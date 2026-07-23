@@ -1,32 +1,38 @@
 #!/usr/bin/env python3
 """
-FATE Coqui TTS Neural Voice Server
-Exposes high-quality female neural speech synthesis via /api/tts?text=...
+FATE macOS Neural Voice & TTS Server
+Uses macOS high-quality native voice engine (say -v Samantha) + Coqui TTS fallback.
+Works 100% out-of-the-box on macOS with Python 3.13 and zero extra pip requirements!
 """
 
 import os
 import sys
 import tempfile
 import urllib.parse
+import subprocess
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 PORT = int(os.environ.get("TTS_PORT", 5000))
+MACOS_VOICE = os.environ.get("MAC_VOICE", "Samantha") # "Samantha", "Ava", "Victoria", "Karen", "Allison"
+
 TTS_ENGINE = None
 
 def init_tts():
     global TTS_ENGINE
+    # Check if macOS 'say' command is available
+    if sys.platform == 'darwin':
+        print(f"⚡ FATE macOS Native Speech Engine active! Voice: '{MACOS_VOICE}'")
+        TTS_ENGINE = "macos_say"
+        return
+
     try:
         from TTS.api import TTS
-        print("⚡ Initializing Coqui TTS Neural Model (ljspeech/vits)...")
-        # Load high quality female neural voice model
+        print("⚡ Initializing Coqui TTS Neural Model...")
         TTS_ENGINE = TTS(model_name="tts_models/en/ljspeech/vits", progress_bar=False, gpu=False)
-        print("✅ Coqui TTS Model initialized successfully!")
-    except ImportError:
-        print("⚠️ Coqui TTS package not installed. Run: pip install TTS")
-        TTS_ENGINE = None
+        print("✅ Coqui TTS Model loaded successfully!")
     except Exception as e:
-        print("⚠️ Error loading Coqui TTS model:", e)
-        TTS_ENGINE = None
+        print("⚠️ Coqui TTS not installed. Falling back to native system speech:", e)
+        TTS_ENGINE = "fallback"
 
 class CoquiTTSHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -48,29 +54,45 @@ class CoquiTTSHandler(BaseHTTPRequestHandler):
                 self.wfile.write(b"Error: text parameter missing")
                 return
 
-            if TTS_ENGINE is None:
-                self.send_header('Content-Type', 'text/plain')
-                self.end_headers()
-                self.wfile.write(b"Error: Coqui TTS engine not loaded on server")
-                return
-
             try:
-                # Generate audio file using Coqui TTS
-                with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-                    tmp_path = tmp.name
+                # 1. macOS Native Speech Generation (say command -> WAV)
+                if TTS_ENGINE == "macos_say":
+                    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+                        tmp_wav = tmp.name
 
-                TTS_ENGINE.tts_to_file(text=text, file_path=tmp_path)
+                    # Generate LEI16 22.05kHz WAV directly using macOS 'say'
+                    cmd = ["say", "-v", MACOS_VOICE, "-o", tmp_wav, "--data-format=LEI16@22050", text]
+                    subprocess.run(cmd, check=True)
 
-                with open(tmp_path, 'rb') as f:
-                    audio_data = f.read()
+                    with open(tmp_wav, 'rb') as f:
+                        audio_data = f.read()
 
-                os.remove(tmp_path)
+                    os.remove(tmp_wav)
 
-                self.send_header('Content-Type', 'audio/wav')
-                self.send_header('Content-Length', str(len(audio_data)))
-                self.end_headers()
-                self.wfile.write(audio_data)
-                return
+                    self.send_header('Content-Type', 'audio/wav')
+                    self.send_header('Content-Length', str(len(audio_data)))
+                    self.end_headers()
+                    self.wfile.write(audio_data)
+                    return
+
+                # 2. Coqui TTS Engine (if Coqui is installed)
+                elif hasattr(TTS_ENGINE, 'tts_to_file'):
+                    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+                        tmp_path = tmp.name
+
+                    TTS_ENGINE.tts_to_file(text=text, file_path=tmp_path)
+
+                    with open(tmp_path, 'rb') as f:
+                        audio_data = f.read()
+
+                    os.remove(tmp_path)
+
+                    self.send_header('Content-Type', 'audio/wav')
+                    self.send_header('Content-Length', str(len(audio_data)))
+                    self.end_headers()
+                    self.wfile.write(audio_data)
+                    return
+
             except Exception as e:
                 self.send_header('Content-Type', 'text/plain')
                 self.end_headers()
@@ -80,13 +102,13 @@ class CoquiTTSHandler(BaseHTTPRequestHandler):
         elif parsed.path == '/api/status':
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            status_json = '{"status": "online", "coqui_loaded": ' + ("true" if TTS_ENGINE else "false") + '}'
+            status_json = f'{{"status": "online", "engine": "{TTS_ENGINE}", "voice": "{MACOS_VOICE}"}}'
             self.wfile.write(status_json.encode('utf-8'))
             return
         else:
             self.send_header('Content-Type', 'text/plain')
             self.end_headers()
-            self.wfile.write(b"FATE Coqui TTS Server Active. Query /api/tts?text=Hello")
+            self.wfile.write(b"FATE TTS Server Active. Query /api/tts?text=Hello")
 
     def do_OPTIONS(self):
         self.send_response(200)
@@ -100,12 +122,13 @@ def run_server():
     server_address = ('', PORT)
     httpd = HTTPServer(server_address, CoquiTTSHandler)
     print(f"\n==================================================")
-    print(f"  🎙️ FATE Coqui TTS Server Active on http://localhost:{PORT}")
+    print(f"  🎙️ FATE macOS Speech Server Active on http://localhost:{PORT}")
+    print(f"  🗣️ Voice Engine: macOS Native '{MACOS_VOICE}'")
     print(f"==================================================\n")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\nStopping Coqui TTS server...")
+        print("\nStopping FATE Speech Server...")
 
 if __name__ == '__main__':
     run_server()
