@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Main Application Controller (Optimized Core)
+   FATE Main Application Controller (Coqui TTS Enabled)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Startup SFX & Greeting
       setTimeout(() => {
         if (typeof audioFX !== 'undefined') audioFX.playStartup();
-        this.addChatMessage('FATE', 'FATE System Core 2.4 active. All subroutines online and operational. How may I assist your mission?');
+        this.addChatMessage('FATE', 'FATE System Core 2.5 active. Coqui Neural Speech Engine initialized. How may I assist your mission?');
       }, 400);
     }
 
@@ -56,6 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
       // Mute Speech Button
       if (this.muteSpeechBtn) {
         this.muteSpeechBtn.addEventListener('click', () => {
+          if (this.speech.currentAudio) {
+            this.speech.currentAudio.pause();
+            this.speech.currentAudio = null;
+          }
           if (this.speech.synthesis) {
             this.speech.synthesis.cancel();
           }
@@ -172,10 +176,16 @@ document.addEventListener('DOMContentLoaded', () => {
       // Settings Inputs
       const voicePitchInput = document.getElementById('voice-pitch');
       const voiceRateInput = document.getElementById('voice-rate');
+      const ttsEngineSelect = document.getElementById('tts-engine-select');
       const apiKeyInput = document.getElementById('api-key-input');
       const apiProviderSelect = document.getElementById('api-provider-select');
       const sfxToggle = document.getElementById('sfx-toggle');
 
+      if (ttsEngineSelect) {
+        ttsEngineSelect.addEventListener('change', () => {
+          this.speech.setTTSEngine(ttsEngineSelect.value);
+        });
+      }
       if (voicePitchInput) {
         voicePitchInput.addEventListener('change', () => {
           this.speech.pitch = parseFloat(voicePitchInput.value);
@@ -315,6 +325,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const apiKeyInput = document.getElementById('api-key-input');
       const apiProviderSelect = document.getElementById('api-provider-select');
+      const ttsEngineSelect = document.getElementById('tts-engine-select');
+
+      if (ttsEngineSelect) {
+        ttsEngineSelect.value = this.speech.ttsEngineMode;
+      }
       if (apiKeyInput && apiProviderSelect) {
         apiKeyInput.value = this.brain.apiKey;
         apiProviderSelect.value = this.brain.apiProvider;
@@ -355,7 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (weatherTemp && weatherInfo) {
-        // High quality weather condition generation
         const temp = Math.floor(22 + Math.random() * 6);
         weatherTemp.textContent = `${temp}°C`;
         weatherInfo.innerHTML = `<span>LOCATION: ${cityName.toUpperCase()}</span><span>CONDITION: CLEAR / SUNNY</span><span>HUMIDITY: 58%</span>`;

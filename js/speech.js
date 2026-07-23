@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Speech Recognition & Voice Synthesis Engine
+   FATE Speech Recognition & Voice Synthesis Engine (Coqui TTS Enabled)
    ========================================================================== */
 
 class FateSpeechEngine {
@@ -9,7 +9,7 @@ class FateSpeechEngine {
 
     this.isListening = false;
     this.isSpeaking = false;
-    this.wakeWord = 'fate';
+    this.ttsEngineMode = localStorage.getItem('fate_tts_engine') || 'coqui'; // 'coqui' or 'webspeech'
 
     this.onResultCallback = null;
     this.onStateChangeCallback = null;
@@ -17,9 +17,15 @@ class FateSpeechEngine {
     this.pitch = 1.0;
     this.rate = 1.0;
     this.selectedVoice = null;
+    this.currentAudio = null;
 
     this.initRecognition();
     this.loadVoices();
+  }
+
+  setTTSEngine(mode) {
+    this.ttsEngineMode = mode;
+    localStorage.setItem('fate_tts_engine', mode);
   }
 
   initRecognition() {
@@ -81,7 +87,6 @@ class FateSpeechEngine {
     if (!this.synthesis) return;
     const populateVoices = () => {
       const voices = this.synthesis.getVoices();
-      // Prefer natural English robotic/sci-fi male or female voices
       this.selectedVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Alex') || v.name.includes('Daniel') || v.lang.startsWith('en')) || voices[0];
     };
 
@@ -114,13 +119,59 @@ class FateSpeechEngine {
   }
 
   speak(text, onComplete) {
-    if (!this.synthesis || !text) {
+    if (!text) {
       if (onComplete) onComplete();
       return;
     }
 
-    // Cancel ongoing speech
-    this.synthesis.cancel();
+    // Stop current playing audio or synthesis
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    if (this.synthesis) {
+      this.synthesis.cancel();
+    }
+
+    // Try Coqui Neural TTS if enabled
+    if (this.ttsEngineMode === 'coqui') {
+      const ttsUrl = `/api/tts?text=${encodeURIComponent(text)}`;
+      const audio = new Audio(ttsUrl);
+      this.currentAudio = audio;
+
+      audio.onplay = () => {
+        this.isSpeaking = true;
+        if (this.onStateChangeCallback) this.onStateChangeCallback('speaking');
+      };
+
+      audio.onended = () => {
+        this.isSpeaking = false;
+        this.currentAudio = null;
+        if (this.onStateChangeCallback) this.onStateChangeCallback(this.isListening ? 'listening' : 'idle');
+        if (onComplete) onComplete();
+      };
+
+      audio.onerror = () => {
+        console.warn('Coqui TTS Server unreachable or error. Falling back to WebSpeech Synthesis.');
+        this.speakWebSpeech(text, onComplete);
+      };
+
+      audio.play().catch(() => {
+        this.speakWebSpeech(text, onComplete);
+      });
+
+      return;
+    }
+
+    // Fallback to WebSpeech Synthesis
+    this.speakWebSpeech(text, onComplete);
+  }
+
+  speakWebSpeech(text, onComplete) {
+    if (!this.synthesis) {
+      if (onComplete) onComplete();
+      return;
+    }
 
     const utterance = new SpeechSynthesisUtterance(text);
     if (this.selectedVoice) utterance.voice = this.selectedVoice;
