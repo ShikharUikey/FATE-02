@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FATE (Futuristic Autonomous Tech Assistant) - Sci-Fi HUD AI Voice Assistant Web Application inspired by NetHyTech.">
+  <title>FATE — Futuristic Autonomous Tech Assistant</title>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Animated Particle Background Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Sci-Fi Vignette & CRT Grid Lines Overlay -->
+  <div class="overlay-grid"></div>
+
+  <!-- Main FATE HUD Application Container -->
+  <div id="fate-app">
+
+    <!-- 1. Header Navigation Bar -->
+    <header class="hud-header">
+      <div class="brand-section">
+        <div class="fate-logo-icon" id="logo-icon"></div>
+        <div class="brand-text">
+          <h1>F.A.T.E. <span>SYSTEM</span></h1>
+          <div class="sub-tag">FUTURISTIC AUTONOMOUS TECH ASSISTANT</div>
+        </div>
+      </div>
+
+      <nav class="hud-nav-tabs">
+        <button class="nav-tab-btn active" data-tab="core" id="tab-btn-core">
+          <span>⚡ CORE HUD</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="suite" id="tab-btn-suite">
+          <span>🛠️ SUITE TOOLS</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="config" id="tab-btn-config">
+          <span>⚙️ CONFIG</span>
+        </button>
+      </nav>
+
+      <div class="header-status-group">
+        <div class="status-pill online" id="system-status-pill">
+          <div class="status-dot"></div>
+          <span id="status-pill-text">ONLINE</span>
+        </div>
+        <div class="clock-display" id="clock-display">00:00:00</div>
+      </div>
+    </header>
+
+    <!-- 2. Main HUD Body View -->
+    <main class="hud-body">
+
+      <!-- Left Telemetry & Quick Action Panel -->
+      <aside class="hud-panel">
+        <div class="panel-header">
+          <h2>📊 TELEMETRY</h2>
+          <span class="panel-badge">SYS_V2.4</span>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="telemetry-card">
+            <span class="telemetry-label">CPU CORE</span>
+            <span class="telemetry-value" id="cpu-val">21%</span>
+            <div class="telemetry-bar-bg">
+              <div class="telemetry-bar-fill" id="cpu-bar"></div>
+            </div>
+          </div>
+
+          <div class="telemetry-card">
+            <span class="telemetry-label">MEMORY</span>
+            <span class="telemetry-value" id="ram-val">2.3 GB</span>
+            <div class="telemetry-bar-bg">
+              <div class="telemetry-bar-fill" id="ram-bar" style="width: 25%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-header" style="margin-top: 10px;">
+          <h2>⚡ QUICK COMMANDS</h2>
+        </div>
+
+        <div class="quick-commands-list">
+          <div class="command-chip" data-cmd="what is the weather">
+            <span class="chip-text">Weather Scan</span>
+            <span class="chip-tag">METEO</span>
+          </div>
+          <div class="command-chip" data-cmd="open youtube">
+            <span class="chip-text">Open YouTube</span>
+            <span class="chip-tag">WEB</span>
+          </div>
+          <div class="command-chip" data-cmd="search google for latest AI news">
+            <span class="chip-text">Search AI News</span>
+            <span class="chip-tag">SEARCH</span>
+          </div>
+          <div class="command-chip" data-cmd="open github">
+            <span class="chip-text">Open GitHub</span>
+            <span class="chip-tag">DEV</span>
+          </div>
+          <div class="command-chip" data-cmd="generate python script">
+            <span class="chip-text">Python Studio</span>
+            <span class="chip-tag">CODE</span>
+          </div>
+          <div class="command-chip" data-cmd="what time is it">
+            <span class="chip-text">System Time</span>
+            <span class="chip-tag">INFO</span>
+          </div>
+          <div class="command-chip" data-cmd="switch theme to red alert">
+            <span class="chip-text">Red Alert Mode</span>
+            <span class="chip-tag">THEME</span>
+          </div>
+          <div class="command-chip" data-cmd="switch theme to default">
+            <span class="chip-text">Cyan Cyberpunk</span>
+            <span class="chip-tag">THEME</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Main Content Section -->
+      <section class="hud-panel" style="overflow: hidden;">
+
+        <!-- View 1: Core Arc Reactor HUD -->
+        <div class="tab-view active" id="tab-core">
+          
+          <div class="arc-reactor-section">
+            <div class="visualizer-container">
+              <canvas id="visualizer-canvas"></canvas>
+              <div class="arc-reactor-core" id="arc-reactor-core">
+                <span class="reactor-symbol">FATE</span>
+              </div>
+            </div>
+            <div class="voice-status-label" id="voice-status-label">
+              FATE CORE ONLINE — CLICK CORE TO SPEAK
+            </div>
+          </div>
+
+          <!-- Interactive Conversation Feed -->
+          <div class="chat-feed-container" id="chat-feed">
+            <!-- Dynamic Messages Inject Here -->
+          </div>
+
+          <!-- Command Input Bar -->
+          <div class="input-bar-group">
+            <button class="mic-toggle-btn" id="mic-toggle-btn" title="Toggle Voice Recognition">🎙️ MIC</button>
+            <button class="input-action-btn" id="mute-speech-btn" style="background: rgba(255, 69, 0, 0.2); border-color: #ff4500;" title="Mute Speech Output">🔇 MUTE</button>
+            <button class="input-action-btn" id="clear-chat-btn" style="background: rgba(255, 255, 255, 0.05); border-color: rgba(255, 255, 255, 0.2);" title="Clear Chat Log">🧹 CLEAR</button>
+            <input type="text" class="text-input-field" id="text-input" placeholder="Type a command or query for FATE..." autocomplete="off">
+            <button class="input-action-btn" id="send-btn">EXECUTE</button>
+          </div>
+
+        </div>
+
+        <!-- View 2: Suite Tools Tab -->
+        <div class="tab-view" id="tab-suite">
+          <div class="panel-header">
+            <h2>🛠️ AUTOMATION & TOOL SUITE</h2>
+            <span class="panel-badge">TOOLS</span>
+          </div>
+
+          <div class="suite-grid">
+
+            <!-- Weather Widget Card -->
+            <div class="tool-card">
+              <div class="tool-card-title">
+                <span id="weather-card-title">🌤️ ATMOSPHERIC DIAGNOSTICS</span>
+                <span>STATUS: OK</span>
+              </div>
+              <div class="weather-display">
+                <div class="weather-temp" id="weather-temp">24°C</div>
+                <div class="weather-info" id="weather-info">
+                  <span>LOCATION: LOCAL REGION</span>
+                  <span>CONDITION: CLEAR / SUNNY</span>
+                  <span>HUMIDITY: 58%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Voice Scientific Calculator -->
+            <div class="tool-card">
+              <div class="tool-card-title">
+                <span>🧮 VOICE CALCULATOR</span>
+                <span>SAFE EVAL</span>
+              </div>
+              <input type="text" class="calc-display-input" id="calc-display" placeholder="0" readonly>
+              <div class="calc-grid">
+                <button class="calc-btn" data-act="clear">C</button>
+                <button class="calc-btn op" data-act="(">(</button>
+                <button class="calc-btn op" data-act=")">)</button>
+                <button class="calc-btn op" data-act="/">/</button>
+
+                <button class="calc-btn" data-act="7">7</button>
+                <button class="calc-btn" data-act="8">8</button>
+                <button class="calc-btn" data-act="9">9</button>
+                <button class="calc-btn op" data-act="*">*</button>
+
+                <button class="calc-btn" data-act="4">4</button>
+                <button class="calc-btn" data-act="5">5</button>
+                <button class="calc-btn" data-act="6">6</button>
+                <button class="calc-btn op" data-act="-">-</button>
+
+                <button class="calc-btn" data-act="1">1</button>
+                <button class="calc-btn" data-act="2">2</button>
+                <button class="calc-btn" data-act="3">3</button>
+                <button class="calc-btn op" data-act="+">+</button>
+
+                <button class="calc-btn" data-act="0" style="grid-column: span 2;">0</button>
+                <button class="calc-btn" data-act=".">.</button>
+                <button class="calc-btn eq" data-act="eval">=</button>
+              </div>
+            </div>
+
+            <!-- Code Studio -->
+            <div class="tool-card">
+              <div class="tool-card-title">
+                <span>💻 FATE CODE STUDIO</span>
+                <span>AUTO GENERATOR</span>
+              </div>
+              <textarea class="code-editor-area" id="code-editor" placeholder="// Code snippets generated by FATE will appear here..."></textarea>
+            </div>
+
+            <!-- Quick Scratchpad -->
+            <div class="tool-card">
+              <div class="tool-card-title">
+                <span>📝 SCRATCHPAD & MEMORY NOTES</span>
+                <span>AUTO-SAVED</span>
+              </div>
+              <textarea class="notes-editor-area" id="notes-editor" placeholder="Type quick notes for FATE memory..."></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- View 3: Config Tab -->
+        <div class="tab-view" id="tab-config">
+          <div class="panel-header">
+            <h2>⚙️ FATE CONFIGURATION & VOICE TUNING</h2>
+            <span class="panel-badge">SETTINGS</span>
+          </div>
+
+          <div class="suite-grid">
+            <div class="tool-card">
+              <div class="tool-card-title">
+                <span>🎨 HUD THEME SELECTOR</span>
+              </div>
+              <div class="theme-options-grid">
+                <div class="theme-swatch cyan active" data-theme="default" title="Cyan Cyberpunk"></div>
+                <div class="theme-swatch red" data-theme="red-alert" title="Red Alert"></div>
+                <div class="theme-swatch emerald" data-theme="emerald" title="Emerald Matrix"></div>
+                <div class="theme-swatch amber" data-theme="amber" title="Deep Amber"></div>
+              </div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-title">
+                <span>🗣️ SPEECH SYNTHESIS ENGINE</span>
+              </div>
+              <div class="settings-group">
+                <div class="setting-row">
+                  <span class="setting-label">VOICE PITCH</span>
+                  <input type="range" id="voice-pitch" min="0.5" max="1.5" step="0.1" value="1.0" class="setting-input">
+                </div>
+                <div class="setting-row">
+                  <span class="setting-label">SPEECH RATE</span>
+                  <input type="range" id="voice-rate" min="0.5" max="1.5" step="0.1" value="1.0" class="setting-input">
+                </div>
+                <div class="setting-row">
+                  <label class="setting-label" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="sfx-toggle" checked>
+                    <span>ENABLE WEB AUDIO SYNTH SFX</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="tool-card">
+              <div class="tool-card-title">
+                <span>🔑 EXTERNAL LLM API KEY (OPTIONAL)</span>
+              </div>
+              <div class="settings-group">
+                <div class="setting-row">
+                  <span class="setting-label">API PROVIDER</span>
+                  <select id="api-provider-select" class="setting-select">
+                    <option value="offline">Built-in FATE Intelligence (Offline)</option>
+                    <option value="openai">OpenAI (GPT-3.5/4)</option>
+                    <option value="gemini">Google Gemini Pro</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <span class="setting-label">API KEY</span>
+                  <input type="password" id="api-key-input" class="setting-input" placeholder="sk-...">
+                </div>
+                <button class="input-action-btn" id="save-api-btn" style="margin-top: 6px;">SAVE API CONFIG</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Subsystem Monitor & System Logs Panel -->
+      <aside class="hud-panel">
+        <div class="panel-header">
+          <h2>🛡️ SUBSYSTEMS</h2>
+          <span class="panel-badge">MONITOR</span>
+        </div>
+
+        <div class="quick-commands-list">
+          <div class="telemetry-card">
+            <span class="telemetry-label">VOICE RECOGNITION</span>
+            <span class="telemetry-value" style="color: #00ff88; font-size: 0.95rem;">READY (WebSpeech)</span>
+          </div>
+
+          <div class="telemetry-card">
+            <span class="telemetry-label">AUDIO SYNTH</span>
+            <span class="telemetry-value" style="color: #00ff88; font-size: 0.95rem;">ACTIVE (WebAudio)</span>
+          </div>
+
+          <div class="telemetry-card">
+            <span class="telemetry-label">AI INTELLIGENCE CORE</span>
+            <span class="telemetry-value" style="color: var(--primary-color); font-size: 0.95rem;">FATE OPTIMIZED V2.4</span>
+          </div>
+
+          <div class="telemetry-card">
+            <span class="telemetry-label">AUTOMATION ENGINE</span>
+            <span class="telemetry-value" style="color: #00ff88; font-size: 0.95rem;">INTENT ENGINE ACTIVE</span>
+          </div>
+        </div>
+
+        <div class="panel-header" style="margin-top: 14px;">
+          <h2>📜 LOG TELEMETRY</h2>
+        </div>
+
+        <div class="chat-feed-container" style="max-height: 160px; font-family: var(--font-mono); font-size: 0.72rem;">
+          <div style="color: var(--primary-color);">[SYSTEM] FATE Core 2.4 Active.</div>
+          <div style="color: #00ff88;">[INTENT] Meteorological Engine Primed.</div>
+          <div style="color: var(--text-muted);">[AUDIO] WebAudio Synth Oscillators Ready.</div>
+          <div style="color: var(--primary-color);">[STATE] Listening for user prompts...</div>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- 3. HUD Footer Status Bar -->
+    <footer class="hud-footer">
+      <div class="footer-left">
+        <span>FATE v2.4 AUTONOMOUS CORE</span>
+        <span class="footer-tag">STATUS: OPTIMAL</span>
+      </div>
+      <div class="footer-right">
+        <span>FRAMEWORK: VANILLA JS / WEB SPEECH API</span>
+        <span class="footer-tag">ENCRYPTION: 256-BIT</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Scripts in Proper Dependency Order -->
+  <script src="js/audio-fx.js"></script>
+  <script src="js/visualizer.js"></script>
+  <script src="js/speech.js"></script>
+  <script src="js/ai-brain.js"></script>
+  <script src="js/commands.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
