@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 FATE macOS Neural Voice & TTS Server
-Supports dynamic voice selection (Samantha, Ava, Victoria, Karen, Veena, Daniel).
+Supports dynamic voice selection and automatic port fallback (5005, 5006...).
 Works 100% out-of-the-box on macOS with Python 3.13 and zero extra pip requirements!
 """
 
@@ -10,9 +10,10 @@ import sys
 import tempfile
 import urllib.parse
 import subprocess
+import socket
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-PORT = int(os.environ.get("TTS_PORT", 5000))
+PORT = int(os.environ.get("TTS_PORT", 5005))
 DEFAULT_VOICE = os.environ.get("MAC_VOICE", "Samantha")
 
 TTS_ENGINE = None
@@ -60,11 +61,9 @@ class CoquiTTSHandler(BaseHTTPRequestHandler):
                     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
                         tmp_wav = tmp.name
 
-                    # Generate LEI16 22.05kHz WAV directly using specified macOS voice
                     cmd = ["say", "-v", voice, "-o", tmp_wav, "--data-format=LEI16@22050", text]
                     res = subprocess.run(cmd, capture_output=True)
 
-                    # Fallback to Samantha if selected voice is not installed on user's Mac
                     if res.returncode != 0 and voice != "Samantha":
                         cmd = ["say", "-v", "Samantha", "-o", tmp_wav, "--data-format=LEI16@22050", text]
                         subprocess.run(cmd, check=True)
@@ -122,18 +121,34 @@ class CoquiTTSHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
-def run_server():
+class ReusableHTTPServer(HTTPServer):
+    def server_bind(self):
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        super().server_bind()
+
+def start_server_with_fallback(port, max_tries=10):
     init_tts()
-    server_address = ('', PORT)
-    httpd = HTTPServer(server_address, CoquiTTSHandler)
-    print(f"\n==================================================")
-    print(f"  🎙️ FATE macOS Dynamic Speech Server Active on http://localhost:{PORT}")
-    print(f"  🗣️ Voice Options: Samantha, Ava, Victoria, Karen, Veena, Daniel")
-    print(f"==================================================\n")
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print("\nStopping FATE Speech Server...")
+    for current_port in range(port, port + max_tries):
+        try:
+            server_address = ('', current_port)
+            httpd = ReusableHTTPServer(server_address, CoquiTTSHandler)
+            print(f"\n==================================================")
+            print(f"  🎙️ FATE macOS Speech Server Active on http://localhost:{current_port}")
+            print(f"  🗣️ Default Voice: macOS '{DEFAULT_VOICE}'")
+            print(f"==================================================\n")
+            
+            # Write active TTS port to a temporary file for server.js to auto-detect
+            with open(os.path.join(os.path.dirname(__file__), ".active_tts_port"), "w") as f:
+                f.write(str(current_port))
+                
+            httpd.serve_forever()
+            return
+        except OSError as e:
+            if e.errno in (48, 98): # Address in use
+                print(f"Port {current_port} busy, retrying on port {current_port + 1}...")
+                continue
+            else:
+                raise e
 
 if __name__ == '__main__':
-    run_server()
+    start_server_with_fallback(PORT)

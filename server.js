@@ -3,8 +3,18 @@ const fs = require('fs');
 const path = require('path');
 
 let PORT = parseInt(process.env.PORT, 10) || 3000;
-const TTS_PORT = process.env.TTS_PORT || 5000;
 const PUBLIC_DIR = path.join(__dirname);
+
+function getActiveTTSPort() {
+  try {
+    const portFile = path.join(__dirname, '.active_tts_port');
+    if (fs.existsSync(portFile)) {
+      const p = fs.readFileSync(portFile, 'utf8').trim();
+      return parseInt(p, 10) || 5005;
+    }
+  } catch (e) {}
+  return parseInt(process.env.TTS_PORT, 10) || 5005;
+}
 
 const MIME_TYPES = {
   '.html': 'text/html',
@@ -19,11 +29,12 @@ const MIME_TYPES = {
 
 function startServer(port) {
   const server = http.createServer((req, res) => {
-    // 1. Proxy /api/tts to Python Coqui TTS Server
+    // 1. Proxy /api/tts to Python Speech Server dynamically
     if (req.url.startsWith('/api/tts') || req.url.startsWith('/api/status')) {
+      const activeTTSPort = getActiveTTSPort();
       const proxyReq = http.request({
         hostname: '127.0.0.1',
-        port: TTS_PORT,
+        port: activeTTSPort,
         path: req.url,
         method: req.method,
         headers: req.headers
@@ -33,9 +44,8 @@ function startServer(port) {
       });
 
       proxyReq.on('error', () => {
-        // Fallback if Coqui TTS server is not running
         res.writeHead(503, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Coqui TTS server offline on port 5000. Fallback to WebSpeech.' }));
+        res.end(JSON.stringify({ error: `Speech server offline on port ${activeTTSPort}. Fallback to WebSpeech.` }));
       });
 
       req.pipe(proxyReq, { end: true });
@@ -76,7 +86,7 @@ function startServer(port) {
     console.log(`\n==================================================`);
     console.log(`  🚀 FATE Local Server Active!`);
     console.log(`  🌐 URL: http://localhost:${port}`);
-    console.log(`  🎙️ Coqui TTS Proxy Route: /api/tts`);
+    console.log(`  🎙️ Speech Proxy Route: /api/tts`);
     console.log(`==================================================\n`);
   });
 }
