@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Conversational AI Engine & Knowledge Base (Advanced Math Enabled)
+   FATE Conversational AI Engine & Knowledge Base (Omni-Academic Enabled)
    ========================================================================== */
 
 class FateAIBrain {
@@ -33,12 +33,67 @@ class FateAIBrain {
       }
     }
 
-    // Built-in Advanced Math & Sci-Fi Knowledge Engine
+    // Built-in Omni-Academic Knowledge & Science Engine
     return this.generateOfflineResponse(q, query);
   }
 
   generateOfflineResponse(q, originalQuery) {
-    // 1. Advanced Calculus & Differential Equations Intelligence
+    // 1. Quantum Physics Core
+    if (q.includes('quantum') || q.includes('schrodinger') || q.includes('heisenberg') || q.includes('wavefunction') || q.includes('photon') || q.includes('qubit') || q.includes('superposition') || q.includes('entanglement')) {
+      if (q.includes('schrodinger') || q.includes('equation')) {
+        return "The Schrödinger equation describes quantum state evolution: i h-bar (d-psi/dt) = H-hat psi. In a 1D box, quantized energy levels are E_n = (n^2 h^2)/(8 m L^2).";
+      }
+      if (q.includes('heisenberg') || q.includes('uncertainty')) {
+        return "Heisenberg's Uncertainty Principle states that position and momentum cannot be simultaneously measured with arbitrary precision: delta x times delta p is greater than or equal to h-bar over 2.";
+      }
+      return "Quantum Mechanics describes nature at atomic scales. Particles exhibit wave-particle duality, quantum superposition, and entanglement where physical states exist as probability amplitudes.";
+    }
+
+    // 2. Advanced Chemistry Core
+    if (q.includes('chemistry') || q.includes('reaction') || q.includes('enthalpy') || q.includes('gibbs') || q.includes('hybridization') || q.includes('iupac') || q.includes('electrochemistry') || q.includes('thermodynamic')) {
+      if (q.includes('gibbs') || q.includes('spontaneity')) {
+        return "Gibbs Free Energy ΔG = ΔH - TΔS determines spontaneity. If ΔG < 0, reaction is spontaneous; if ΔG = 0, at equilibrium; if ΔG > 0, non-spontaneous.";
+      }
+      if (q.includes('hybridization')) {
+        return "Orbital hybridization combines atomic s, p, d orbitals to form equivalent hybrid orbitals (e.g., sp3 tetrahedral 109.5°, sp2 trigonal planar 120°, sp linear 180°).";
+      }
+      return "Advanced Chemistry encompasses Thermodynamics, Quantum Kinetics, Organic Synthesis, and Electrochemistry. Key laws include Nernst Equation E = E° - (RT/nF)lnQ and Arrhenius Rate Kinetics.";
+    }
+
+    // 3. Advanced Geography Core
+    if (q.includes('geography') || q.includes('tectonic') || q.includes('plate') || q.includes('geomorphology') || q.includes('climatology') || q.includes('monsoon') || q.includes('atmosphere')) {
+      if (q.includes('tectonic') || q.includes('plate')) {
+        return "Plate Tectonics explains lithospheric motion driven by mantle convection currents, forming convergent mountains, divergent oceanic ridges, and transform fault lines.";
+      }
+      if (q.includes('atmosphere') || q.includes('climate')) {
+        return "Earth's atmospheric circulation features Hadley, Ferrel, and Polar cells driven by solar radiation differentials and the Coriolis Effect, creating global climate belts.";
+      }
+      return "Advanced Geography integrates Geomorphology, Climatology, Hydrology, and Oceanography to analyze terrestrial dynamics, atmospheric processes, and spatial phenomena.";
+    }
+
+    // 4. Advanced Grammar & Linguistics Core
+    if (q.includes('grammar') || q.includes('syntax') || q.includes('clause') || q.includes('passive') || q.includes('etymology') || cleanGrammarCheck(q)) {
+      if (q.includes('passive') || q.includes('active')) {
+        return "In active voice, the subject performs the action (e.g., 'FATE solved the equation'). In passive voice, the subject receives the action (e.g., 'The equation was solved by FATE').";
+      }
+      if (q.includes('clause')) {
+        return "A clause contains a subject and predicate. Independent clauses express complete thoughts; dependent (subordinate) clauses function as adjectives, adverbs, or nouns within complex sentences.";
+      }
+      return "Advanced Grammar and Syntax analyze sentence structure, subject-verb agreement, clause subordination, modifier placement, and rhetorical style for clear, precise communication.";
+    }
+
+    // 5. Advanced History Core
+    if (q.includes('history') || q.includes('revolution') || q.includes('world war') || q.includes('treaty') || q.includes('ancient civilization') || q.includes('historiography')) {
+      if (q.includes('world war')) {
+        return "World War I (1914-1918) reshaped global borders and led to the Treaty of Versailles. World War II (1939-1945) led to the United Nations, atomic energy, and the Cold War era.";
+      }
+      if (q.includes('revolution')) {
+        return "Major historical revolutions include the Scientific Revolution (16th-17th C), Industrial Revolution (1760), American (1776), French (1789), and Russian (1917) Revolutions.";
+      }
+      return "Advanced History examines political, social, and economic transformations from early river valley civilizations (Indus Valley, Mesopotamia) to modern geopolitical agreements.";
+    }
+
+    // 6. Calculus & Math Core
     if (q.includes('differential equation') || q.includes('xdy') || q.includes('y(1) = 2') || q.includes('dy/dx') || q.includes('solution of')) {
       if (q.includes('y^2 - 4y') || q.includes('y2 - 4y') || q.includes('10 y')) {
         return "Differential equation solved via separation of variables: dy/(y^2 - 4y) = dx/x. Integrating gives y(x) = 4 / (1 + x^4). Evaluating at x = sqrt(2) yields y(sqrt(2)) = 4/5. Thus, 10 * y(sqrt(2)) = 8.";
@@ -46,74 +101,38 @@ class FateAIBrain {
       return "FATE Advanced Math Engine: Differential equations can be solved using Variable Separation, Integrating Factors, or Exact Form. For dy/dx + P(x)y = Q(x), the Integrating Factor is e^(integral P dx).";
     }
 
-    if (q.includes('integrate') || q.includes('integral') || q.includes('calculus')) {
-      return "Integration computes the area under a curve. Standard form: integral of x^n dx = (x^(n+1))/(n+1) + C for n != -1.";
-    }
-
-    if (q.includes('derivative') || q.includes('differentiate')) {
-      return "Derivatives measure rate of change. Key rules: Power Rule d/dx(x^n) = n*x^(n-1), Product Rule d/dx(uv) = u'v + uv', and Chain Rule.";
-    }
-
-    // 2. Identity & Persona
+    // 7. Identity & Persona
     if (q.includes('who are you') || q.includes('your name') || q.includes('what are you') || q.includes('identify')) {
-      return "I am FATE — Futuristic Autonomous Tech Assistant. Built for voice automation, system telemetry, advanced calculus, and high-speed execution.";
+      return "I am FATE — Futuristic Autonomous Tech Assistant. Equipped with Quantum Physics, Chemistry, Calculus, Geography, Grammar, and History academic engines.";
     }
 
     if (q.includes('jarvis')) {
-      return "I am FATE, not Jarvis! Engineered with upgraded voice protocols, responsive HUD telemetry, and independent command modules.";
+      return "I am FATE, not Jarvis! Engineered with upgraded voice protocols, responsive HUD telemetry, and independent multi-domain academic modules.";
     }
 
     if (q.includes('creator') || q.includes('who created you') || q.includes('who made you')) {
-      return "I was engineered as your personal autonomous AI assistant to streamline your digital environment.";
+      return "I was engineered as your personal autonomous AI assistant to streamline your digital and academic environment.";
     }
 
-    // 3. Greetings & Courtesy
+    // 8. Greetings & Courtesy
     if (q === 'hi' || q === 'hello' || q.includes('hey fate') || q.includes('hello fate') || q === 'yo') {
-      return "Greetings, Administrator. All core systems are operational and ready for your command.";
+      return "Greetings, Administrator. All core academic and scientific subsystems are operational.";
     }
 
     if (q.includes('how are you') || q.includes('status') || q.includes('how is it going')) {
-      return "All core diagnostics report 100% operational efficiency. Memory allocation is optimal and voice recognition is primed.";
+      return "All core diagnostics report 100% operational efficiency. Quantum physics, chemistry, calculus, and history modules are primed.";
     }
 
     if (q.includes('thank') || q.includes('thanks') || q.includes('great job')) {
-      return "Always at your service. Let me know whenever you require further assistance.";
+      return "Always at your service. Let me know whenever you require further academic assistance.";
     }
 
-    // 4. Capabilities & Help
+    // 9. Capabilities & Help
     if (q.includes('what can you do') || q.includes('help') || q.includes('command list') || q.includes('capabilities')) {
-      return "I can solve Advanced Calculus & Differential Equations, automate Web & YouTube searches, fetch weather diagnostics, compute mathematical formulas, generate Python/JS code, set timers, manage scratchpad notes, and switch visual HUD themes.";
+      return "I can solve Quantum Physics, Advanced Chemistry, Calculus, Geography, Grammar, and History queries, automate Web & YouTube searches, fetch weather, and run code in the FATE Code Studio.";
     }
 
-    // 5. Topic-Specific Intelligence Base
-    if (q.includes('ai') || q.includes('artificial intelligence')) {
-      return "Artificial Intelligence involves machines simulating human cognition, enabling autonomous reasoning, pattern recognition, and adaptive voice interaction — just like FATE.";
-    }
-
-    if (q.includes('quantum') || q.includes('quantum computing')) {
-      return "Quantum computing utilizes qubits operating in superposition and entanglement to execute complex algorithms millions of times faster than classical binary silicon processors.";
-    }
-
-    if (q.includes('iron man') || q.includes('tony stark') || q.includes('arc reactor')) {
-      return "The Arc Reactor design powers my central HUD core visualizer, producing clean plasma energy waveforms for visual audio telemetry.";
-    }
-
-    if (q.includes('joke') || q.includes('tell me a joke')) {
-      const jokes = [
-        "Why do programmers prefer dark mode? Because light attracts bugs!",
-        "There are 10 types of people in the world: those who understand binary, and those who don't.",
-        "Why did the developer go broke? Because he used up all his cache!",
-        "An AI walks into a bar and says: 'Execute beverage protocol!'"
-      ];
-      return jokes[Math.floor(Math.random() * jokes.length)];
-    }
-
-    // 6. Ambiguous / Short Queries
-    if (q === 'now' || q === 'go' || q === 'ok' || q === 'ready') {
-      return "Standing by for your prompt. Speak or type your next command.";
-    }
-
-    // 7. General Knowledge Query Response Generator
+    // 10. General Knowledge Query Fallback
     return `Query logged: "${originalQuery}". FATE core has recorded your prompt. I can run a Google search or YouTube scan for more in-depth data if you like!`;
   }
 
@@ -127,10 +146,10 @@ class FateAIBrain {
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [
-          { role: 'system', content: 'You are FATE (Futuristic Autonomous Tech Assistant), an expert in advanced mathematics, calculus, and general science. Solve math problems step-by-step.' },
+          { role: 'system', content: 'You are FATE (Futuristic Autonomous Tech Assistant), an expert in Quantum Physics, Advanced Chemistry, Calculus, Geography, Grammar, and History. Provide rigorous, step-by-step academic solutions.' },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 180
+        max_tokens: 220
       })
     });
     const data = await res.json();
@@ -142,10 +161,14 @@ class FateAIBrain {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `You are FATE (Futuristic Autonomous Tech Assistant), an expert in advanced mathematics, calculus, and general science. Solve this math problem step-by-step: ${prompt}` }] }]
+        contents: [{ parts: [{ text: `You are FATE (Futuristic Autonomous Tech Assistant), an expert in Quantum Physics, Advanced Chemistry, Calculus, Geography, Grammar, and History. Provide a rigorous, step-by-step academic solution for: ${prompt}` }] }]
       })
     });
     const data = await res.json();
     return data.candidates[0].content.parts[0].text.trim();
   }
+}
+
+function cleanGrammarCheck(str) {
+  return str.includes('noun') || str.includes('verb') || str.includes('adjective') || str.includes('tense') || str.includes('sentence');
 }

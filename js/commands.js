@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Command Execution Engine (Advanced Math & Calculus Core)
+   FATE Command Execution Engine (Omni-Domain Academic & Science Core)
    ========================================================================== */
 
 class FateCommandHandler {
@@ -26,7 +26,18 @@ class FateCommandHandler {
       };
     }
 
-    // 2. Standard Arithmetic & Polynomial Math Intent
+    // 2. Check for Specialized Academic Domain Queries (Quantum Physics, Chemistry, Geography, Grammar, History)
+    const academicResult = this.solveAcademicDomain(text);
+    if (academicResult) {
+      if (this.app.codeArea) this.app.codeArea.value = academicResult.detailedNotes;
+      this.app.switchTab('suite');
+      return {
+        speakText: academicResult.spokenText,
+        actionTaken: academicResult.actionTaken
+      };
+    }
+
+    // 3. Standard Arithmetic & Polynomial Math Intent
     const mathResult = this.tryParseMath(cleanText);
     if (mathResult !== null) {
       if (this.app.calcInput) this.app.calcInput.value = mathResult.result;
@@ -36,7 +47,7 @@ class FateCommandHandler {
       };
     }
 
-    // 3. Weather Intent
+    // 4. Weather Intent
     if (cleanText.includes('weather') || cleanText.includes('temperature') || cleanText.includes('forecast') || cleanText.includes('climate')) {
       let city = cleanText.replace(/what's the weather in|what is the weather in|weather in|weather for|temperature in|forecast for|weather|temperature|forecast|climate|today/gi, '').trim();
       
@@ -56,7 +67,7 @@ class FateCommandHandler {
       }
     }
 
-    // 4. Mute / Silence Commands
+    // 5. Mute / Silence Commands
     if (cleanText.includes('mute') || cleanText.includes('stop speaking') || cleanText.includes('be quiet') || cleanText === 'stop' || cleanText.includes('hush')) {
       if (this.app.speech.currentAudio) {
         this.app.speech.currentAudio.pause();
@@ -68,13 +79,13 @@ class FateCommandHandler {
       return { speakText: "Audio output silenced.", actionTaken: "Speech Silenced" };
     }
 
-    // 5. Clear Chat / Reset Conversation
+    // 6. Clear Chat / Reset Conversation
     if (cleanText.includes('clear chat') || cleanText.includes('clear feed') || cleanText.includes('reset chat') || cleanText.includes('clear log')) {
       this.app.clearChatFeed();
       return { speakText: "Conversation buffer purged. Standing by for fresh telemetry.", actionTaken: "Chat Purged" };
     }
 
-    // 6. YouTube & Video Automation
+    // 7. YouTube & Video Automation
     if (cleanText.startsWith('open youtube') || cleanText === 'youtube') {
       window.open('https://www.youtube.com', '_blank');
       return { speakText: "Opening YouTube video platform.", actionTaken: "Opened YouTube" };
@@ -88,7 +99,7 @@ class FateCommandHandler {
       }
     }
 
-    // 7. Google Web Search & AI Platforms
+    // 8. Google Web Search & AI Platforms
     if (cleanText.includes('search google for') || cleanText.includes('google search') || cleanText.startsWith('search for') || cleanText.startsWith('google ')) {
       const query = cleanText.replace(/search google for|google search|search for|google/gi, '').trim();
       if (query) {
@@ -107,7 +118,7 @@ class FateCommandHandler {
       return { speakText: "Opening Google Gemini platform.", actionTaken: "Opened Gemini" };
     }
 
-    // 8. Developer Tools & Portals
+    // 9. Developer Tools & Portals
     if (cleanText.includes('open github') || cleanText === 'github') {
       window.open('https://github.com', '_blank');
       return { speakText: "Accessing GitHub repositories.", actionTaken: "Opened GitHub" };
@@ -123,7 +134,7 @@ class FateCommandHandler {
       return { speakText: "Loading Google Satellite Navigation Maps.", actionTaken: "Opened Maps" };
     }
 
-    // 9. Time & Date Telemetry
+    // 10. Time & Date Telemetry
     if (cleanText.includes('time') || cleanText.includes('clock') || cleanText.includes('what time')) {
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -136,7 +147,7 @@ class FateCommandHandler {
       return { speakText: `Today's date is ${dateStr}.`, actionTaken: `Date: ${dateStr}` };
     }
 
-    // 10. Theme Customization
+    // 11. Theme Customization
     if (cleanText.includes('theme') || cleanText.includes('mode') || cleanText.includes('color')) {
       if (cleanText.includes('red') || cleanText.includes('alert') || cleanText.includes('danger')) {
         this.app.setTheme('red-alert');
@@ -156,7 +167,7 @@ class FateCommandHandler {
       }
     }
 
-    // 11. Timer & Countdown
+    // 12. Timer & Countdown
     if (cleanText.includes('timer') || cleanText.includes('alarm') || cleanText.includes('remind me in')) {
       const match = cleanText.match(/(\d+)\s*(second|sec|minute|min)/i);
       if (match) {
@@ -173,15 +184,15 @@ class FateCommandHandler {
       }
     }
 
-    // 12. Code Studio Automation
+    // 13. Code Studio Automation
     if (cleanText.includes('code') || cleanText.includes('script') || cleanText.includes('python') || cleanText.includes('html') || cleanText.includes('javascript')) {
       let codeSnippet = '';
       if (cleanText.includes('python')) {
-        codeSnippet = `# FATE Advanced Mathematics & Symbolic Calculus Engine\nimport sympy as sp\n\nx = sp.Symbol('x')\ny = sp.Function('y')\neq = sp.Eq(x * y(x).diff(x), y(x)**2 - 4*y(x))\nsol = sp.dsolve(eq, y(x))\nprint("Differential Solution:", sol)`;
+        codeSnippet = `# FATE Quantum Mechanics & Wavefunction Simulation\nimport numpy as np\n\ndef schrodinger_particle_in_box(n, L, x):\n    """1D Particle in a box wavefunction psi_n(x)"""\n    return np.sqrt(2/L) * np.sin((n * np.pi * x) / L)\n\nprint("Psi_1 at x=0.5L:", schrodinger_particle_in_box(1, 1.0, 0.5))`;
       } else if (cleanText.includes('html')) {
-        codeSnippet = `<!-- FATE Cyberpunk Glassmorphic Widget -->\n<div class="fate-hud-card">\n  <h2>F.A.T.E. Core Telemetry</h2>\n  <div class="status-indicator active">ONLINE</div>\n</div>`;
+        codeSnippet = `<!-- FATE Cyberpunk Glassmorphic Widget -->\n<div class="fate-hud-card">\n  <h2>F.A.T.E. Quantum Core Telemetry</h2>\n  <div class="status-indicator active">ONLINE</div>\n</div>`;
       } else {
-        codeSnippet = `// FATE Calculus Engine\nfunction solveDiffEq(x) {\n  return 4 / (1 + Math.pow(x, 4));\n}\nconsole.log("10 * y(sqrt(2)) =", 10 * solveDiffEq(Math.sqrt(2)));`;
+        codeSnippet = `// FATE Quantum State Visualizer\nfunction quantumState(alpha, beta) {\n  const norm = Math.sqrt(alpha*alpha + beta*beta);\n  return { alpha: alpha/norm, beta: beta/norm };\n}\nconsole.log(quantumState(1, 1));`;
       }
       if (this.app.codeArea) this.app.codeArea.value = codeSnippet;
       this.app.switchTab('suite');
@@ -191,11 +202,63 @@ class FateCommandHandler {
     return null;
   }
 
+  // Specialized Academic Domain Intent Solver (Quantum Physics, Chemistry, Geography, Grammar, History)
+  solveAcademicDomain(text) {
+    const clean = text.toLowerCase();
+
+    // 1. Quantum Physics
+    if (clean.includes('schrodinger') || clean.includes('quantum') || clean.includes('wavefunction') || clean.includes('heisenberg') || clean.includes('planck') || clean.includes('qubit') || clean.includes('superposition')) {
+      return {
+        spokenText: "Quantum Physics protocol active. In quantum mechanics, physical systems are described by wavefunctions satisfying the time-dependent Schrodinger equation: i h-bar d-psi/dt equals H-hat psi. Energy is quantized in units of h nu.",
+        actionTaken: "Quantum Physics: Schrödinger Wave Engine",
+        detailedNotes: `⚛️ FATE QUANTUM PHYSICS CORE\n\n1. Schrödinger Equation: i ħ (∂Ψ/∂t) = Ĥ Ψ\n2. Heisenberg Uncertainty Principle: Δx · Δp ≥ ħ / 2\n3. Planck-Einstein Relation: E = h·ν = ħ·ω\n4. Wave-Particle Duality: λ = h / p`
+      };
+    }
+
+    // 2. Advanced Chemistry
+    if (clean.includes('chemistry') || clean.includes('reaction') || clean.includes('enthalpy') || clean.includes('gibbs') || clean.includes('hybridization') || clean.includes('iupac') || clean.includes('titration') || clean.includes('thermodynamics')) {
+      return {
+        spokenText: "Advanced Chemistry protocol active. Spontaneity of chemical reactions is determined by Gibbs Free Energy: delta G equals delta H minus T delta S. Negative delta G indicates a spontaneous reaction.",
+        actionTaken: "Advanced Chemistry: Thermodynamic Engine",
+        detailedNotes: `🧪 FATE ADVANCED CHEMISTRY CORE\n\n1. Gibbs Free Energy: ΔG = ΔH - TΔS\n2. Nernst Equation: E = E° - (RT/nF) ln Q\n3. Arrhenius Kinetics: k = A e^(-Ea / RT)\n4. Ideal Gas Law & Real Gas: (P + a/V²)(V - b) = nRT`
+      };
+    }
+
+    // 3. Advanced Geography
+    if (clean.includes('geography') || clean.includes('tectonic') || clean.includes('plate') || clean.includes('geomorphology') || clean.includes('climatology') || clean.includes('monsoon') || clean.includes('stratosphere')) {
+      return {
+        spokenText: "Advanced Geography protocol active. Earth's lithosphere is divided into tectonic plates moving via mantle convection currents, creating convergent, divergent, and transform boundaries.",
+        actionTaken: "Geography: Geomorphology Engine",
+        detailedNotes: `🌍 FATE ADVANCED GEOGRAPHY CORE\n\n1. Tectonic Boundary Types: Convergent, Divergent, Transform\n2. Atmospheric Structure: Troposphere, Stratosphere, Mesosphere, Thermosphere\n3. Geomorphology: Weathering, Erosion, Mass Wasting, Glacial landforms\n4. Climatology: Hadley & Ferrel Cells, Coriolis Effect`
+      };
+    }
+
+    // 4. Advanced Grammar & Linguistics
+    if (clean.includes('grammar') || clean.includes('syntax') || clean.includes('clause') || clean.includes('passive') || clean.includes('etymology') || clean.includes('phonetics') || clean.includes('part of speech')) {
+      return {
+        spokenText: "Advanced Grammar protocol active. Syntax dictates sentence structure through noun phrases, verb phrases, and clause subordination. Active voice prioritizes the agent, whereas passive voice emphasizes the recipient of the action.",
+        actionTaken: "Grammar & Linguistics Core",
+        detailedNotes: `🔤 FATE GRAMMAR & LINGUISTICS CORE\n\n1. Active vs Passive: Subject performs vs receives action.\n2. Subordinate Clause: Dependent clause providing contextual modification.\n3. Subject-Verb Agreement: Number and person concordance.\n4. Advanced Syntax: Tree diagrams, Constituency, Transformation rules.`
+      };
+    }
+
+    // 5. Advanced History
+    if (clean.includes('history') || clean.includes('revolution') || clean.includes('world war') || clean.includes('treaty') || clean.includes('ancient civilization') || clean.includes('historiography')) {
+      return {
+        spokenText: "Advanced History protocol active. World history explores pivotal shifts from early river valley civilizations to modern geopolitical treaties, industrial revolutions, and international diplomacy.",
+        actionTaken: "World History Core",
+        detailedNotes: `📜 FATE ADVANCED HISTORY CORE\n\n1. Ancient Civilizations: Indus Valley, Mesopotamia, Egypt, Yellow River.\n2. Turning Points: Renaissance (14th-17th C), Industrial Revolution (1760), WWI (1914), WWII (1939).\n3. Treaties & Diplomacy: Treaty of Westphalia (1648), Treaty of Versailles (1919).\n4. Historiography: Critical examination of sources and historical methodology.`
+      };
+    }
+
+    return null;
+  }
+
   // Advanced Mathematics & Calculus Solver Engine
   solveAdvancedMath(text) {
     const clean = text.toLowerCase();
 
-    // Problem 1: Differential Equation xdy - (y^2 - 4y)dx = 0, y(1) = 2, find 10 y(sqrt(2))
+    // Differential Equation xdy - (y^2 - 4y)dx = 0, y(1) = 2, find 10 y(sqrt(2))
     if ((clean.includes('xdy') || clean.includes('x dy') || clean.includes('differential equation')) && (clean.includes('y^2 - 4y') || clean.includes('y2 - 4y') || clean.includes('y(1) = 2') || clean.includes('10 y'))) {
       const solutionSteps = `
 🧮 **FATE ADVANCED CALCULUS DIAGNOSTICS**
@@ -208,7 +271,7 @@ class FateCommandHandler {
 2. **Partial Fractions & Integrate**:
    $$\\frac{1}{4} \\int \\left(\\frac{1}{y-4} - \\frac{1}{y}\\right) dy = \\int \\frac{dx}{x}$$
    $$\\ln \\left|\\frac{y-4}{y}\\right| = 4 \\ln x + \\ln C = \\ln(C x^4)$$
-   $$\\frac{y-4}{y} = C_1 x^4 \\implies 1 - \\frac{4}{y} = C_1 x^4$$
+   $$1 - \\frac{4}{y} = C_1 x^4$$
 
 3. **Apply Initial Condition $y(1) = 2$**:
    $$1 - \\frac{4}{2} = C_1(1)^4 \\implies C_1 = -1$$
@@ -219,33 +282,12 @@ class FateCommandHandler {
    $$10 \\cdot y(\\sqrt{2}) = 10 \\cdot \\frac{4}{5} = \\mathbf{8}$$
       `.trim();
 
-      if (this.app.codeArea) {
-        this.app.codeArea.value = solutionSteps;
-      }
-
       return {
         spokenText: "Differential equation solved. The solution is y of x equals 4 over 1 plus x to the fourth power. Evaluating 10 times y of square root 2 yields the final answer of 8.",
         actionTaken: "Calculus: 10 * y(√2) = 8",
-        shortResult: "8"
+        shortResult: "8",
+        detailedNotes: solutionSteps
       };
-    }
-
-    // General Calculus / Integration / Derivative Pattern Detection
-    if (clean.includes('integrate') || clean.includes('derivative') || clean.includes('differential equation') || clean.includes('integral') || clean.includes('dy/dx')) {
-      if (clean.includes('x^2') || clean.includes('x2')) {
-        return {
-          spokenText: "The integral of x squared dx is x cubed over 3 plus constant C. The derivative of x squared is 2 x.",
-          actionTaken: "Calculus: d/dx(x^2) = 2x",
-          shortResult: "2x"
-        };
-      }
-      if (clean.includes('sin') || clean.includes('cos')) {
-        return {
-          spokenText: "Derivative of sin x is cos x. Integral of sin x dx is negative cos x plus C.",
-          actionTaken: "Trig Calculus: d/dx(sinx) = cosx",
-          shortResult: "cosx"
-        };
-      }
     }
 
     return null;
