@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Speech Engine - Echo Cancellation & Self-Feedback Prevention
+   FATE Speech Engine - Echo Cancellation & Multilingual Native Voice
    ========================================================================== */
 
 class FateSpeechEngine {
@@ -11,7 +11,7 @@ class FateSpeechEngine {
     this.isSpeaking = false;
     this.wasListeningBeforeSpeaking = false;
 
-    this.ttsEngineMode = localStorage.getItem('fate_tts_engine') || 'coqui'; // 'coqui' (macOS/Neural) or 'webspeech'
+    this.ttsEngineMode = localStorage.getItem('fate_tts_engine') || 'coqui';
     this.macVoice = localStorage.getItem('fate_mac_voice') || 'Samantha';
 
     this.onResultCallback = null;
@@ -51,7 +51,6 @@ class FateSpeechEngine {
       };
 
       this.recognition.onresult = (event) => {
-        // Discard speech recognition results if FATE is currently speaking
         if (this.isSpeaking) return;
 
         let interimTranscript = '';
@@ -68,7 +67,6 @@ class FateSpeechEngine {
         const trimmedFinal = finalTranscript.trim();
         const trimmedInterim = interimTranscript.trim();
 
-        // Echo prevention: filter out if recognition matches FATE's recent spoken text
         if (trimmedFinal && !this.isEcho(trimmedFinal)) {
           if (this.onResultCallback) this.onResultCallback(trimmedFinal, true);
         } else if (trimmedInterim && !this.isEcho(trimmedInterim)) {
@@ -85,7 +83,6 @@ class FateSpeechEngine {
       };
 
       this.recognition.onend = () => {
-        // Auto-restart listening ONLY if user initiated listening and FATE is NOT currently speaking
         if (this.isListening && !this.isSpeaking) {
           try {
             this.recognition.start();
@@ -105,7 +102,6 @@ class FateSpeechEngine {
     const cleanInput = text.toLowerCase().trim();
     const cleanSpoken = this.lastSpokenText.toLowerCase().trim();
 
-    // Check if recognized text is contained in FATE's last spoken response
     if (cleanSpoken.includes(cleanInput) || cleanInput.includes(cleanSpoken)) {
       console.log('🔇 Suppressed Self-Echo Input:', text);
       return true;
@@ -117,7 +113,7 @@ class FateSpeechEngine {
     if (!this.synthesis) return;
     const populateVoices = () => {
       const voices = this.synthesis.getVoices();
-      this.selectedVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Alex') || v.name.includes('Daniel') || v.lang.startsWith('en')) || voices[0];
+      this.selectedVoice = voices.find(v => v.name.includes('Veena') || v.name.includes('Samantha') || v.name.includes('Alex') || v.name.includes('Daniel') || v.lang.startsWith('en')) || voices[0];
     };
 
     populateVoices();
@@ -165,7 +161,7 @@ class FateSpeechEngine {
           this.recognition.start();
           if (this.onStateChangeCallback) this.onStateChangeCallback('listening');
         } catch (e) {}
-      }, 400); // 400ms echo decay delay
+      }, 400);
     } else {
       if (this.onStateChangeCallback) this.onStateChangeCallback('idle');
     }
@@ -178,8 +174,6 @@ class FateSpeechEngine {
     }
 
     this.lastSpokenText = text;
-
-    // Pause mic listening while FATE is speaking to prevent self-echo loop
     this.pauseListeningForSpeech();
 
     if (this.currentAudio) {
@@ -190,9 +184,15 @@ class FateSpeechEngine {
       this.synthesis.cancel();
     }
 
+    // Auto-detect Hindi / Devanagari script and select Indian Neural Voice (Veena)
+    let activeVoice = this.macVoice;
+    if (/[\u0900-\u097F]/.test(text)) {
+      activeVoice = 'Veena';
+    }
+
     // Coqui / macOS Native Speech Engine
     if (this.ttsEngineMode === 'coqui') {
-      const ttsUrl = `/api/tts?voice=${encodeURIComponent(this.macVoice)}&text=${encodeURIComponent(text)}`;
+      const ttsUrl = `/api/tts?voice=${encodeURIComponent(activeVoice)}&text=${encodeURIComponent(text)}`;
       const audio = new Audio(ttsUrl);
       this.currentAudio = audio;
 
@@ -209,7 +209,6 @@ class FateSpeechEngine {
       };
 
       audio.onerror = () => {
-        console.warn('TTS Server error. Falling back to WebSpeech Synthesis.');
         this.speakWebSpeech(text, onComplete);
       };
 
@@ -220,7 +219,6 @@ class FateSpeechEngine {
       return;
     }
 
-    // WebSpeech Synthesis
     this.speakWebSpeech(text, onComplete);
   }
 
