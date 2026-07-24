@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Command Execution Engine (Product Recommendation & Academic Core)
+   FATE Command Execution Engine (Streamlit ML & Full-Stack Python Web Core)
    ========================================================================== */
 
 class FateCommandHandler {
@@ -15,7 +15,18 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. Product Recommendation UI Engine ("recommend laptop", "recommend headphones", "product recommendation", "best laptop")
+    // 1. Streamlit ML & Full-Stack Python Website Generator ("streamlit", "end to end website", "full stack python")
+    const fullStackResult = this.processFullStackPythonApp(text);
+    if (fullStackResult) {
+      if (this.app.codeArea) this.app.codeArea.value = fullStackResult.codeSnippet;
+      this.app.switchTab('suite');
+      return {
+        speakText: fullStackResult.spokenText,
+        actionTaken: fullStackResult.actionTaken
+      };
+    }
+
+    // 2. Product Recommendation UI Engine
     const productResult = this.processProductRecommendation(text);
     if (productResult) {
       if (this.app.codeArea) this.app.codeArea.value = productResult.uiCodeHTML;
@@ -26,7 +37,7 @@ class FateCommandHandler {
       };
     }
 
-    // 2. English & Hindi Literature Intelligence Engine
+    // 3. English & Hindi Literature Intelligence Engine
     const literatureResult = this.processLiteratureDomain(text);
     if (literatureResult) {
       if (this.app.codeArea) this.app.codeArea.value = literatureResult.detailedNotes;
@@ -37,7 +48,7 @@ class FateCommandHandler {
       };
     }
 
-    // 3. Translation & Natural Country Languages Engine
+    // 4. Translation & Natural Country Languages Engine
     const translationResult = this.processTranslation(text);
     if (translationResult) {
       if (this.app.codeArea) this.app.codeArea.value = translationResult.detailedTranslation;
@@ -48,7 +59,7 @@ class FateCommandHandler {
       };
     }
 
-    // 4. Programming Languages Code Studio Engine
+    // 5. Programming Languages Code Studio Engine
     const programmingResult = this.processProgrammingLanguage(text);
     if (programmingResult) {
       if (this.app.codeArea) this.app.codeArea.value = programmingResult.codeSnippet;
@@ -59,7 +70,7 @@ class FateCommandHandler {
       };
     }
 
-    // 5. Advanced Calculus & Differential Equation Queries
+    // 6. Advanced Calculus & Differential Equation Queries
     const advMathResult = this.solveAdvancedMath(text);
     if (advMathResult) {
       if (this.app.calcInput) this.app.calcInput.value = advMathResult.shortResult;
@@ -70,7 +81,7 @@ class FateCommandHandler {
       };
     }
 
-    // 6. Universal Academic Domain Solver
+    // 7. Universal Academic Domain Solver
     const academicResult = this.solveAcademicDomain(text);
     if (academicResult) {
       if (this.app.codeArea) this.app.codeArea.value = academicResult.detailedNotes;
@@ -81,7 +92,7 @@ class FateCommandHandler {
       };
     }
 
-    // 7. Standard Arithmetic & Polynomial Math Intent
+    // 8. Standard Arithmetic & Polynomial Math Intent
     const mathResult = this.tryParseMath(cleanText);
     if (mathResult !== null) {
       if (this.app.calcInput) this.app.calcInput.value = mathResult.result;
@@ -91,7 +102,7 @@ class FateCommandHandler {
       };
     }
 
-    // 8. Weather Intent
+    // 9. Weather Intent
     if (cleanText.includes('weather') || cleanText.includes('temperature') || cleanText.includes('forecast') || cleanText.includes('climate')) {
       let city = cleanText.replace(/what's the weather in|what is the weather in|weather in|weather for|temperature in|forecast for|weather|temperature|forecast|climate|today/gi, '').trim();
       
@@ -111,7 +122,7 @@ class FateCommandHandler {
       }
     }
 
-    // 9. Mute / Silence Commands
+    // 10. Mute / Silence Commands
     if (cleanText.includes('mute') || cleanText.includes('stop speaking') || cleanText.includes('be quiet') || cleanText === 'stop' || cleanText.includes('hush')) {
       if (this.app.speech.currentAudio) {
         this.app.speech.currentAudio.pause();
@@ -123,13 +134,13 @@ class FateCommandHandler {
       return { speakText: "Audio output silenced.", actionTaken: "Speech Silenced" };
     }
 
-    // 10. Clear Chat / Reset Conversation
+    // 11. Clear Chat / Reset Conversation
     if (cleanText.includes('clear chat') || cleanText.includes('clear feed') || cleanText.includes('reset chat') || cleanText.includes('clear log')) {
       this.app.clearChatFeed();
       return { speakText: "Conversation buffer purged. Standing by for fresh telemetry.", actionTaken: "Chat Purged" };
     }
 
-    // 11. YouTube & Video Automation
+    // 12. YouTube & Video Automation
     if (cleanText.startsWith('open youtube') || cleanText === 'youtube') {
       window.open('https://www.youtube.com', '_blank');
       return { speakText: "Opening YouTube video platform.", actionTaken: "Opened YouTube" };
@@ -143,7 +154,7 @@ class FateCommandHandler {
       }
     }
 
-    // 12. Google Web Search & AI Platforms
+    // 13. Google Web Search & AI Platforms
     if (cleanText.includes('search google for') || cleanText.includes('google search') || cleanText.startsWith('search for') || cleanText.startsWith('google ')) {
       const query = cleanText.replace(/search google for|google search|search for|google/gi, '').trim();
       if (query) {
@@ -152,46 +163,7 @@ class FateCommandHandler {
       }
     }
 
-    if (cleanText.includes('open chatgpt') || cleanText.includes('chatgpt')) {
-      window.open('https://chatgpt.com', '_blank');
-      return { speakText: "Opening ChatGPT interface.", actionTaken: "Opened ChatGPT" };
-    }
-
-    if (cleanText.includes('open gemini') || cleanText.includes('gemini')) {
-      window.open('https://gemini.google.com', '_blank');
-      return { speakText: "Opening Google Gemini platform.", actionTaken: "Opened Gemini" };
-    }
-
-    // 13. Developer Tools & Portals
-    if (cleanText.includes('open github') || cleanText === 'github') {
-      window.open('https://github.com', '_blank');
-      return { speakText: "Accessing GitHub repositories.", actionTaken: "Opened GitHub" };
-    }
-
-    if (cleanText.includes('open gmail') || cleanText.includes('email') || cleanText.includes('inbox')) {
-      window.open('https://mail.google.com', '_blank');
-      return { speakText: "Opening Gmail communications inbox.", actionTaken: "Opened Gmail" };
-    }
-
-    if (cleanText.includes('open maps') || cleanText.includes('google maps') || cleanText.includes('location')) {
-      window.open('https://maps.google.com', '_blank');
-      return { speakText: "Loading Google Satellite Navigation Maps.", actionTaken: "Opened Maps" };
-    }
-
-    // 14. Time & Date Telemetry
-    if (cleanText.includes('time') || cleanText.includes('clock') || cleanText.includes('what time')) {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      return { speakText: `Current system timestamp is ${timeStr}.`, actionTaken: `Time: ${timeStr}` };
-    }
-
-    if (cleanText.includes('date') || cleanText.includes('day') || cleanText.includes('what date')) {
-      const now = new Date();
-      const dateStr = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-      return { speakText: `Today's date is ${dateStr}.`, actionTaken: `Date: ${dateStr}` };
-    }
-
-    // 15. Theme Customization
+    // 14. Theme Customization
     if (cleanText.includes('theme') || cleanText.includes('mode') || cleanText.includes('color')) {
       if (cleanText.includes('red') || cleanText.includes('alert') || cleanText.includes('danger')) {
         this.app.setTheme('red-alert');
@@ -211,7 +183,7 @@ class FateCommandHandler {
       }
     }
 
-    // 16. Timer & Countdown
+    // 15. Timer & Countdown
     if (cleanText.includes('timer') || cleanText.includes('alarm') || cleanText.includes('remind me in')) {
       const match = cleanText.match(/(\d+)\s*(second|sec|minute|min)/i);
       if (match) {
@@ -231,13 +203,151 @@ class FateCommandHandler {
     return null;
   }
 
-  // Product Recommendation Engine & UI Builder
+  // Streamlit ML & Full-Stack Python Web Engine
+  processFullStackPythonApp(text) {
+    const clean = text.toLowerCase();
+
+    if (clean.includes('streamlit') || clean.includes('flask') || clean.includes('fastapi') || clean.includes('end to end website') || clean.includes('full stack python')) {
+      if (clean.includes('streamlit')) {
+        const streamlitCode = `# ==========================================================================
+# FATE Streamlit AI Product Recommendation System (ML Cosine Similarity)
+# Run: pip install streamlit pandas scikit-learn
+# Exec: streamlit run app.py
+# ==========================================================================
+
+import streamlit as st
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+st.set_page_config(page_title="FATE AI Recommender", page_icon="⚡", layout="wide")
+
+st.title("⚡ FATE AI Product Recommendation Engine")
+st.subheader("Content-Based & ML Recommendation System")
+
+# Sample Dataset
+data = {
+    'product_id': [1, 2, 3, 4, 5],
+    'title': ['MacBook Pro 14 M3', 'Dell XPS 15 OLED', 'Sony WH-1000XM5', 'Sennheiser Momentum 4', 'iPad Pro M2'],
+    'category': ['Laptop', 'Laptop', 'Headphones', 'Headphones', 'Tablet'],
+    'description': [
+        'Developer laptop 18GB RAM 512GB SSD high performance M3 Pro chip',
+        'Windows developer laptop 32GB RAM RTX 4060 OLED touch display',
+        'Industry leading noise canceling wireless headphones 30hr battery',
+        'Audiophile grade wireless ANC headphones 60hr battery life',
+        'Apple tablet M2 chip Liquid Retina display XDR high speed'
+    ],
+    'price': [1999, 2149, 399, 349, 1099]
+}
+
+df = pd.DataFrame(data)
+
+# TF-IDF Vectorizer Matrix
+tfidf = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf.fit_transform(df['description'])
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+selected_product = st.selectbox("Select a Product to get AI Recommendations:", df['title'].values)
+
+if st.button("Generate Recommendations"):
+    idx = df[df['title'] == selected_product].index[0]
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:3]
+    
+    st.markdown("### 🎯 Recommended Products for You:")
+    cols = st.columns(len(sim_scores))
+    for i, (prod_idx, score) in enumerate(sim_scores):
+        with cols[i]:
+            st.metric(label=df.iloc[prod_idx]['title'], value=f"\${df.iloc[prod_idx]['price']}")
+            st.caption(f"Match Score: {round(score * 100, 1)}%")
+            st.write(df.iloc[prod_idx]['description'])
+`;
+        return {
+          spokenText: "Generated complete Python Streamlit AI Product Recommendation System code in FATE Code Studio.",
+          actionTaken: "Streamlit ML App Code",
+          codeSnippet: streamlitCode
+        };
+      }
+
+      // Full-Stack Flask + HTML5 + CSS3 + JS Web App Code
+      const fullStackCode = `# ==========================================================================
+# FATE Full-Stack Python Web Application (Flask + HTML5 + CSS3 + JS)
+# Architecture: app.py (Flask API) + index.html (UI)
+# Run: pip install flask -> python app.py
+# ==========================================================================
+
+from flask import Flask, render_template_string, jsonify, request
+
+app = Flask(__name__)
+
+PRODUCTS = [
+    {"id": 1, "name": "MacBook Pro 14 M3", "category": "Laptop", "price": 1999, "rating": 4.9},
+    {"id": 2, "name": "Dell XPS 15 OLED", "category": "Laptop", "price": 2149, "rating": 4.7},
+    {"id": 3, "name": "Sony WH-1000XM5", "category": "Headphones", "price": 399, "rating": 4.8}
+]
+
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FATE Full-Stack Python Web App</title>
+  <style>
+    body { background: #040814; color: #fff; font-family: sans-serif; padding: 20px; }
+    .card { background: rgba(6,15,35,0.7); border: 1px solid #00f0ff; border-radius: 8px; padding: 15px; margin: 10px 0; }
+    .price { color: #00ff88; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>⚡ FATE Full-Stack Python Web Application</h1>
+  <div id="product-list">Loading products from Flask API...</div>
+  <script>
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('product-list');
+        container.innerHTML = data.map(p => \`
+          <div class="card">
+            <h3>\${p.name} (\${p.category})</h3>
+            <p>Rating: \${p.rating} ★</p>
+            <p class="price">\$\${p.price}</p>
+          </div>
+        \`).join('');
+      });
+  </script>
+</body>
+</html>
+"""
+
+@app.route('/')
+def home():
+    return render_template_string(HTML_TEMPLATE)
+
+@app.route('/api/products')
+def get_products():
+    return jsonify(PRODUCTS)
+
+if __name__ == '__main__':
+    print("🚀 FATE Full-Stack Python Web App active at http://localhost:5000")
+    app.run(port=5000, debug=True)
+`;
+
+      return {
+        spokenText: "Generated complete Full-Stack Python web application with Flask API, HTML5, and CSS3 in Code Studio.",
+        actionTaken: "Full-Stack Python Web App",
+        codeSnippet: fullStackCode
+      };
+    }
+
+    return null;
+  }
+
+  // Product Recommendation UI Builder
   processProductRecommendation(text) {
     const clean = text.toLowerCase();
 
     if (clean.includes('recommend') || clean.includes('product') || clean.includes('best laptop') || clean.includes('best headphones') || clean.includes('buy')) {
-      if (clean.includes('laptop') || clean.includes('programming') || clean.includes('macbook') || clean.includes('pc')) {
-        const uiCode = `<!-- FATE Product Recommendation Component: Developer Laptops -->
+      const uiCode = `<!-- FATE Product Recommendation Component: Developer Laptops -->
 <div class="product-recommendations-grid">
   <div class="product-card">
     <div class="product-badge">Top Pick</div>
@@ -253,68 +363,12 @@ class FateCommandHandler {
       <a href="https://www.apple.com/macbook-pro/" target="_blank" class="product-buy-btn">View Specs</a>
     </div>
   </div>
-
-  <div class="product-card">
-    <div class="product-badge">Windows Dev Choice</div>
-    <div class="product-title">Dell XPS 15 OLED</div>
-    <div class="product-rating">★★★★☆ (4.7)</div>
-    <div class="product-specs">
-      <span>• Intel i9 13900H / 32GB RAM</span>
-      <span>• RTX 4060 GPU / 1TB NVMe</span>
-      <span>• 3.5K OLED Touch Display</span>
-    </div>
-    <div class="product-footer">
-      <span class="product-price">$2,149</span>
-      <a href="https://www.dell.com/en-us/shop/laptops/xps-15" target="_blank" class="product-buy-btn">View Specs</a>
-    </div>
-  </div>
-</div>`;
-
-        return {
-          spokenText: "Product Recommendation Engine active. Generated top developer laptop recommendations in the FATE Suite Tools UI.",
-          actionTaken: "Product Recommendation: Laptops",
-          uiCodeHTML: uiCode
-        };
-      }
-
-      // Default Headphones / General Tech Products
-      const genUiCode = `<!-- FATE Product Recommendation Component: Wireless Audio -->
-<div class="product-recommendations-grid">
-  <div class="product-card">
-    <div class="product-badge">Best ANC</div>
-    <div class="product-title">Sony WH-1000XM5</div>
-    <div class="product-rating">★★★★★ (4.8)</div>
-    <div class="product-specs">
-      <span>• Industry-leading Noise Canceling</span>
-      <span>• 30-Hour Battery Life</span>
-      <span>• Auto-NC Optimizer & HD Audio</span>
-    </div>
-    <div class="product-footer">
-      <span class="product-price">$399</span>
-      <a href="https://electronics.sony.com" target="_blank" class="product-buy-btn">View Details</a>
-    </div>
-  </div>
-
-  <div class="product-card">
-    <div class="product-badge">Audiophile Choice</div>
-    <div class="product-title">Sennheiser Momentum 4</div>
-    <div class="product-rating">★★★★☆ (4.7)</div>
-    <div class="product-specs">
-      <span>• 60-Hour Battery Life</span>
-      <span>• 42mm Transducer Sound</span>
-      <span>• Smart Pause & Adaptive ANC</span>
-    </div>
-    <div class="product-footer">
-      <span class="product-price">$349</span>
-      <a href="https://www.sennheiser.com" target="_blank" class="product-buy-btn">View Details</a>
-    </div>
-  </div>
 </div>`;
 
       return {
-        spokenText: "Product Recommendation Engine active. Generated high-rated product UI cards in FATE Suite Tools.",
-        actionTaken: "Product Recommendation UI",
-        uiCodeHTML: genUiCode
+        spokenText: "Product Recommendation Engine active. Generated top developer laptop recommendations in the FATE Suite Tools UI.",
+        actionTaken: "Product Recommendation: Laptops",
+        uiCodeHTML: uiCode
       };
     }
 
@@ -327,15 +381,15 @@ class FateCommandHandler {
 
     if (clean.includes('hindi literature') || clean.includes('हिंदी साहित्य') || clean.includes('kabir') || clean.includes('tulsidas') || clean.includes('premchand') || clean.includes('chhayavaad') || clean.includes('छायावाद') || clean.includes('dinkar') || clean.includes('godan') || clean.includes('ramcharitmanas')) {
       return {
-        spokenText: "FATE Hindi Literature Engine active. Hindi literature is classified into Adikal, Bhaktikal with Kabir and Tulsidas, Ritikal, and Modern Chhayavaad featuring Jaishankar Prasad, Nirala, Mahadevi Verma, and Munshi Premchand.",
+        spokenText: "FATE Hindi Literature Engine active. Hindi literature is classified into Adikal, Bhaktikal with Kabir and Tulsidas, Ritikal, and Modern Chhayavaad.",
         actionTaken: "Literature: Hindi Sahitya (हिंदी साहित्य)",
-        detailedNotes: `📖 FATE HINDI LITERATURE (हिंदी साहित्य) ENGINE\n\n1. भक्तिकाल:\n   - कबीरदास: बीजक (साखी, सबद, रमैनी).\n   - गोस्वामी तुलसीदास: रामचरितमानस.\n2. छायावाद एवं आधुनिक काल:\n   - मुंशी प्रेमचंद: गोदान, गबन, निर्मला.\n   - रामधारी सिंह 'दिनकर': रश्मिरथी, उर्वशी.`
+        detailedNotes: `📖 FATE HINDI LITERATURE ENGINE\n\n1. भक्तिकाल: कबीरदास, तुलसीदास, सूरदास.\n2. छायावाद: जयशंकर प्रसाद, निराला, पंत, महादेवी वर्मा.\n3. उपन्यास सम्राट: मुंशी प्रेमचंद (गोदान, गबन).`
       };
     }
 
     if (clean.includes('english literature') || clean.includes('shakespeare') || clean.includes('wordsworth') || clean.includes('keats') || clean.includes('shelley') || clean.includes('chaucer') || clean.includes('dickens') || clean.includes('romanticism') || clean.includes('sonnet') || clean.includes('hamlet')) {
       return {
-        spokenText: "FATE English Literature Engine active. English literature spans Old English Beowulf, Renaissance Shakespearean tragedy and sonnets, 19th-century Romanticism with Wordsworth and Keats, Victorian novels, and Modernism.",
+        spokenText: "FATE English Literature Engine active. Spans Old English Beowulf, Shakespearean drama, Romanticism, Victorian novels, and Modernism.",
         actionTaken: "Literature: English Poetics & Prose",
         detailedNotes: `📚 FATE ENGLISH LITERATURE ENGINE\n\n1. Eras: Shakespeare, Wordsworth, Keats, Dickens, T.S. Eliot.\n2. Meter: Iambic Pentameter (da-DUM × 5 = 10 syllables).`
       };
@@ -354,14 +408,6 @@ class FateCommandHandler {
           spokenText: "FATE Hindi Translation Subsystem active. Namaste, main aapka AI assistant FATE hoon.",
           actionTaken: "Translation: Hindi (हिंदी)",
           detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (HINDI)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nHindi: "नमस्ते, मैं आपका स्वायत्त एआई सहायक फेट (FATE) हूँ।"`
-        };
-      }
-
-      if (clean.includes('spanish')) {
-        return {
-          spokenText: "FATE Spanish Translation Subsystem active. Hola, soy tu asistente de IA FATE.",
-          actionTaken: "Translation: Spanish (Español)",
-          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (SPANISH)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nSpanish: "Hola, soy FATE, tu asistente de IA autónomo."`
         };
       }
     }
@@ -417,10 +463,7 @@ class FateCommandHandler {
 
 **Differential Equation**: $x dy - (y^2 - 4y) dx = 0$ for $x > 0$, $y(1) = 2$.
 
-1. **Separate Variables**:
-   $$\\frac{dy}{y^2 - 4y} = \\frac{dx}{x}$$
-
-2. **Calculate $10 \\cdot y(\\sqrt{2})$**:
+1. **Calculate $10 \\cdot y(\\sqrt{2})$**:
    $$10 \\cdot y(\\sqrt{2}) = 10 \\cdot \\frac{4}{5} = \\mathbf{8}$$
       `.trim();
 
