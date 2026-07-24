@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Speech Recognition & Voice Synthesis Engine (Dynamic Voice Engine)
+   FATE Speech Engine - Echo Cancellation & Self-Feedback Prevention
    ========================================================================== */
 
 class FateSpeechEngine {
@@ -9,6 +9,8 @@ class FateSpeechEngine {
 
     this.isListening = false;
     this.isSpeaking = false;
+    this.wasListeningBeforeSpeaking = false;
+
     this.ttsEngineMode = localStorage.getItem('fate_tts_engine') || 'coqui'; // 'coqui' (macOS/Neural) or 'webspeech'
     this.macVoice = localStorage.getItem('fate_mac_voice') || 'Samantha';
 
@@ -19,6 +21,7 @@ class FateSpeechEngine {
     this.rate = 1.0;
     this.selectedVoice = null;
     this.currentAudio = null;
+    this.lastSpokenText = '';
 
     this.initRecognition();
     this.loadVoices();
@@ -48,6 +51,9 @@ class FateSpeechEngine {
       };
 
       this.recognition.onresult = (event) => {
+        // Discard speech recognition results if FATE is currently speaking
+        if (this.isSpeaking) return;
+
         let interimTranscript = '';
         let finalTranscript = '';
 
@@ -59,34 +65,52 @@ class FateSpeechEngine {
           }
         }
 
-        if (finalTranscript && this.onResultCallback) {
-          this.onResultCallback(finalTranscript.trim(), true);
-        } else if (interimTranscript && this.onResultCallback) {
-          this.onResultCallback(interimTranscript.trim(), false);
+        const trimmedFinal = finalTranscript.trim();
+        const trimmedInterim = interimTranscript.trim();
+
+        // Echo prevention: filter out if recognition matches FATE's recent spoken text
+        if (trimmedFinal && !this.isEcho(trimmedFinal)) {
+          if (this.onResultCallback) this.onResultCallback(trimmedFinal, true);
+        } else if (trimmedInterim && !this.isEcho(trimmedInterim)) {
+          if (this.onResultCallback) this.onResultCallback(trimmedInterim, false);
         }
       };
 
       this.recognition.onerror = (event) => {
-        console.warn('FATE Speech Recognition Error:', event.error);
-        if (event.error !== 'no-speech') {
+        if (event.error !== 'no-speech' && event.error !== 'aborted') {
+          console.warn('FATE Speech Recognition Error:', event.error);
           this.isListening = false;
           if (this.onStateChangeCallback) this.onStateChangeCallback('idle');
         }
       };
 
       this.recognition.onend = () => {
-        if (this.isListening) {
+        // Auto-restart listening ONLY if user initiated listening and FATE is NOT currently speaking
+        if (this.isListening && !this.isSpeaking) {
           try {
             this.recognition.start();
           } catch (e) {
             this.isListening = false;
             if (this.onStateChangeCallback) this.onStateChangeCallback('idle');
           }
-        } else {
+        } else if (!this.isSpeaking) {
           if (this.onStateChangeCallback) this.onStateChangeCallback('idle');
         }
       };
     }
+  }
+
+  isEcho(text) {
+    if (!this.lastSpokenText) return false;
+    const cleanInput = text.toLowerCase().trim();
+    const cleanSpoken = this.lastSpokenText.toLowerCase().trim();
+
+    // Check if recognized text is contained in FATE's last spoken response
+    if (cleanSpoken.includes(cleanInput) || cleanInput.includes(cleanSpoken)) {
+      console.log('🔇 Suppressed Self-Echo Input:', text);
+      return true;
+    }
+    return false;
   }
 
   loadVoices() {
@@ -124,11 +148,39 @@ class FateSpeechEngine {
     if (this.onStateChangeCallback) this.onStateChangeCallback('idle');
   }
 
+  pauseListeningForSpeech() {
+    this.wasListeningBeforeSpeaking = this.isListening;
+    if (this.recognition && this.isListening) {
+      try {
+        this.recognition.abort();
+      } catch (e) {}
+    }
+  }
+
+  resumeListeningAfterSpeech() {
+    if (this.wasListeningBeforeSpeaking && this.recognition) {
+      setTimeout(() => {
+        try {
+          this.isListening = true;
+          this.recognition.start();
+          if (this.onStateChangeCallback) this.onStateChangeCallback('listening');
+        } catch (e) {}
+      }, 400); // 400ms echo decay delay
+    } else {
+      if (this.onStateChangeCallback) this.onStateChangeCallback('idle');
+    }
+  }
+
   speak(text, onComplete) {
     if (!text) {
       if (onComplete) onComplete();
       return;
     }
+
+    this.lastSpokenText = text;
+
+    // Pause mic listening while FATE is speaking to prevent self-echo loop
+    this.pauseListeningForSpeech();
 
     if (this.currentAudio) {
       this.currentAudio.pause();
@@ -152,7 +204,7 @@ class FateSpeechEngine {
       audio.onended = () => {
         this.isSpeaking = false;
         this.currentAudio = null;
-        if (this.onStateChangeCallback) this.onStateChangeCallback(this.isListening ? 'listening' : 'idle');
+        this.resumeListeningAfterSpeech();
         if (onComplete) onComplete();
       };
 
@@ -174,6 +226,7 @@ class FateSpeechEngine {
 
   speakWebSpeech(text, onComplete) {
     if (!this.synthesis) {
+      this.resumeListeningAfterSpeech();
       if (onComplete) onComplete();
       return;
     }
@@ -190,13 +243,13 @@ class FateSpeechEngine {
 
     utterance.onend = () => {
       this.isSpeaking = false;
-      if (this.onStateChangeCallback) this.onStateChangeCallback(this.isListening ? 'listening' : 'idle');
+      this.resumeListeningAfterSpeech();
       if (onComplete) onComplete();
     };
 
     utterance.onerror = () => {
       this.isSpeaking = false;
-      if (this.onStateChangeCallback) this.onStateChangeCallback(this.isListening ? 'listening' : 'idle');
+      this.resumeListeningAfterSpeech();
       if (onComplete) onComplete();
     };
 
