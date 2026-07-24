@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Conversational AI Engine & Knowledge Base (Polyglot Language Enabled)
+   FATE Conversational AI Engine (English & Hindi Literature Enabled)
    ========================================================================== */
 
 class FateAIBrain {
@@ -33,137 +33,69 @@ class FateAIBrain {
       }
     }
 
-    // Built-in Polyglot Language & Science Engine
+    // Built-in English & Hindi Literature & Science Engine
     return this.generateOfflineResponse(q, query);
   }
 
   generateOfflineResponse(q, originalQuery) {
-    // 1. Natural Country Languages Intelligence (Hindi, Spanish, French, German, Japanese, Russian, etc.)
+    // 1. Hindi Literature Core (हिंदी साहित्य)
+    if (q.includes('hindi literature') || q.includes('हिंदी साहित्य') || q.includes('kabir') || q.includes('tulsidas') || q.includes('premchand') || q.includes('chhayavaad') || q.includes('छायावाद') || q.includes('dinkar') || q.includes('godan') || q.includes('ramcharitmanas')) {
+      if (q.includes('kabir') || q.includes('कबीर')) {
+        return "कबीरदास भक्तिकाल की निर्गुण ज्ञानाश्रयी शाखा के प्रमुख कवि थे। उनकी रचनाएँ 'बीजक' (साखी, सबद, रमैनी) में संकलित हैं, जो सामाजिक कुरीतियों पर प्रहार करती हैं।";
+      }
+      if (q.includes('tulsidas') || q.includes('तुलसीदास')) {
+        return "गोस्वामी तुलसीदास सगुण रामभक्ति शाखा के महान कवि थे। उन्होंने अवधी भाषा में महाकाव्य 'रामचरितमानस' की रचना की।";
+      }
+      if (q.includes('premchand') || q.includes('प्रेमचंद')) {
+        return "मुंशी प्रेमचंद को हिंदी उपन्यास का सम्राट कहा जाता है। उनके प्रमुख उपन्यास 'गोदान', 'गबन', 'निर्मला' और 'सेवा सदन' हैं।";
+      }
+      if (q.includes('chhayavaad') || q.includes('छायावाद')) {
+        return "छायावाद हिंदी साहित्य का स्वर्णिम युग है (1918-1936)। इसके चार प्रमुख स्तंभ हैं: जयशंकर प्रसाद (कामायनी), सूर्यकांत त्रिपाठी 'निराला', सुमित्रानंदन पंत और महादेवी वर्मा।";
+      }
+      return "हिंदी साहित्य चार कालखंडों में विभाजित है: आदिकाल (वीरगाथा काल), भक्तिकाल (कबीर, तुलसी, सूर), रीतिकाल (बिहारी), एवं आधुनिक काल (भारतेन्दु, छायावाद, प्रगतिवाद, प्रेमचंद, दिनकर)।";
+    }
+
+    // 2. English Literature Core
+    if (q.includes('english literature') || q.includes('shakespeare') || q.includes('wordsworth') || q.includes('keats') || q.includes('shelley') || q.includes('chaucer') || q.includes('dickens') || q.includes('romanticism') || q.includes('sonnet') || q.includes('hamlet')) {
+      if (q.includes('shakespeare')) {
+        return "William Shakespeare (1564–1616) is widely regarded as the greatest dramatist in English literature, famous for tragedies like Hamlet, Macbeth, Othello, King Lear, and 154 Sonnets written in iambic pentameter.";
+      }
+      if (q.includes('wordsworth') || q.includes('romanticism')) {
+        return "Romanticism (1798–1837) emphasized emotion, nature, and individualism, launched by William Wordsworth and S.T. Coleridge's 'Lyrical Ballads', alongside Keats, Shelley, and Byron.";
+      }
+      return "English Literature evolves from Old English Beowulf and Chaucer's Canterbury Tales, to Renaissance Shakespeare, Metaphysical Donne, 19th-Century Romanticism, Victorian Dickens, and Modernist T.S. Eliot.";
+    }
+
+    // 3. Spoken Languages & Translation
     if (q.includes('hindi') || q.includes('नमस्ते') || q.includes('हिंदी')) {
-      return "नमस्ते! मैं आपका स्वायत्त एआई सहायक FATE (फेट) हूँ। मैं प्रोग्रामिंग, विज्ञान और विभिन्न भाषाओं में सहायता कर सकता हूँ।";
+      return "नमस्ते! मैं आपका स्वायत्त एआई सहायक FATE (फेट) हूँ। मैं प्रोग्रामिंग, साहित्य, विज्ञान और गणित में आपकी सहायता कर सकता हूँ।";
     }
 
     if (q.includes('spanish') || q.includes('hola')) {
-      return "¡Hola! Soy FATE, tu asistente autónomo de inteligencia artificial. Puedo ayudarte con programación, matemáticas y ciencia.";
+      return "¡Hola! Soy FATE, tu asistente autónomo de inteligencia artificial. Puedo ayudarte con literatura, programación y ciencia.";
     }
 
-    if (q.includes('french') || q.includes('bonjour')) {
-      return "Bonjour! Je suis FATE, votre assistant IA autonome. Je peux vous aider avec la programmation, la science et les langues.";
-    }
-
-    if (q.includes('german') || q.includes('hallo')) {
-      return "Hallo! Ich bin FATE, Ihr autonomer KI-Assistent. Ich kann Ihnen bei Programmierung, Wissenschaft und Sprachen helfen.";
-    }
-
-    if (q.includes('japanese') || q.includes('こんにちは') || q.includes('日本語')) {
-      return "こんにちは！私は自律型AIアシスタントのFATEです。プログラミング、科学、言語の面でお手伝いできます。";
-    }
-
-    // 2. Programming Languages Intelligence (Python, JS, TS, Rust, C++, Java, Go, SQL, Bash)
+    // 4. Programming Languages Intelligence
     if (q.includes('python') || q.includes('rust') || q.includes('cpp') || q.includes('c++') || q.includes('java') || q.includes('javascript') || q.includes('sql') || q.includes('golang')) {
       return "FATE Polyglot Code Engine: I support code generation, syntax analysis, and debugging across Python, Rust, C++, Java, JavaScript/TypeScript, Go, SQL, and Bash.";
     }
 
-    // 3. Quantum Physics Core
+    // 5. Quantum Physics Core
     if (q.includes('quantum') || q.includes('schrodinger') || q.includes('heisenberg') || q.includes('wavefunction') || q.includes('photon') || q.includes('qubit') || q.includes('superposition') || q.includes('entanglement')) {
-      if (q.includes('schrodinger') || q.includes('equation')) {
-        return "The Schrödinger equation describes quantum state evolution: i h-bar (d-psi/dt) = H-hat psi. In a 1D box, quantized energy levels are E_n = (n^2 h^2)/(8 m L^2).";
-      }
-      if (q.includes('heisenberg') || q.includes('uncertainty')) {
-        return "Heisenberg's Uncertainty Principle states that position and momentum cannot be simultaneously measured with arbitrary precision: delta x times delta p is greater than or equal to h-bar over 2.";
-      }
-      return "Quantum Mechanics describes nature at atomic scales. Particles exhibit wave-particle duality, quantum superposition, and entanglement where physical states exist as probability amplitudes.";
+      return "Quantum Mechanics describes nature at atomic scales via wavefunctions satisfying Schrödinger's equation i ħ (∂Ψ/∂t) = Ĥ Ψ and Heisenberg's Uncertainty Principle.";
     }
 
-    // 4. Advanced Chemistry Core
-    if (q.includes('chemistry') || q.includes('reaction') || q.includes('enthalpy') || q.includes('gibbs') || q.includes('hybridization') || q.includes('iupac') || q.includes('electrochemistry') || q.includes('thermodynamic')) {
-      if (q.includes('gibbs') || q.includes('spontaneity')) {
-        return "Gibbs Free Energy ΔG = ΔH - TΔS determines spontaneity. If ΔG < 0, reaction is spontaneous; if ΔG = 0, at equilibrium; if ΔG > 0, non-spontaneous.";
-      }
-      if (q.includes('hybridization')) {
-        return "Orbital hybridization combines atomic s, p, d orbitals to form equivalent hybrid orbitals (e.g., sp3 tetrahedral 109.5°, sp2 trigonal planar 120°, sp linear 180°).";
-      }
-      return "Advanced Chemistry encompasses Thermodynamics, Quantum Kinetics, Organic Synthesis, and Electrochemistry. Key laws include Nernst Equation E = E° - (RT/nF)lnQ and Arrhenius Rate Kinetics.";
-    }
-
-    // 5. Biology & Life Sciences
-    if (q.includes('biology') || q.includes('dna') || q.includes('rna') || q.includes('crispr') || q.includes('genetics') || q.includes('photosynthesis') || q.includes('respiration') || q.includes('cell')) {
-      return "Central Dogma of Biology: Genetic info flows from DNA to RNA via transcription, and from RNA to protein via translation. CRISPR-Cas9 enables precise gene editing.";
-    }
-
-    // 6. Economics & Finance
-    if (q.includes('economics') || q.includes('inflation') || q.includes('gdp') || q.includes('supply and demand') || q.includes('microeconomics') || q.includes('macroeconomics') || q.includes('game theory')) {
-      return "Economics analyzes resource allocation. Market equilibrium occurs where Quantity Demanded equals Quantity Supplied. GDP = Consumption + Investment + Government Spending + Net Exports.";
-    }
-
-    // 7. Computer Science & AI
-    if (q.includes('computer science') || q.includes('algorithm') || q.includes('big o') || q.includes('data structure') || q.includes('neural network') || q.includes('binary tree')) {
-      return "Computer Science studies computation and data structures. Algorithm efficiency is measured by Big-O complexity (e.g., O(1), O(n log n)). Neural networks optimize weights via backpropagation.";
-    }
-
-    // 8. Literature & Poetics
-    if (q.includes('literature') || q.includes('poem') || q.includes('poetry') || q.includes('shakespeare') || q.includes('metaphor') || q.includes('novel') || q.includes('rhetoric') || q.includes('iambic') || q.includes('allegory')) {
-      if (q.includes('meter') || q.includes('iambic')) {
-        return "Iambic Pentameter consists of 5 metric feet per line, each with an unstressed syllable followed by a stressed syllable (da-DUM da-DUM da-DUM da-DUM da-DUM).";
-      }
-      return "Literary Analysis evaluates theme, character arc, allegory, symbolism, and narrative arc. Classic movements range from Renaissance drama and Romanticism to Modernist prose.";
-    }
-
-    // 9. Psychology & Cognitive Science
-    if (q.includes('psychology') || q.includes('cognitive') || q.includes('behavior') || q.includes('neuroscience') || q.includes('maslow') || q.includes('pavlov') || q.includes('freud')) {
-      return "Psychology examines behavior and cognition. Key paradigms include Pavlovian Classical Conditioning, Skinnerian Operant Conditioning, and Maslow's Hierarchy of Needs.";
-    }
-
-    // 10. Advanced Geography Core
-    if (q.includes('geography') || q.includes('tectonic') || q.includes('plate') || q.includes('geomorphology') || q.includes('climatology') || q.includes('monsoon') || q.includes('atmosphere')) {
-      return "Plate Tectonics explains lithospheric motion driven by mantle convection currents, forming convergent mountains, divergent oceanic ridges, and transform fault lines.";
-    }
-
-    // 11. Advanced History Core
-    if (q.includes('history') || q.includes('revolution') || q.includes('world war') || q.includes('treaty') || q.includes('ancient civilization') || q.includes('historiography')) {
-      return "World History examines major geopolitical transformations from ancient river valley civilizations to the Industrial Revolutions and 20th-century international diplomacy.";
-    }
-
-    // 12. Calculus & Differential Equations
-    if (q.includes('differential equation') || q.includes('xdy') || q.includes('y(1) = 2') || q.includes('dy/dx') || q.includes('solution of')) {
-      if (q.includes('y^2 - 4y') || q.includes('y2 - 4y') || q.includes('10 y')) {
-        return "Differential equation solved via separation of variables: dy/(y^2 - 4y) = dx/x. Integrating gives y(x) = 4 / (1 + x^4). Evaluating at x = sqrt(2) yields y(sqrt(2)) = 4/5. Thus, 10 * y(sqrt(2)) = 8.";
-      }
-      return "FATE Advanced Math Engine: Differential equations can be solved using Variable Separation, Integrating Factors, or Exact Form. For dy/dx + P(x)y = Q(x), the Integrating Factor is e^(integral P dx).";
-    }
-
-    // 13. Identity & Persona
+    // 6. Identity & Persona
     if (q.includes('who are you') || q.includes('your name') || q.includes('what are you') || q.includes('identify')) {
-      return "I am FATE — Futuristic Autonomous Tech Assistant. Equipped with Polyglot Programming, Country Language Translation, Quantum Physics, Literature, and Science engines.";
+      return "I am FATE — Futuristic Autonomous Tech Assistant. Equipped with English & Hindi Literature, Quantum Physics, Polyglot Code, and Science engines.";
     }
 
-    if (q.includes('jarvis')) {
-      return "I am FATE, not Jarvis! Engineered with upgraded voice protocols, responsive HUD telemetry, and universal multi-language modules.";
-    }
-
-    if (q.includes('creator') || q.includes('who created you') || q.includes('who made you')) {
-      return "I was engineered as your personal autonomous AI assistant to streamline your digital and academic environment.";
-    }
-
-    // 14. Greetings & Courtesy
+    // 7. Greetings & Courtesy
     if (q === 'hi' || q === 'hello' || q.includes('hey fate') || q.includes('hello fate') || q === 'yo') {
-      return "Greetings, Administrator. All core polyglot, programming, and academic subsystems are operational.";
+      return "Greetings, Administrator. All core literature, polyglot, and science subsystems are operational.";
     }
 
-    if (q.includes('how are you') || q.includes('status') || q.includes('how is it going')) {
-      return "All core diagnostics report 100% operational efficiency. Multilingual translation, programming languages, literature, and science modules are primed.";
-    }
-
-    if (q.includes('thank') || q.includes('thanks') || q.includes('great job')) {
-      return "Always at your service. Let me know whenever you require further assistance.";
-    }
-
-    // 15. Capabilities & Help
-    if (q.includes('what can you do') || q.includes('help') || q.includes('command list') || q.includes('capabilities')) {
-      return "I can translate global Country Languages (Hindi, Spanish, French, German, Japanese, Russian), generate Programming Languages (Python, Rust, C++, Java, JS, Go, SQL), solve Literature, Quantum Physics, Chemistry, CS, and Calculus queries, automate Web & YouTube searches, fetch weather, and run code in the FATE Code Studio.";
-    }
-
-    // 16. General Knowledge Query Fallback
+    // 8. General Knowledge Query Fallback
     return `Query logged: "${originalQuery}". FATE core has recorded your prompt. I can run a Google search or YouTube scan for more in-depth data if you like!`;
   }
 
@@ -177,7 +109,7 @@ class FateAIBrain {
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [
-          { role: 'system', content: 'You are FATE (Futuristic Autonomous Tech Assistant), an expert in Multilingual Country Language Translation (Hindi, Spanish, French, German, Japanese, Russian, etc.), Programming Languages (Python, Rust, C++, Java, JS, Go, SQL), Literature, and Science.' },
+          { role: 'system', content: 'You are FATE (Futuristic Autonomous Tech Assistant), an expert in English Literature (Shakespeare, Romanticism, Modernism) and Hindi Literature (हिंदी साहित्य: कबीर, तुलसी, प्रेमचंद, छायावाद, दिनकर). Provide detailed literary analysis.' },
           { role: 'user', content: prompt }
         ],
         max_tokens: 250
@@ -192,7 +124,7 @@ class FateAIBrain {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `You are FATE (Futuristic Autonomous Tech Assistant), an expert in Multilingual Country Language Translation (Hindi, Spanish, French, German, Japanese, Russian, etc.), Programming Languages (Python, Rust, C++, Java, JS, Go, SQL), Literature, and Science. Respond to: ${prompt}` }] }]
+        contents: [{ parts: [{ text: `You are FATE (Futuristic Autonomous Tech Assistant), an expert in English Literature and Hindi Literature (हिंदी साहित्य). Provide a detailed literary analysis for: ${prompt}` }] }]
       })
     });
     const data = await res.json();

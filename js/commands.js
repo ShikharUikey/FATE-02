@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Command Execution Engine (Polyglot Programming & Natural Languages Core)
+   FATE Command Execution Engine (English & Hindi Literature Core)
    ========================================================================== */
 
 class FateCommandHandler {
@@ -15,7 +15,18 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. Translation & Natural Country Languages Engine ("translate hello to hindi", "how to say thank you in french")
+    // 1. English & Hindi Literature Intelligence Engine
+    const literatureResult = this.processLiteratureDomain(text);
+    if (literatureResult) {
+      if (this.app.codeArea) this.app.codeArea.value = literatureResult.detailedNotes;
+      this.app.switchTab('suite');
+      return {
+        speakText: literatureResult.spokenText,
+        actionTaken: literatureResult.actionTaken
+      };
+    }
+
+    // 2. Translation & Natural Country Languages Engine
     const translationResult = this.processTranslation(text);
     if (translationResult) {
       if (this.app.codeArea) this.app.codeArea.value = translationResult.detailedTranslation;
@@ -26,7 +37,7 @@ class FateCommandHandler {
       };
     }
 
-    // 2. Programming Languages Code Studio Engine ("generate rust code", "cpp code", "java script", "sql query", "python script")
+    // 3. Programming Languages Code Studio Engine
     const programmingResult = this.processProgrammingLanguage(text);
     if (programmingResult) {
       if (this.app.codeArea) this.app.codeArea.value = programmingResult.codeSnippet;
@@ -37,7 +48,7 @@ class FateCommandHandler {
       };
     }
 
-    // 3. Advanced Calculus & Differential Equation Queries
+    // 4. Advanced Calculus & Differential Equation Queries
     const advMathResult = this.solveAdvancedMath(text);
     if (advMathResult) {
       if (this.app.calcInput) this.app.calcInput.value = advMathResult.shortResult;
@@ -48,7 +59,7 @@ class FateCommandHandler {
       };
     }
 
-    // 4. Universal Academic Domain Solver (Quantum Physics, Chemistry, Biology, Economics, CS, Psychology, History, Geography, Literature)
+    // 5. Universal Academic Domain Solver
     const academicResult = this.solveAcademicDomain(text);
     if (academicResult) {
       if (this.app.codeArea) this.app.codeArea.value = academicResult.detailedNotes;
@@ -59,7 +70,7 @@ class FateCommandHandler {
       };
     }
 
-    // 5. Standard Arithmetic & Polynomial Math Intent
+    // 6. Standard Arithmetic & Polynomial Math Intent
     const mathResult = this.tryParseMath(cleanText);
     if (mathResult !== null) {
       if (this.app.calcInput) this.app.calcInput.value = mathResult.result;
@@ -69,7 +80,7 @@ class FateCommandHandler {
       };
     }
 
-    // 6. Weather Intent
+    // 7. Weather Intent
     if (cleanText.includes('weather') || cleanText.includes('temperature') || cleanText.includes('forecast') || cleanText.includes('climate')) {
       let city = cleanText.replace(/what's the weather in|what is the weather in|weather in|weather for|temperature in|forecast for|weather|temperature|forecast|climate|today/gi, '').trim();
       
@@ -89,7 +100,7 @@ class FateCommandHandler {
       }
     }
 
-    // 7. Mute / Silence Commands
+    // 8. Mute / Silence Commands
     if (cleanText.includes('mute') || cleanText.includes('stop speaking') || cleanText.includes('be quiet') || cleanText === 'stop' || cleanText.includes('hush')) {
       if (this.app.speech.currentAudio) {
         this.app.speech.currentAudio.pause();
@@ -101,13 +112,13 @@ class FateCommandHandler {
       return { speakText: "Audio output silenced.", actionTaken: "Speech Silenced" };
     }
 
-    // 8. Clear Chat / Reset Conversation
+    // 9. Clear Chat / Reset Conversation
     if (cleanText.includes('clear chat') || cleanText.includes('clear feed') || cleanText.includes('reset chat') || cleanText.includes('clear log')) {
       this.app.clearChatFeed();
       return { speakText: "Conversation buffer purged. Standing by for fresh telemetry.", actionTaken: "Chat Purged" };
     }
 
-    // 9. YouTube & Video Automation
+    // 10. YouTube & Video Automation
     if (cleanText.startsWith('open youtube') || cleanText === 'youtube') {
       window.open('https://www.youtube.com', '_blank');
       return { speakText: "Opening YouTube video platform.", actionTaken: "Opened YouTube" };
@@ -121,7 +132,7 @@ class FateCommandHandler {
       }
     }
 
-    // 10. Google Web Search & AI Platforms
+    // 11. Google Web Search & AI Platforms
     if (cleanText.includes('search google for') || cleanText.includes('google search') || cleanText.startsWith('search for') || cleanText.startsWith('google ')) {
       const query = cleanText.replace(/search google for|google search|search for|google/gi, '').trim();
       if (query) {
@@ -140,7 +151,7 @@ class FateCommandHandler {
       return { speakText: "Opening Google Gemini platform.", actionTaken: "Opened Gemini" };
     }
 
-    // 11. Developer Tools & Portals
+    // 12. Developer Tools & Portals
     if (cleanText.includes('open github') || cleanText === 'github') {
       window.open('https://github.com', '_blank');
       return { speakText: "Accessing GitHub repositories.", actionTaken: "Opened GitHub" };
@@ -156,7 +167,7 @@ class FateCommandHandler {
       return { speakText: "Loading Google Satellite Navigation Maps.", actionTaken: "Opened Maps" };
     }
 
-    // 12. Time & Date Telemetry
+    // 13. Time & Date Telemetry
     if (cleanText.includes('time') || cleanText.includes('clock') || cleanText.includes('what time')) {
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -169,7 +180,7 @@ class FateCommandHandler {
       return { speakText: `Today's date is ${dateStr}.`, actionTaken: `Date: ${dateStr}` };
     }
 
-    // 13. Theme Customization
+    // 14. Theme Customization
     if (cleanText.includes('theme') || cleanText.includes('mode') || cleanText.includes('color')) {
       if (cleanText.includes('red') || cleanText.includes('alert') || cleanText.includes('danger')) {
         this.app.setTheme('red-alert');
@@ -189,7 +200,7 @@ class FateCommandHandler {
       }
     }
 
-    // 14. Timer & Countdown
+    // 15. Timer & Countdown
     if (cleanText.includes('timer') || cleanText.includes('alarm') || cleanText.includes('remind me in')) {
       const match = cleanText.match(/(\d+)\s*(second|sec|minute|min)/i);
       if (match) {
@@ -209,6 +220,31 @@ class FateCommandHandler {
     return null;
   }
 
+  // English & Hindi Literature Domain Engine
+  processLiteratureDomain(text) {
+    const clean = text.toLowerCase();
+
+    // Hindi Literature (हिंदी साहित्य)
+    if (clean.includes('hindi literature') || clean.includes('हिंदी साहित्य') || clean.includes('kabir') || clean.includes('tulsidas') || clean.includes('premchand') || clean.includes('chhayavaad') || clean.includes('छायावाद') || clean.includes('dinkar') || clean.includes('rashmirathi') || clean.includes('godan') || clean.includes('ramcharitmanas')) {
+      return {
+        spokenText: "FATE Hindi Literature Engine active. Hindi literature is classified into Adikal, Bhaktikal with Kabir and Tulsidas, Ritikal, and Modern Chhayavaad featuring Jaishankar Prasad, Nirala, Mahadevi Verma, and Munshi Premchand.",
+        actionTaken: "Literature: Hindi Sahitya (हिंदी साहित्य)",
+        detailedNotes: `📖 FATE HINDI LITERATURE (हिंदी साहित्य) ENGINE\n\n1. भक्तिकाल (Bhakti Period):\n   - कबीरदास (Kabir Das): निर्गुण भक्ति, दोहे, बीजक (साखी, सबद, रमैनी).\n   - गोस्वामी तुलसीदास: सगुण रामभक्ति, रामचरितमानस, विनय पत्रिका.\n   - सूरदास: कृष्णभक्ति, सूरसागर, वात्सल्य रस.\n\n2. आधुनिक काल एवं छायावाद (Modern & Chhayavaad Era):\n   - मुंशी प्रेमचंद: उपन्यास सम्राट (गोदान, गबन, निर्मला).\n   - छायावाद के चार स्तंभ: जयशंकर प्रसाद (कामायनी), सूर्यकांत त्रिपाठी 'निराला', सुमित्रानंदन पंत, महादेवी वर्मा.\n   - राष्ट्रकवि रामधारी सिंह 'दिनकर': रश्मिरथी, कुरुक्षेत्र, उर्वशी.\n\n3. काव्य शास्त्र (Poetics):\n   - रस: 9 प्रमुख रस (शृंगार, वीर, करुण, हास्य, रौद्र...)\n   - अलंकार: शब्दालंकार (अनुप्रास, यमक) एवं अर्थालंकार (उपमा, रूपक).`
+      };
+    }
+
+    // English Literature
+    if (clean.includes('english literature') || clean.includes('shakespeare') || clean.includes('wordsworth') || clean.includes('keats') || clean.includes('shelley') || clean.includes('chaucer') || clean.includes('dickens') || clean.includes('romanticism') || clean.includes('sonnet') || clean.includes('hamlet')) {
+      return {
+        spokenText: "FATE English Literature Engine active. English literature spans Old English Beowulf, Renaissance Shakespearean tragedy and sonnets, 19th-century Romanticism with Wordsworth and Keats, Victorian novels, and Modernism.",
+        actionTaken: "Literature: English Poetics & Prose",
+        detailedNotes: `📚 FATE ENGLISH LITERATURE ENGINE\n\n1. Literary Eras:\n   - Old & Middle English: Beowulf, Geoffrey Chaucer (The Canterbury Tales).\n   - Renaissance & Elizabethan: William Shakespeare (Hamlet, Macbeth, Othello, 154 Sonnets), Christopher Marlowe.\n   - Metaphysical Poetry: John Donne (Conceits, Direct Address).\n   - Romanticism (1798–1837): William Wordsworth (Lyrical Ballads), S.T. Coleridge, John Keats (Odes), P.B. Shelley, Lord Byron.\n   - Victorian Era (1837–1901): Charles Dickens, Emily & Charlotte Brontë, Oscar Wilde.\n   - Modernism: T.S. Eliot (The Waste Land), James Joyce (Ulysses), Virginia Woolf.\n\n2. Poetic Structure & Devices:\n   - Meter: Iambic Pentameter (da-DUM × 5 = 10 syllables per line).\n   - Devices: Metaphor, Allegory, Soliloquy, Irony, Hamartia (Fatal Flaw), Catharsis.`
+      };
+    }
+
+    return null;
+  }
+
   // Country Languages & Translation Subsystem
   processTranslation(text) {
     const clean = text.toLowerCase();
@@ -218,7 +254,7 @@ class FateCommandHandler {
         return {
           spokenText: "FATE Hindi Translation Subsystem active. Namaste, main aapka AI assistant FATE hoon.",
           actionTaken: "Translation: Hindi (हिंदी)",
-          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (HINDI)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nHindi: "नमस्ते, मैं आपका स्वायत्त एआई सहायक फेट (FATE) हूँ।"\n\nTransliteration: Namaste, main aapka svaayatt AI sahaayak FATE hoon.`
+          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (HINDI)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nHindi: "नमस्ते, मैं आपका स्वायत्त एआई सहायक फेट (FATE) हूँ।"`
         };
       }
 
@@ -250,7 +286,7 @@ class FateCommandHandler {
         return {
           spokenText: "FATE Japanese Translation Subsystem active. Konnichiwa, FATE desu.",
           actionTaken: "Translation: Japanese (日本語)",
-          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (JAPANESE)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nJapanese: "こんにちは、私は自律型AIアシスタントのFATEです。"\n\nRomaji: Konnichiwa, watashi wa jiritsugata AI ashisutanto no FATE desu.`
+          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (JAPANESE)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nJapanese: "こんにちは、私は自律型AIアシスタントのFATEです。"`
         };
       }
 
@@ -266,7 +302,7 @@ class FateCommandHandler {
     return null;
   }
 
-  // Programming Languages Subsystem (Python, JS, TS, Rust, C++, Java, Go, SQL, Bash)
+  // Programming Languages Subsystem
   processProgrammingLanguage(text) {
     const clean = text.toLowerCase();
 
@@ -282,22 +318,7 @@ class FateCommandHandler {
       return {
         spokenText: "C++ high-performance module active. Generated C++20 template in FATE Code Studio.",
         actionTaken: "Programming: C++20",
-        codeSnippet: `// FATE C++20 Engine\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nint main() {\n    std::cout << "⚡ FATE C++20 Engine Active\\n";\n    std::vector<int> data = {10, 20, 30, 40};\n    for(const auto& val : data) {\n        std::cout << "Value: " << val << "\\n";\n    }\n    return 0;\n}`
-      };
-    }
-
-    if (clean.includes('java ') || clean.includes('java script') || clean.includes('java')) {
-      if (clean.includes('javascript') || clean.includes('js')) {
-        return {
-          spokenText: "JavaScript Async ES6 module active. Generated JS code snippet in Code Studio.",
-          actionTaken: "Programming: JavaScript ES6",
-          codeSnippet: `// FATE ES6 Async Controller\nasync function fateFetchData(url) {\n  const res = await fetch(url);\n  return await res.json();\n}\nfateFetchData('/api/status').then(console.log);`
-        };
-      }
-      return {
-        spokenText: "Java 21 Virtual Threads module active. Generated Object-Oriented Java snippet in Code Studio.",
-        actionTaken: "Programming: Java 21",
-        codeSnippet: `// FATE Java 21 Class\npublic class FateCore {\n    public static void main(String[] args) {\n        System.out.println("⚡ FATE Java 21 Systems Primed.");\n    }\n}`
+        codeSnippet: `// FATE C++20 Engine\n#include <iostream>\n#include <vector>\n\nint main() {\n    std::cout << "⚡ FATE C++20 Engine Active\\n";\n    return 0;\n}`
       };
     }
 
@@ -306,22 +327,6 @@ class FateCommandHandler {
         spokenText: "Python 3.13 AI/ML module active. Generated Python automation script in Code Studio.",
         actionTaken: "Programming: Python 3.13",
         codeSnippet: `# FATE Python 3.13 Automation\nimport sys\n\ndef main():\n    print(f"⚡ FATE Python Core running on {sys.version}")\n\nif __name__ == '__main__':\n    main()`
-      };
-    }
-
-    if (clean.includes('sql') || clean.includes('database') || clean.includes('query')) {
-      return {
-        spokenText: "SQL Relational Query Engine active. Generated optimized SQL query in Code Studio.",
-        actionTaken: "Programming: SQL Query",
-        codeSnippet: `-- FATE Relational SQL Telemetry Query\nSELECT \n    system_id, \n    status, \n    COUNT(*) AS active_nodes\nFROM fate_telemetry_logs\nWHERE timestamp >= NOW() - INTERVAL '1 hour'\nGROUP BY system_id, status\nHAVING COUNT(*) > 5;`
-      };
-    }
-
-    if (clean.includes('go ') || clean.includes('golang')) {
-      return {
-        spokenText: "Go Goroutine Concurrent module active. Generated Go code snippet in Code Studio.",
-        actionTaken: "Programming: Go (Golang)",
-        codeSnippet: `// FATE Concurrent Go Engine\npackage main\nimport ("fmt"; "time")\n\nfunc worker(id int) {\n    fmt.Printf("Worker %d active\\n", id)\n}\n\nfunc main() {\n    go worker(1)\n    time.Sleep(100 * time.Millisecond)\n}`
       };
     }
 
@@ -347,69 +352,6 @@ class FateCommandHandler {
         spokenText: "Advanced Chemistry protocol active. Gibbs Free Energy delta G equals delta H minus T delta S governs chemical reaction spontaneity.",
         actionTaken: "Advanced Chemistry Engine",
         detailedNotes: `🧪 FATE ADVANCED CHEMISTRY CORE\n\n1. Gibbs Free Energy: ΔG = ΔH - TΔS\n2. Nernst Equation: E = E° - (RT/nF) ln Q\n3. Arrhenius Rate Law: k = A e^(-Ea / RT)\n4. Orbital Hybridization: sp³, sp², sp`
-      };
-    }
-
-    // 3. Biology & Life Sciences
-    if (clean.includes('biology') || clean.includes('dna') || clean.includes('rna') || clean.includes('crispr') || clean.includes('genetics') || clean.includes('photosynthesis') || clean.includes('respiration') || clean.includes('cell')) {
-      return {
-        spokenText: "Biology and Genetics protocol active. Genetic information is stored in DNA double helices and transcribed into mRNA for protein synthesis via ribosomes.",
-        actionTaken: "Biology & Genetics Core",
-        detailedNotes: `🧬 FATE BIOLOGY & GENETICS CORE\n\n1. Central Dogma: DNA → (Transcription) → mRNA → (Translation) → Protein\n2. Photosynthesis: 6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂\n3. Cellular Respiration: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + 36 ATP\n4. Gene Editing: CRISPR-Cas9 endonuclease targeting`
-      };
-    }
-
-    // 4. Economics & Finance
-    if (clean.includes('economics') || clean.includes('inflation') || clean.includes('gdp') || clean.includes('supply and demand') || clean.includes('microeconomics') || clean.includes('macroeconomics') || clean.includes('game theory') || clean.includes('monetary')) {
-      return {
-        spokenText: "Economics & Finance protocol active. Market equilibrium occurs at the intersection of aggregate supply and demand. Monetary policy regulates inflation and GDP growth.",
-        actionTaken: "Economics & Finance Core",
-        detailedNotes: `📈 FATE ECONOMICS & FINANCE CORE\n\n1. Supply & Demand Equilibrium: Qd(P) = Qs(P)\n2. GDP Equation: GDP = C + I + G + (X - M)\n3. Fisher Equation: i = r + π (Nominal = Real + Inflation)\n4. Nash Equilibrium in Game Theory`
-      };
-    }
-
-    // 5. Computer Science & AI
-    if (clean.includes('computer science') || clean.includes('algorithm') || clean.includes('big o') || clean.includes('data structure') || clean.includes('neural network') || clean.includes('binary tree') || clean.includes('complexity')) {
-      return {
-        spokenText: "Computer Science protocol active. Algorithm performance is evaluated using Big-O time and space complexity notation.",
-        actionTaken: "Computer Science Core",
-        detailedNotes: `💻 FATE COMPUTER SCIENCE CORE\n\n1. Big-O Complexity: O(1), O(log n), O(n), O(n log n), O(n²)\n2. Data Structures: Arrays, Linked Lists, Trees, Graphs, Hash Tables\n3. Deep Learning: Forward propagation, Loss minimization, Backpropagation\n4. CAP Theorem: Consistency, Availability, Partition Tolerance`
-      };
-    }
-
-    // 6. Literature & Poetics
-    if (clean.includes('literature') || clean.includes('poem') || clean.includes('poetry') || clean.includes('shakespeare') || clean.includes('metaphor') || clean.includes('novel') || clean.includes('rhetoric') || clean.includes('iambic') || clean.includes('allegory')) {
-      return {
-        spokenText: "Literature and Poetics protocol active. Literary analysis examines symbolism, thematic resonance, narrative structure, and poetic meter such as iambic pentameter.",
-        actionTaken: "Literature & Poetics Core",
-        detailedNotes: `📚 FATE LITERATURE & POETICS CORE\n\n1. Meter: Iambic Pentameter (da-DUM × 5 = 10 syllables per line).\n2. Literary Devices: Metaphor, Simile, Personification, Allegory, Irony.\n3. Tragic Structure: Hamartia (fatal flaw), Peripeteia (reversal), Catharsis.\n4. Periods: Renaissance, Romanticism, Victorian, Modernism, Post-Modernism.`
-      };
-    }
-
-    // 7. Psychology & Cognitive Science
-    if (clean.includes('psychology') || clean.includes('cognitive') || clean.includes('behavior') || clean.includes('neuroscience') || clean.includes('maslow') || clean.includes('pavlov') || clean.includes('freud')) {
-      return {
-        spokenText: "Psychology protocol active. Human cognition is studied through behavioral conditioning, neural synaptic transmission, and cognitive memory consolidation.",
-        actionTaken: "Psychology Core",
-        detailedNotes: `🧠 FATE PSYCHOLOGY CORE\n\n1. Classical Conditioning (Pavlov): Unconditioned vs Conditioned Response\n2. Operant Conditioning (Skinner): Reinforcement vs Punishment\n3. Maslow's Hierarchy: Physiological → Safety → Belonging → Esteem → Self-Actualization\n4. Memory: Sensory → Short-Term (Working) → Long-Term`
-      };
-    }
-
-    // 8. Advanced Geography
-    if (clean.includes('geography') || clean.includes('tectonic') || clean.includes('plate') || clean.includes('geomorphology') || clean.includes('climatology') || clean.includes('monsoon') || clean.includes('stratosphere')) {
-      return {
-        spokenText: "Advanced Geography protocol active. Earth's lithosphere is divided into tectonic plates moving via mantle convection currents.",
-        actionTaken: "Geography Core",
-        detailedNotes: `🌍 FATE GEOGRAPHY CORE\n\n1. Tectonic Boundaries: Convergent, Divergent, Transform\n2. Atmospheric Cells: Hadley, Ferrel, Polar\n3. Geomorphology: Weathering, Erosion, Mass Wasting`
-      };
-    }
-
-    // 9. Advanced History
-    if (clean.includes('history') || clean.includes('revolution') || clean.includes('world war') || clean.includes('treaty') || clean.includes('ancient civilization') || clean.includes('historiography')) {
-      return {
-        spokenText: "Advanced History protocol active. World history explores pivotal shifts from early river valley civilizations to modern international diplomacy.",
-        actionTaken: "World History Core",
-        detailedNotes: `📜 FATE WORLD HISTORY CORE\n\n1. Ancient Civilizations: Indus Valley, Mesopotamia, Egypt, Yellow River.\n2. Turning Points: Renaissance, Industrial Revolution, World War I & II.\n3. Historiography & Primary Source Analysis`
       };
     }
 
