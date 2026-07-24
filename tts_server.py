@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 FATE macOS Neural Voice & TTS Server
-Guarantees 100% playable audio generation across all macOS voices and text scripts.
+Supports macOS Native Hindi Voice ('Lekha') and English Voices ('Samantha', 'Ava', 'Daniel', 'Rishi').
 """
 
 import os
@@ -46,24 +46,25 @@ class CoquiTTSHandler(BaseHTTPRequestHandler):
                 return
 
             try:
+                # If text contains Devanagari Hindi characters, automatically use macOS native Hindi voice 'Lekha'
+                if re.search(r'[\u0900-\u097F]', text):
+                    voice = "Lekha"
+
                 if TTS_ENGINE == "macos_say":
                     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
                         tmp_wav = tmp.name
 
-                    # Try selected voice
                     cmd = ["say", "-v", voice, "-o", tmp_wav, "--data-format=LEI16@22050", text]
                     res = subprocess.run(cmd, capture_output=True)
 
-                    # Fallback to Samantha if custom voice is unavailable
-                    if (res.returncode != 0 or os.path.getsize(tmp_wav) == 0) and voice != "Samantha":
-                        cmd = ["say", "-v", "Samantha", "-o", tmp_wav, "--data-format=LEI16@22050", text]
+                    # Fallback to Lekha or Samantha if requested voice returns non-zero
+                    if (res.returncode != 0 or os.path.getsize(tmp_wav) == 0) and voice != "Lekha":
+                        cmd = ["say", "-v", "Lekha", "-o", tmp_wav, "--data-format=LEI16@22050", text]
                         res = subprocess.run(cmd, capture_output=True)
 
-                    # Final failsafe: strip non-ascii characters if macOS say fails on raw Unicode
                     if res.returncode != 0 or os.path.getsize(tmp_wav) == 0:
-                        clean_text = re.sub(r'[^\x00-\x7F]+', ' ', text).strip() or "Response ready"
-                        cmd = ["say", "-v", "Samantha", "-o", tmp_wav, "--data-format=LEI16@22050", clean_text]
-                        subprocess.run(cmd, check=True)
+                        cmd = ["say", "-v", "Samantha", "-o", tmp_wav, "--data-format=LEI16@22050", text]
+                        res = subprocess.run(cmd, capture_output=True)
 
                     with open(tmp_wav, 'rb') as f:
                         audio_data = f.read()

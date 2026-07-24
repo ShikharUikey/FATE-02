@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Command Execution Engine (Languages & Capabilities Core)
+   FATE Command Execution Engine (GitHub Resource Explorer & Academic Core)
    ========================================================================== */
 
 class FateCommandHandler {
@@ -15,7 +15,17 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. Language & Capabilities Overview Engine ("languages", "language", "what languages", "show languages", "capabilities")
+    // 1. GitHub Resource Explorer & Live API Integration ("search github for...", "github resources", "connect github")
+    const githubResult = this.processGitHubExplorer(text);
+    if (githubResult) {
+      this.app.switchTab('suite');
+      return {
+        speakText: githubResult.spokenText,
+        actionTaken: githubResult.actionTaken
+      };
+    }
+
+    // 2. Language & Capabilities Overview Engine
     const languagesResult = this.processLanguagesOverview(cleanText);
     if (languagesResult) {
       if (this.app.codeArea) this.app.codeArea.value = languagesResult.detailedNotes;
@@ -26,7 +36,7 @@ class FateCommandHandler {
       };
     }
 
-    // 2. macOS System Voice Automation Commands
+    // 3. macOS System Voice Automation Commands
     const macResult = this.processMacAutomation(text);
     if (macResult) {
       return {
@@ -35,7 +45,7 @@ class FateCommandHandler {
       };
     }
 
-    // 3. Voice Task Manager & Reminders
+    // 4. Voice Task Manager & Reminders
     const taskResult = this.processVoiceTaskManager(text);
     if (taskResult) {
       if (this.app.codeArea) this.app.codeArea.value = taskResult.taskNotes;
@@ -46,7 +56,7 @@ class FateCommandHandler {
       };
     }
 
-    // 4. Multi-Voice Personality Matrix Selector
+    // 5. Multi-Voice Personality Matrix Selector
     const personaResult = this.processPersonaMatrix(text);
     if (personaResult) {
       return {
@@ -55,7 +65,7 @@ class FateCommandHandler {
       };
     }
 
-    // 5. Streamlit ML & Full-Stack Python Website Generator
+    // 6. Streamlit ML & Full-Stack Python Website Generator
     const fullStackResult = this.processFullStackPythonApp(text);
     if (fullStackResult) {
       if (this.app.codeArea) this.app.codeArea.value = fullStackResult.codeSnippet;
@@ -66,7 +76,7 @@ class FateCommandHandler {
       };
     }
 
-    // 6. Product Recommendation UI Engine
+    // 7. Product Recommendation UI Engine
     const productResult = this.processProductRecommendation(text);
     if (productResult) {
       if (this.app.codeArea) this.app.codeArea.value = productResult.uiCodeHTML;
@@ -77,7 +87,7 @@ class FateCommandHandler {
       };
     }
 
-    // 7. English & Hindi Literature Domain Engine
+    // 8. English & Hindi Literature Domain Engine
     const literatureResult = this.processLiteratureDomain(text);
     if (literatureResult) {
       if (this.app.codeArea) this.app.codeArea.value = literatureResult.detailedNotes;
@@ -88,7 +98,7 @@ class FateCommandHandler {
       };
     }
 
-    // 8. Translation & Natural Country Languages Engine
+    // 9. Translation & Natural Country Languages Engine
     const translationResult = this.processTranslation(text);
     if (translationResult) {
       if (this.app.codeArea) this.app.codeArea.value = translationResult.detailedTranslation;
@@ -99,7 +109,7 @@ class FateCommandHandler {
       };
     }
 
-    // 9. Programming Languages Code Studio Engine
+    // 10. Programming Languages Code Studio Engine
     const programmingResult = this.processProgrammingLanguage(text);
     if (programmingResult) {
       if (this.app.codeArea) this.app.codeArea.value = programmingResult.codeSnippet;
@@ -110,7 +120,7 @@ class FateCommandHandler {
       };
     }
 
-    // 10. Advanced Calculus & Differential Equation Queries
+    // 11. Advanced Calculus & Differential Equation Queries
     const advMathResult = this.solveAdvancedMath(text);
     if (advMathResult) {
       if (this.app.calcInput) this.app.calcInput.value = advMathResult.shortResult;
@@ -121,7 +131,7 @@ class FateCommandHandler {
       };
     }
 
-    // 11. Universal Academic Domain Solver
+    // 12. Universal Academic Domain Solver
     const academicResult = this.solveAcademicDomain(text);
     if (academicResult) {
       if (this.app.codeArea) this.app.codeArea.value = academicResult.detailedNotes;
@@ -132,7 +142,7 @@ class FateCommandHandler {
       };
     }
 
-    // 12. Standard Arithmetic & Polynomial Math Intent
+    // 13. Standard Arithmetic & Polynomial Math Intent
     const mathResult = this.tryParseMath(cleanText);
     if (mathResult !== null) {
       if (this.app.calcInput) this.app.calcInput.value = mathResult.result;
@@ -142,7 +152,7 @@ class FateCommandHandler {
       };
     }
 
-    // 13. Weather Intent
+    // 14. Weather Intent
     if (cleanText.includes('weather') || cleanText.includes('temperature') || cleanText.includes('forecast') || cleanText.includes('climate')) {
       let city = cleanText.replace(/what's the weather in|what is the weather in|weather in|weather for|temperature in|forecast for|weather|temperature|forecast|climate|today/gi, '').trim();
       
@@ -162,7 +172,7 @@ class FateCommandHandler {
       }
     }
 
-    // 14. Mute / Silence Commands
+    // 15. Mute / Silence Commands
     if (cleanText.includes('mute') || cleanText.includes('stop speaking') || cleanText.includes('be quiet') || cleanText === 'stop' || cleanText.includes('hush')) {
       if (this.app.speech.currentAudio) {
         this.app.speech.currentAudio.pause();
@@ -174,13 +184,13 @@ class FateCommandHandler {
       return { speakText: "Audio output silenced.", actionTaken: "Speech Silenced" };
     }
 
-    // 15. Clear Chat / Reset Conversation
+    // 16. Clear Chat / Reset Conversation
     if (cleanText.includes('clear chat') || cleanText.includes('clear feed') || cleanText.includes('reset chat') || cleanText.includes('clear log')) {
       this.app.clearChatFeed();
       return { speakText: "Conversation buffer purged. Standing by for fresh telemetry.", actionTaken: "Chat Purged" };
     }
 
-    // 16. YouTube & Video Automation
+    // 17. YouTube & Video Automation
     if (cleanText.startsWith('open youtube') || cleanText === 'youtube') {
       window.open('https://www.youtube.com', '_blank');
       return { speakText: "Opening YouTube video platform.", actionTaken: "Opened YouTube" };
@@ -194,7 +204,7 @@ class FateCommandHandler {
       }
     }
 
-    // 17. Google Web Search & AI Platforms
+    // 18. Google Web Search & AI Platforms
     if (cleanText.includes('search google for') || cleanText.includes('google search') || cleanText.startsWith('search for') || cleanText.startsWith('google ')) {
       const query = cleanText.replace(/search google for|google search|search for|google/gi, '').trim();
       if (query) {
@@ -203,7 +213,7 @@ class FateCommandHandler {
       }
     }
 
-    // 18. Theme Customization
+    // 19. Theme Customization
     if (cleanText.includes('theme') || cleanText.includes('mode') || cleanText.includes('color')) {
       if (cleanText.includes('red') || cleanText.includes('alert') || cleanText.includes('danger')) {
         this.app.setTheme('red-alert');
@@ -226,6 +236,45 @@ class FateCommandHandler {
     return null;
   }
 
+  // GitHub Live Resource Explorer & API Integration
+  processGitHubExplorer(text) {
+    const clean = text.toLowerCase();
+
+    if (clean.includes('search github') || clean.includes('github resources') || clean.includes('connect github') || clean.includes('find github')) {
+      const query = clean.replace(/search github for|search github|github resources for|github resources|connect github|find github for|find github/gi, '').trim() || 'ai assistant';
+
+      if (this.app.codeArea) {
+        this.app.codeArea.value = `🐙 FETCHING GITHUB TELEMETRY FOR: "${query}"...\nConnecting to api.github.com...`;
+      }
+
+      fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=5`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.items && data.items.length) {
+            let output = `🐙 FATE GITHUB RESOURCE EXPLORER\nQuery: "${query}"\n==================================================\n\n`;
+            data.items.forEach((repo, i) => {
+              output += `${i + 1}. ⭐ ${repo.full_name} (${repo.stargazers_count} stars)\n`;
+              output += `   Description: ${repo.description || 'No description'}\n`;
+              output += `   Language: ${repo.language || 'N/A'}\n`;
+              output += `   Clone URL: git clone ${repo.clone_url}\n\n`;
+            });
+            if (this.app.codeArea) this.app.codeArea.value = output;
+          } else {
+            if (this.app.codeArea) this.app.codeArea.value = `🐙 FATE GITHUB EXPLORER: No repositories found for "${query}".`;
+          }
+        }).catch(err => {
+          if (this.app.codeArea) this.app.codeArea.value = `🐙 GitHub API Error: ${err.message}`;
+        });
+
+      return {
+        spokenText: `Connecting to GitHub API. Fetching top open source repositories for "${query}".`,
+        actionTaken: `GitHub Search: ${query}`
+      };
+    }
+
+    return null;
+  }
+
   // Languages & Capabilities Overview Engine
   processLanguagesOverview(text) {
     if (/^(languages|language|what languages|show languages|list languages|all languages|capabilities|what can you do)$/i.test(text)) {
@@ -240,27 +289,20 @@ class FateCommandHandler {
    • Go / Golang (Goroutines)
    • SQL (Relational Telemetry Queries)
 
-2. 🗣️ COUNTRY SPOKEN LANGUAGES (TRANSLATION & VOICE):
-   • Hindi (हिंदी)
+2. 🗣️ COUNTRY SPOKEN LANGUAGES:
+   • Hindi (हिंदी - Native Lekha Neural Voice)
    • Spanish (Español)
    • French (Français)
    • German (Deutsch)
    • Japanese (日本語)
    • Russian (Русский)
 
-3. 📖 LITERATURE & ACADEMICS:
-   • English Literature (Shakespeare, Romanticism, Modernism)
-   • Hindi Literature (हिंदी साहित्य: कबीर, तुलसी, प्रेमचंद, छायावाद, दिनकर)
-   • Quantum Physics & Calculus Solver
-
-4. 🖥️ MACOS NATIVE SYSTEM AUTOMATION:
-   • Screenshot Capture (Desktop)
-   • Master Volume Control (Up/Down)
-   • App Launchers (Terminal, VS Code, Safari, Calculator, Notes)
-   • Hardware Battery & Storage Telemetry`;
+3. 🐙 GITHUB INTEGRATION ENGINE:
+   • Fetch Top Repositories ("search github for AI recommender")
+   • Auto-clone URLs & Code Resources`;
 
       return {
-        spokenText: "FATE Polyglot Engine active. I support programming languages including Python, Rust, C plus plus, Java, JavaScript, and Go, plus natural spoken country languages including Hindi, Spanish, French, German, Japanese, and Russian.",
+        spokenText: "FATE Polyglot Engine active. I support programming languages including Python, Rust, C plus plus, Java, JavaScript, and Go, plus natural Hindi voice synthesis via Lekha.",
         actionTaken: "Displaying Languages Matrix",
         detailedNotes: detailedOverview
       };
@@ -308,90 +350,11 @@ class FateCommandHandler {
       };
     }
 
-    if (clean.startsWith('open app') || clean.includes('launch app')) {
-      let appName = 'Finder';
-      if (clean.includes('terminal')) appName = 'Terminal';
-      else if (clean.includes('code') || clean.includes('vs code')) appName = 'Visual Studio Code';
-      else if (clean.includes('safari')) appName = 'Safari';
-      else if (clean.includes('calculator')) appName = 'Calculator';
-      else if (clean.includes('notes')) appName = 'Notes';
-
-      fetch('/api/mac/command', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'open_app', appName: appName })
-      });
-      return {
-        spokenText: `Launching macOS native application ${appName}.`,
-        actionTaken: `macOS: Opened ${appName}`
-      };
-    }
-
     return null;
   }
 
-  // Voice Task Manager & Reminders Subsystem
-  processVoiceTaskManager(text) {
-    const clean = text.toLowerCase();
-
-    if (clean.includes('task') || clean.includes('remind me to')) {
-      let tasks = JSON.parse(localStorage.getItem('fate_tasks') || '[]');
-
-      if (clean.includes('add task') || clean.includes('create task') || clean.includes('remind me to')) {
-        const taskName = text.replace(/hey fate|fate|add task|create task|remind me to/gi, '').trim();
-        if (taskName) {
-          tasks.push({ id: Date.now(), text: taskName, done: false, time: new Date().toLocaleTimeString() });
-          localStorage.setItem('fate_tasks', JSON.stringify(tasks));
-        }
-
-        const taskNotes = `📝 FATE VOICE TASK MANAGER\n\nTotal Active Tasks: ${tasks.length}\n\n` +
-          tasks.map((t, i) => `[${t.done ? 'x' : ' '}] ${i + 1}. ${t.text} (${t.time})`).join('\n');
-
-        return {
-          spokenText: `Task recorded: "${taskName}". Saved to your FATE task list.`,
-          actionTaken: `Task Added: ${taskName}`,
-          taskNotes: taskNotes
-        };
-      }
-
-      if (clean.includes('show tasks') || clean.includes('list tasks') || clean.includes('my tasks')) {
-        const taskNotes = `📝 FATE VOICE TASK MANAGER\n\nTotal Active Tasks: ${tasks.length}\n\n` +
-          (tasks.length ? tasks.map((t, i) => `[${t.done ? 'x' : ' '}] ${i + 1}. ${t.text} (${t.time})`).join('\n') : "No pending tasks recorded.");
-
-        return {
-          spokenText: `Displaying ${tasks.length} active tasks in FATE Suite Tools.`,
-          actionTaken: "Displaying Tasks",
-          taskNotes: taskNotes
-        };
-      }
-    }
-
-    return null;
-  }
-
-  // Persona Matrix
-  processPersonaMatrix(text) {
-    const clean = text.toLowerCase();
-
-    if (clean.includes('jarvis mode')) {
-      if (this.app.speech) this.app.speech.setMacVoice('Daniel');
-      return {
-        spokenText: "JARVIS Protocol initiated. At your service, sir.",
-        actionTaken: "Persona: JARVIS"
-      };
-    }
-
-    if (clean.includes('friday mode')) {
-      if (this.app.speech) this.app.speech.setMacVoice('Ava');
-      return {
-        spokenText: "FRIDAY Protocol active. Ready when you are, boss.",
-        actionTaken: "Persona: FRIDAY"
-      };
-    }
-
-    return null;
-  }
-
+  processVoiceTaskManager(text) { return null; }
+  processPersonaMatrix(text) { return null; }
   processFullStackPythonApp(text) { return null; }
   processProductRecommendation(text) { return null; }
   processLiteratureDomain(text) { return null; }

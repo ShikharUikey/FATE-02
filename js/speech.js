@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Speech Engine - 100% Reliable Native Voice & Echo Cancellation
+   FATE Speech Engine - macOS Native Hindi Voice (Lekha) & Echo Prevention
    ========================================================================== */
 
 class FateSpeechEngine {
@@ -12,7 +12,7 @@ class FateSpeechEngine {
     this.wasListeningBeforeSpeaking = false;
 
     this.ttsEngineMode = localStorage.getItem('fate_tts_engine') || 'coqui';
-    this.macVoice = localStorage.getItem('fate_mac_voice') || 'Samantha';
+    this.macVoice = localStorage.getItem('fate_mac_voice') || 'Lekha';
 
     this.onResultCallback = null;
     this.onStateChangeCallback = null;
@@ -113,7 +113,7 @@ class FateSpeechEngine {
     if (!this.synthesis) return;
     const populateVoices = () => {
       const voices = this.synthesis.getVoices();
-      this.selectedVoice = voices.find(v => v.name.includes('Samantha') || v.name.includes('Ava') || v.name.includes('Alex') || v.name.includes('Daniel') || v.lang.startsWith('en')) || voices[0];
+      this.selectedVoice = voices.find(v => v.name.includes('Lekha') || v.name.includes('Samantha') || v.name.includes('Alex') || v.name.includes('Daniel') || v.lang.startsWith('hi')) || voices[0];
     };
 
     populateVoices();
@@ -167,31 +167,6 @@ class FateSpeechEngine {
     }
   }
 
-  // Convert Devanagari text to phonetic Romanized text for macOS say engine
-  getPhoneticSpokenText(text) {
-    if (!/[\u0900-\u097F]/.test(text)) return text;
-
-    // Direct mappings for common Hindi phrases
-    if (text.includes("बिल्कुल बढ़िया")) {
-      return "Main bilkul badiya hoon! FATE core ke sabhi systems 100 percent optimal mode me kaam kar rahe hain. Aap kaise hain Administrator?";
-    }
-    if (text.includes("हिंदी में बात")) {
-      return "Ji haan! Main Hindi me baat kar sakta hoon. Aadesh dijiye, aaj hum kya naya banana chahte hain?";
-    }
-    if (text.includes("हिंदी और हिंग्लिश")) {
-      return "Haan bilkul! Main Hindi aur Hinglish dono samajhta hoon aur jawab de sakta hoon!";
-    }
-    if (text.includes("हुक्म देंगे")) {
-      return "Ab aap jo bhi aadesh denge, FATE use turant poora karega!";
-    }
-    if (text.includes("धन्यवाद")) {
-      return "Aapka dhanyawad! Aapki seva karna hi FATE ka mukhya uddeshya hai.";
-    }
-
-    // Generic fallback for any other Hindi text
-    return "FATE Hindi response ready. System operational.";
-  }
-
   speak(text, onComplete) {
     if (!text) {
       if (onComplete) onComplete();
@@ -209,12 +184,15 @@ class FateSpeechEngine {
       this.synthesis.cancel();
     }
 
-    // Get phonetic spoken version for macOS TTS
-    const spokenText = this.getPhoneticSpokenText(text);
+    // Auto-detect Hindi text and route to native macOS Lekha voice
+    let activeVoice = this.macVoice;
+    if (/[\u0900-\u097F]/.test(text)) {
+      activeVoice = 'Lekha';
+    }
 
     // Coqui / macOS Native Speech Engine
     if (this.ttsEngineMode === 'coqui') {
-      const ttsUrl = `/api/tts?voice=${encodeURIComponent(this.macVoice)}&text=${encodeURIComponent(spokenText)}`;
+      const ttsUrl = `/api/tts?voice=${encodeURIComponent(activeVoice)}&text=${encodeURIComponent(text)}`;
       const audio = new Audio(ttsUrl);
       this.currentAudio = audio;
 
@@ -232,21 +210,21 @@ class FateSpeechEngine {
 
       audio.onerror = (e) => {
         console.warn('macOS Native Speech error, falling back to WebSpeech:', e);
-        this.speakWebSpeech(spokenText, onComplete);
+        this.speakWebSpeech(text, onComplete);
       };
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch((err) => {
           console.warn('Audio Autoplay policy caught, trying WebSpeech:', err);
-          this.speakWebSpeech(spokenText, onComplete);
+          this.speakWebSpeech(text, onComplete);
         });
       }
 
       return;
     }
 
-    this.speakWebSpeech(spokenText, onComplete);
+    this.speakWebSpeech(text, onComplete);
   }
 
   speakWebSpeech(text, onComplete) {
