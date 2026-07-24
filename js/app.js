@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Main Application Controller (Coqui TTS Enabled)
+   FATE Main Application Controller (Dynamic Voice & LLM Enabled)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Startup SFX & Greeting
       setTimeout(() => {
         if (typeof audioFX !== 'undefined') audioFX.playStartup();
-        this.addChatMessage('FATE', 'FATE System Core 2.5 active. Coqui Neural Speech Engine initialized. How may I assist your mission?');
+        this.addChatMessage('FATE', 'FATE System Core 2.6 active. macOS Speech Engine & LLM Interfaces Primed. How may I assist your mission?');
       }, 400);
     }
 
@@ -177,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const voicePitchInput = document.getElementById('voice-pitch');
       const voiceRateInput = document.getElementById('voice-rate');
       const ttsEngineSelect = document.getElementById('tts-engine-select');
+      const macVoiceSelect = document.getElementById('mac-voice-select');
       const apiKeyInput = document.getElementById('api-key-input');
       const apiProviderSelect = document.getElementById('api-provider-select');
       const sfxToggle = document.getElementById('sfx-toggle');
@@ -184,6 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
       if (ttsEngineSelect) {
         ttsEngineSelect.addEventListener('change', () => {
           this.speech.setTTSEngine(ttsEngineSelect.value);
+        });
+      }
+      if (macVoiceSelect) {
+        macVoiceSelect.addEventListener('change', () => {
+          this.speech.setMacVoice(macVoiceSelect.value);
+          if (typeof audioFX !== 'undefined') audioFX.playSuccess();
         });
       }
       if (voicePitchInput) {
@@ -326,9 +333,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const apiKeyInput = document.getElementById('api-key-input');
       const apiProviderSelect = document.getElementById('api-provider-select');
       const ttsEngineSelect = document.getElementById('tts-engine-select');
+      const macVoiceSelect = document.getElementById('mac-voice-select');
 
       if (ttsEngineSelect) {
         ttsEngineSelect.value = this.speech.ttsEngineMode;
+      }
+      if (macVoiceSelect) {
+        macVoiceSelect.value = this.speech.macVoice;
       }
       if (apiKeyInput && apiProviderSelect) {
         apiKeyInput.value = this.brain.apiKey;

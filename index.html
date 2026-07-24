@@ -58,7 +58,7 @@
       <aside class="hud-panel">
         <div class="panel-header">
           <h2>📊 TELEMETRY</h2>
-          <span class="panel-badge">SYS_V2.5</span>
+          <span class="panel-badge">SYS_V2.6</span>
         </div>
 
         <div class="telemetry-grid">
@@ -243,15 +243,26 @@
           <div class="suite-grid">
             <div class="tool-card">
               <div class="tool-card-title">
-                <span>🗣️ NEURAL SPEECH ENGINE (COQUI TTS)</span>
-                <span>VITS MODEL</span>
+                <span>🗣️ NEURAL SPEECH ENGINE & MACOS VOICES</span>
+                <span>V2.6 ENGINE</span>
               </div>
               <div class="settings-group">
                 <div class="setting-row">
                   <span class="setting-label">VOICE SYNTHESIS MODE</span>
                   <select id="tts-engine-select" class="setting-select">
-                    <option value="coqui">Coqui Neural AI TTS (Female VITS Model / Python)</option>
-                    <option value="webspeech">Browser Native Speech (WebSpeech API)</option>
+                    <option value="coqui">macOS Native / Coqui Speech Server (/api/tts)</option>
+                    <option value="webspeech">Browser Native WebSpeech API</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <span class="setting-label">MACOS NEURAL VOICE SELECTION</span>
+                  <select id="mac-voice-select" class="setting-select">
+                    <option value="Samantha">Samantha (US Crisp Female)</option>
+                    <option value="Ava">Ava (US Smooth Neural Female)</option>
+                    <option value="Victoria">Victoria (British Female)</option>
+                    <option value="Karen">Karen (Australian Female)</option>
+                    <option value="Veena">Veena (Indian Female)</option>
+                    <option value="Daniel">Daniel (British Male)</option>
                   </select>
                 </div>
                 <div class="setting-row">
@@ -292,13 +303,13 @@
                   <span class="setting-label">API PROVIDER</span>
                   <select id="api-provider-select" class="setting-select">
                     <option value="offline">Built-in FATE Intelligence (Offline)</option>
+                    <option value="gemini">Google Gemini Pro (Free Key)</option>
                     <option value="openai">OpenAI (GPT-3.5/4)</option>
-                    <option value="gemini">Google Gemini Pro</option>
                   </select>
                 </div>
                 <div class="setting-row">
                   <span class="setting-label">API KEY</span>
-                  <input type="password" id="api-key-input" class="setting-input" placeholder="sk-...">
+                  <input type="password" id="api-key-input" class="setting-input" placeholder="sk-... or AIzaSy...">
                 </div>
                 <button class="input-action-btn" id="save-api-btn" style="margin-top: 6px;">SAVE API CONFIG</button>
               </div>
@@ -322,13 +333,13 @@
           </div>
 
           <div class="telemetry-card">
-            <span class="telemetry-label">COQUI NEURAL TTS</span>
-            <span class="telemetry-value" style="color: var(--primary-color); font-size: 0.95rem;">VITS / LJSPEECH</span>
+            <span class="telemetry-label">MACOS SPEECH ENGINE</span>
+            <span class="telemetry-value" style="color: var(--primary-color); font-size: 0.95rem;">SAMANTHA / AVA</span>
           </div>
 
           <div class="telemetry-card">
             <span class="telemetry-label">AI INTELLIGENCE CORE</span>
-            <span class="telemetry-value" style="color: var(--primary-color); font-size: 0.95rem;">FATE OPTIMIZED V2.5</span>
+            <span class="telemetry-value" style="color: var(--primary-color); font-size: 0.95rem;">FATE OPTIMIZED V2.6</span>
           </div>
 
           <div class="telemetry-card">
@@ -342,8 +353,8 @@
         </div>
 
         <div class="chat-feed-container" style="max-height: 160px; font-family: var(--font-mono); font-size: 0.72rem;">
-          <div style="color: var(--primary-color);">[SYSTEM] FATE Core 2.5 Active.</div>
-          <div style="color: #00ff88;">[TTS] Coqui Neural Route /api/tts Enabled.</div>
+          <div style="color: var(--primary-color);">[SYSTEM] FATE Core 2.6 Active.</div>
+          <div style="color: #00ff88;">[SPEECH] macOS Native Engine Connected.</div>
           <div style="color: var(--text-muted);">[AUDIO] WebAudio Synth Oscillators Ready.</div>
           <div style="color: var(--primary-color);">[STATE] Listening for user prompts...</div>
         </div>
@@ -354,11 +365,11 @@
     <!-- 3. HUD Footer Status Bar -->
     <footer class="hud-footer">
       <div class="footer-left">
-        <span>FATE v2.5 AUTONOMOUS CORE</span>
+        <span>FATE v2.6 AUTONOMOUS CORE</span>
         <span class="footer-tag">STATUS: OPTIMAL</span>
       </div>
       <div class="footer-right">
-        <span>FRAMEWORK: VANILLA JS / COQUI TTS / WEB SPEECH</span>
+        <span>FRAMEWORK: VANILLA JS / MACOS SPEECH / WEB SPEECH</span>
         <span class="footer-tag">ENCRYPTION: 256-BIT</span>
       </div>
     </footer>

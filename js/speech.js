@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Speech Recognition & Voice Synthesis Engine (Coqui TTS Enabled)
+   FATE Speech Recognition & Voice Synthesis Engine (Dynamic Voice Engine)
    ========================================================================== */
 
 class FateSpeechEngine {
@@ -9,7 +9,8 @@ class FateSpeechEngine {
 
     this.isListening = false;
     this.isSpeaking = false;
-    this.ttsEngineMode = localStorage.getItem('fate_tts_engine') || 'coqui'; // 'coqui' or 'webspeech'
+    this.ttsEngineMode = localStorage.getItem('fate_tts_engine') || 'coqui'; // 'coqui' (macOS/Neural) or 'webspeech'
+    this.macVoice = localStorage.getItem('fate_mac_voice') || 'Samantha';
 
     this.onResultCallback = null;
     this.onStateChangeCallback = null;
@@ -26,6 +27,11 @@ class FateSpeechEngine {
   setTTSEngine(mode) {
     this.ttsEngineMode = mode;
     localStorage.setItem('fate_tts_engine', mode);
+  }
+
+  setMacVoice(voiceName) {
+    this.macVoice = voiceName;
+    localStorage.setItem('fate_mac_voice', voiceName);
   }
 
   initRecognition() {
@@ -124,7 +130,6 @@ class FateSpeechEngine {
       return;
     }
 
-    // Stop current playing audio or synthesis
     if (this.currentAudio) {
       this.currentAudio.pause();
       this.currentAudio = null;
@@ -133,9 +138,9 @@ class FateSpeechEngine {
       this.synthesis.cancel();
     }
 
-    // Try Coqui Neural TTS if enabled
+    // Coqui / macOS Native Speech Engine
     if (this.ttsEngineMode === 'coqui') {
-      const ttsUrl = `/api/tts?text=${encodeURIComponent(text)}`;
+      const ttsUrl = `/api/tts?voice=${encodeURIComponent(this.macVoice)}&text=${encodeURIComponent(text)}`;
       const audio = new Audio(ttsUrl);
       this.currentAudio = audio;
 
@@ -152,7 +157,7 @@ class FateSpeechEngine {
       };
 
       audio.onerror = () => {
-        console.warn('Coqui TTS Server unreachable or error. Falling back to WebSpeech Synthesis.');
+        console.warn('TTS Server error. Falling back to WebSpeech Synthesis.');
         this.speakWebSpeech(text, onComplete);
       };
 
@@ -163,7 +168,7 @@ class FateSpeechEngine {
       return;
     }
 
-    // Fallback to WebSpeech Synthesis
+    // WebSpeech Synthesis
     this.speakWebSpeech(text, onComplete);
   }
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 FATE macOS Neural Voice & TTS Server
-Uses macOS high-quality native voice engine (say -v Samantha) + Coqui TTS fallback.
+Supports dynamic voice selection (Samantha, Ava, Victoria, Karen, Veena, Daniel).
 Works 100% out-of-the-box on macOS with Python 3.13 and zero extra pip requirements!
 """
 
@@ -13,15 +13,14 @@ import subprocess
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
 PORT = int(os.environ.get("TTS_PORT", 5000))
-MACOS_VOICE = os.environ.get("MAC_VOICE", "Samantha") # "Samantha", "Ava", "Victoria", "Karen", "Allison"
+DEFAULT_VOICE = os.environ.get("MAC_VOICE", "Samantha")
 
 TTS_ENGINE = None
 
 def init_tts():
     global TTS_ENGINE
-    # Check if macOS 'say' command is available
     if sys.platform == 'darwin':
-        print(f"⚡ FATE macOS Native Speech Engine active! Voice: '{MACOS_VOICE}'")
+        print(f"⚡ FATE macOS Native Speech Engine active! Default Voice: '{DEFAULT_VOICE}'")
         TTS_ENGINE = "macos_say"
         return
 
@@ -47,6 +46,7 @@ class CoquiTTSHandler(BaseHTTPRequestHandler):
         if parsed.path == '/api/tts':
             params = urllib.parse.parse_qs(parsed.query)
             text = params.get('text', [''])[0].strip()
+            voice = params.get('voice', [DEFAULT_VOICE])[0].strip()
 
             if not text:
                 self.send_header('Content-Type', 'text/plain')
@@ -60,9 +60,14 @@ class CoquiTTSHandler(BaseHTTPRequestHandler):
                     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
                         tmp_wav = tmp.name
 
-                    # Generate LEI16 22.05kHz WAV directly using macOS 'say'
-                    cmd = ["say", "-v", MACOS_VOICE, "-o", tmp_wav, "--data-format=LEI16@22050", text]
-                    subprocess.run(cmd, check=True)
+                    # Generate LEI16 22.05kHz WAV directly using specified macOS voice
+                    cmd = ["say", "-v", voice, "-o", tmp_wav, "--data-format=LEI16@22050", text]
+                    res = subprocess.run(cmd, capture_output=True)
+
+                    # Fallback to Samantha if selected voice is not installed on user's Mac
+                    if res.returncode != 0 and voice != "Samantha":
+                        cmd = ["say", "-v", "Samantha", "-o", tmp_wav, "--data-format=LEI16@22050", text]
+                        subprocess.run(cmd, check=True)
 
                     with open(tmp_wav, 'rb') as f:
                         audio_data = f.read()
@@ -102,7 +107,7 @@ class CoquiTTSHandler(BaseHTTPRequestHandler):
         elif parsed.path == '/api/status':
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            status_json = f'{{"status": "online", "engine": "{TTS_ENGINE}", "voice": "{MACOS_VOICE}"}}'
+            status_json = f'{{"status": "online", "engine": "{TTS_ENGINE}", "voice": "{DEFAULT_VOICE}"}}'
             self.wfile.write(status_json.encode('utf-8'))
             return
         else:
@@ -122,8 +127,8 @@ def run_server():
     server_address = ('', PORT)
     httpd = HTTPServer(server_address, CoquiTTSHandler)
     print(f"\n==================================================")
-    print(f"  🎙️ FATE macOS Speech Server Active on http://localhost:{PORT}")
-    print(f"  🗣️ Voice Engine: macOS Native '{MACOS_VOICE}'")
+    print(f"  🎙️ FATE macOS Dynamic Speech Server Active on http://localhost:{PORT}")
+    print(f"  🗣️ Voice Options: Samantha, Ava, Victoria, Karen, Veena, Daniel")
     print(f"==================================================\n")
     try:
         httpd.serve_forever()
