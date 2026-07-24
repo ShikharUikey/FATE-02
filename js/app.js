@@ -193,6 +193,29 @@ document.addEventListener('DOMContentLoaded', () => {
           if (typeof audioFX !== 'undefined') audioFX.playSuccess();
         });
       }
+
+      const voicePersonaSelect = document.getElementById('voice-persona-select');
+      if (voicePersonaSelect) {
+        voicePersonaSelect.addEventListener('change', () => {
+          const val = voicePersonaSelect.value;
+          if (val === 'jarvis_male') {
+            this.speech.setMacVoice('Daniel');
+            this.speech.speak("JARVIS Protocol initialized. At your service, sir.");
+          } else if (val === 'friday_female') {
+            this.speech.setMacVoice('Ava');
+            this.speech.speak("FRIDAY Protocol active. Ready when you are, boss.");
+          } else if (val === 'cyberpunk_synth') {
+            this.speech.setMacVoice('Veena');
+            this.setTheme('emerald');
+            this.speech.speak("Cyberpunk Matrix Protocol active.");
+          } else {
+            this.speech.setMacVoice('Samantha');
+            this.setTheme('default');
+            this.speech.speak("FATE Standard Assistant active.");
+          }
+          if (typeof audioFX !== 'undefined') audioFX.playSuccess();
+        });
+      }
       if (voicePitchInput) {
         voicePitchInput.addEventListener('change', () => {
           this.speech.pitch = parseFloat(voicePitchInput.value);

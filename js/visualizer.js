@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Visualizer & Particle Canvas Engine
+   FATE 3D Three.js WebGL Holographic Sphere & Particle Visualizer Engine
    ========================================================================== */
 
 class FateVisualizer {
@@ -21,6 +21,12 @@ class FateVisualizer {
     this.rotationAngle = 0;
     this.wavePhase = 0;
 
+    // Three.js 3D Holographic Sphere Variables
+    this.threeScene = null;
+    this.threeCamera = null;
+    this.threeRenderer = null;
+    this.spherePoints = null;
+
     this.init();
   }
 
@@ -29,13 +35,91 @@ class FateVisualizer {
     window.addEventListener('resize', () => this.resizeCanvas());
 
     this.createParticles();
+    this.initThreeJSSphere();
     this.animate();
+  }
+
+  initThreeJSSphere() {
+    if (typeof THREE === 'undefined' || !this.reactorCanvas) return;
+
+    try {
+      const parent = this.reactorCanvas.parentElement;
+      const width = parent ? parent.clientWidth : 240;
+      const height = parent ? parent.clientHeight : 240;
+
+      this.threeScene = new THREE.Scene();
+      this.threeCamera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      this.threeCamera.position.z = 180;
+
+      // Create WebGL Renderer over canvas
+      this.threeRenderer = new THREE.WebGLRenderer({
+        canvas: this.reactorCanvas,
+        alpha: true,
+        antialias: true
+      });
+      this.threeRenderer.setSize(width, height);
+      this.threeRenderer.setPixelRatio(window.devicePixelRatio || 1);
+
+      // Create 3D Holographic Particle Sphere Geometry
+      const geometry = new THREE.BufferGeometry();
+      const count = 750;
+      const positions = new Float32Array(count * 3);
+      const radius = 55;
+
+      for (let i = 0; i < count; i++) {
+        const u = Math.random();
+        const v = Math.random();
+        const theta = u * 2.0 * Math.PI;
+        const phi = Math.acos(2.0 * v - 1.0);
+        const r = radius + (Math.random() - 0.5) * 6;
+
+        positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = r * Math.cos(phi);
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      // Particle Material
+      const material = new THREE.PointsMaterial({
+        color: new THREE.Color(this.primaryColor),
+        size: 2.2,
+        transparent: true,
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending
+      });
+
+      this.spherePoints = new THREE.Points(geometry, material);
+      this.threeScene.add(this.spherePoints);
+
+      // Add Inner Glowing Ring Torus
+      const ringGeom = new THREE.TorusGeometry(38, 0.8, 16, 100);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(this.secondaryColor),
+        wireframe: true,
+        transparent: true,
+        opacity: 0.6
+      });
+      this.torusRing = new THREE.Mesh(ringGeom, ringMat);
+      this.threeScene.add(this.torusRing);
+
+    } catch (e) {
+      console.warn('Three.js initialization fallback to 2D Canvas:', e);
+      this.threeRenderer = null;
+    }
   }
 
   updateColors(primary, secondary, accent) {
     if (primary) this.primaryColor = primary;
     if (secondary) this.secondaryColor = secondary;
     if (accent) this.accentColor = accent;
+
+    if (this.spherePoints && typeof THREE !== 'undefined') {
+      this.spherePoints.material.color = new THREE.Color(this.primaryColor);
+    }
+    if (this.torusRing && typeof THREE !== 'undefined') {
+      this.torusRing.material.color = new THREE.Color(this.secondaryColor);
+    }
   }
 
   setState(state) {
@@ -47,7 +131,14 @@ class FateVisualizer {
       this.bgCanvas.width = window.innerWidth;
       this.bgCanvas.height = window.innerHeight;
     }
-    if (this.reactorCanvas) {
+    if (this.reactorCanvas && this.threeRenderer) {
+      const parent = this.reactorCanvas.parentElement;
+      const width = parent ? parent.clientWidth : 240;
+      const height = parent ? parent.clientHeight : 240;
+      this.threeCamera.aspect = width / height;
+      this.threeCamera.updateProjectionMatrix();
+      this.threeRenderer.setSize(width, height);
+    } else if (this.reactorCanvas) {
       const parent = this.reactorCanvas.parentElement;
       if (parent) {
         this.reactorCanvas.width = parent.clientWidth || 240;
@@ -80,7 +171,6 @@ class FateVisualizer {
 
     this.bgCtx.clearRect(0, 0, w, h);
 
-    // Update and draw nodes
     for (let i = 0; i < this.particles.length; i++) {
       const p = this.particles[i];
       p.x += p.vx;
@@ -95,7 +185,6 @@ class FateVisualizer {
       this.bgCtx.globalAlpha = p.alpha;
       this.bgCtx.fill();
 
-      // Connect nearby nodes with glowing lines
       for (let j = i + 1; j < this.particles.length; j++) {
         const p2 = this.particles[j];
         const dx = p.x - p2.x;
@@ -117,6 +206,26 @@ class FateVisualizer {
   }
 
   drawArcReactorVisualizer() {
+    if (this.threeRenderer && this.threeScene && this.threeCamera) {
+      // 3D Three.js WebGL Rendering Mode
+      const speed = this.state === 'speaking' ? 0.03 : this.state === 'listening' ? 0.05 : 0.01;
+      if (this.spherePoints) {
+        this.spherePoints.rotation.y += speed;
+        this.spherePoints.rotation.x += speed * 0.5;
+
+        // Pulse scale based on audio voice state
+        const scale = 1.0 + Math.sin(Date.now() * (this.state === 'speaking' ? 0.01 : 0.003)) * (this.state === 'speaking' ? 0.15 : 0.05);
+        this.spherePoints.scale.set(scale, scale, scale);
+      }
+      if (this.torusRing) {
+        this.torusRing.rotation.z -= speed * 1.5;
+        this.torusRing.rotation.y += speed * 0.8;
+      }
+      this.threeRenderer.render(this.threeScene, this.threeCamera);
+      return;
+    }
+
+    // Fallback 2D Canvas Mode
     if (!this.reactorCtx) return;
     const ctx = this.reactorCtx;
     const w = this.reactorCanvas.width;
@@ -129,16 +238,13 @@ class FateVisualizer {
     this.rotationAngle += (this.state === 'speaking' ? 0.05 : this.state === 'listening' ? 0.08 : 0.02);
     this.wavePhase += 0.06;
 
-    // Active Color determination
     let activeColor = this.primaryColor;
     if (this.state === 'listening') activeColor = this.accentColor;
     if (this.state === 'speaking') activeColor = this.secondaryColor;
 
-    // Outer Concentric HUD Rings
     ctx.save();
     ctx.translate(cx, cy);
 
-    // Ring 1 (Rotating dash)
     ctx.rotate(this.rotationAngle);
     ctx.beginPath();
     ctx.arc(0, 0, cx - 12, 0, Math.PI * 2);
@@ -148,46 +254,6 @@ class FateVisualizer {
     ctx.setLineDash([12, 8, 4, 8]);
     ctx.stroke();
 
-    // Ring 2 (Counter-rotating dash)
-    ctx.rotate(-this.rotationAngle * 2);
-    ctx.beginPath();
-    ctx.arc(0, 0, cx - 24, 0, Math.PI * 2);
-    ctx.strokeStyle = activeColor;
-    ctx.globalAlpha = 0.6;
-    ctx.lineWidth = 2;
-    ctx.setLineDash([20, 15]);
-    ctx.stroke();
-
-    ctx.restore();
-
-    // Animated Audio Waveform Ring
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.beginPath();
-
-    const points = 60;
-    const baseRadius = cx - 38;
-    const waveAmp = (this.state === 'speaking' ? 12 : this.state === 'listening' ? 16 : 4);
-
-    for (let i = 0; i <= points; i++) {
-      const angle = (i / points) * Math.PI * 2;
-      const freqOffset = Math.sin(angle * 6 + this.wavePhase) * Math.cos(angle * 3 + this.wavePhase);
-      const r = baseRadius + freqOffset * waveAmp;
-
-      const x = Math.cos(angle) * r;
-      const y = Math.sin(angle) * r;
-
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-
-    ctx.closePath();
-    ctx.strokeStyle = activeColor;
-    ctx.lineWidth = 2.5;
-    ctx.shadowColor = activeColor;
-    ctx.shadowBlur = 15;
-    ctx.globalAlpha = 0.95;
-    ctx.stroke();
     ctx.restore();
   }
 
