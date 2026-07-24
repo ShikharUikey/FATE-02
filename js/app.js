@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Main Application Controller (Dynamic Voice & LLM Enabled)
+   FATE Main Application Controller (Optimized Speed & Accuracy Core)
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Startup SFX & Greeting
       setTimeout(() => {
         if (typeof audioFX !== 'undefined') audioFX.playStartup();
-        this.addChatMessage('FATE', 'FATE System Core 2.6 active. macOS Speech Engine & LLM Interfaces Primed. How may I assist your mission?');
+        this.addChatMessage('FATE', 'FATE System Core 2.6 active. All academic, coding, and macOS speech interfaces primed.');
       }, 400);
     }
 
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Nav Tab Buttons
+      // Nav Tab Buttons Setup (Fixed tab-view selector)
       const tabBtns = document.querySelectorAll('.nav-tab-btn');
       tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -178,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const voiceRateInput = document.getElementById('voice-rate');
       const ttsEngineSelect = document.getElementById('tts-engine-select');
       const macVoiceSelect = document.getElementById('mac-voice-select');
+      const voicePersonaSelect = document.getElementById('voice-persona-select');
       const apiKeyInput = document.getElementById('api-key-input');
       const apiProviderSelect = document.getElementById('api-provider-select');
       const sfxToggle = document.getElementById('sfx-toggle');
@@ -193,8 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (typeof audioFX !== 'undefined') audioFX.playSuccess();
         });
       }
-
-      const voicePersonaSelect = document.getElementById('voice-persona-select');
       if (voicePersonaSelect) {
         voicePersonaSelect.addEventListener('change', () => {
           const val = voicePersonaSelect.value;
@@ -320,60 +319,39 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Fixed tab switching implementation targeting .tab-view
     switchTab(tabName) {
       const tabBtns = document.querySelectorAll('.nav-tab-btn');
-      const tabSections = document.querySelectorAll('.hud-tab-content');
+      const tabViews = document.querySelectorAll('.tab-view');
 
       tabBtns.forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabName);
       });
 
-      tabSections.forEach(section => {
-        section.classList.toggle('active', section.id === `tab-${tabName}`);
+      tabViews.forEach(view => {
+        view.classList.toggle('active', view.id === `tab-${tabName}`);
       });
 
-      // Auto-scroll smooth down to Code Studio when switching to suite tab
+      // Non-blocking smooth scroll down to Code Studio when switching to suite tab
       if (tabName === 'suite' && this.codeArea) {
         setTimeout(() => {
           this.codeArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          this.codeArea.focus();
         }, 150);
       }
     }
 
     setTheme(themeName) {
-      document.body.removeAttribute('data-theme');
-      if (themeName !== 'default' && themeName !== 'cyan') {
-        document.body.setAttribute('data-theme', themeName);
+      document.body.className = '';
+      if (themeName !== 'default') {
+        document.body.classList.add(`theme-${themeName}`);
       }
 
-      let primary = '#00f0ff', secondary = '#7000ff', accent = '#ff0077';
-      if (themeName === 'red-alert') { primary = '#ff2a5f'; secondary = '#ff6000'; accent = '#00f0ff'; }
-      if (themeName === 'emerald') { primary = '#00ff88'; secondary = '#00b8ff'; accent = '#ff0077'; }
-      if (themeName === 'amber') { primary = '#ffaa00'; secondary = '#ff4500'; accent = '#00ff88'; }
+      let p = '#00f0ff', s = '#7000ff', a = '#ff0077';
+      if (themeName === 'red-alert') { p = '#ff2a5f'; s = '#ff6000'; a = '#ff0033'; }
+      else if (themeName === 'emerald') { p = '#00ff88'; s = '#00b8ff'; a = '#00ffcc'; }
+      else if (themeName === 'amber') { p = '#ffaa00'; s = '#ff4500'; a = '#ffff00'; }
 
-      this.visualizer.updateColors(primary, secondary, accent);
-    }
-
-    loadSavedSettings() {
-      const savedTheme = localStorage.getItem('fate_theme');
-      if (savedTheme) this.setTheme(savedTheme);
-
-      const apiKeyInput = document.getElementById('api-key-input');
-      const apiProviderSelect = document.getElementById('api-provider-select');
-      const ttsEngineSelect = document.getElementById('tts-engine-select');
-      const macVoiceSelect = document.getElementById('mac-voice-select');
-
-      if (ttsEngineSelect) {
-        ttsEngineSelect.value = this.speech.ttsEngineMode;
-      }
-      if (macVoiceSelect) {
-        macVoiceSelect.value = this.speech.macVoice;
-      }
-      if (apiKeyInput && apiProviderSelect) {
-        apiKeyInput.value = this.brain.apiKey;
-        apiProviderSelect.value = this.brain.apiProvider;
-      }
+      this.visualizer.updateColors(p, s, a);
     }
 
     initClockAndTelemetry() {
@@ -382,41 +360,50 @@ document.addEventListener('DOMContentLoaded', () => {
         if (this.clockElem) {
           this.clockElem.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
-
-        if (this.cpuVal && this.cpuBar) {
-          const cpu = Math.floor(16 + Math.random() * 20 + (this.speech.isSpeaking ? 30 : 0));
-          this.cpuVal.textContent = `${cpu}%`;
-          this.cpuBar.style.width = `${cpu}%`;
-        }
-
-        if (this.ramVal && this.ramBar) {
-          const ram = (2.3 + Math.sin(Date.now() / 5000) * 0.3).toFixed(1);
-          this.ramVal.textContent = `${ram} / 16 GB`;
-          this.ramBar.style.width = `${(ram / 16) * 100}%`;
-        }
       };
 
-      updateClock();
+      const updateSystemUsage = () => {
+        const baseCpu = 18 + Math.floor(Math.sin(Date.now() / 1500) * 8);
+        const baseRam = (2.1 + (Math.cos(Date.now() / 2500) * 0.2)).toFixed(1);
+
+        if (this.cpuVal) this.cpuVal.textContent = `${baseCpu}%`;
+        if (this.cpuBar) this.cpuBar.style.width = `${baseCpu}%`;
+        if (this.ramVal) this.ramVal.textContent = `${baseRam} GB`;
+        if (this.ramBar) this.ramBar.style.width = `${(baseRam / 16) * 100}%`;
+      };
+
       setInterval(updateClock, 1000);
+      setInterval(updateSystemUsage, 2000);
+      updateClock();
+      updateSystemUsage();
     }
 
-    fetchWeatherForCity(cityName) {
+    loadSavedSettings() {
+      const savedEngine = localStorage.getItem('fate_tts_engine') || 'coqui';
+      const savedVoice = localStorage.getItem('fate_mac_voice') || 'Samantha';
+
+      const ttsEngineSelect = document.getElementById('tts-engine-select');
+      const macVoiceSelect = document.getElementById('mac-voice-select');
+
+      if (ttsEngineSelect) ttsEngineSelect.value = savedEngine;
+      if (macVoiceSelect) macVoiceSelect.value = savedVoice;
+    }
+
+    fetchWeatherForCity(city) {
       const weatherTemp = document.getElementById('weather-temp');
-      const weatherInfo = document.getElementById('weather-info');
-      const weatherTitle = document.getElementById('weather-card-title');
+      const weatherCond = document.getElementById('weather-condition');
 
-      if (weatherTitle) {
-        weatherTitle.textContent = `🌤️ WEATHER: ${cityName.toUpperCase()}`;
-      }
+      if (!weatherTemp || !weatherCond) return;
 
-      if (weatherTemp && weatherInfo) {
-        const temp = Math.floor(22 + Math.random() * 6);
-        weatherTemp.textContent = `${temp}°C`;
-        weatherInfo.innerHTML = `<span>LOCATION: ${cityName.toUpperCase()}</span><span>CONDITION: CLEAR / SUNNY</span><span>HUMIDITY: 58%</span>`;
-      }
+      const hash = city.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const temp = 18 + (hash % 12);
+      const conditions = ['CLEAR / SUNNY', 'PARTLY CLOUDY', 'OPTIMAL ATMOSPHERE', 'MILD BREEZE'];
+      const cond = conditions[hash % conditions.length];
+
+      weatherTemp.textContent = `${temp}°C`;
+      weatherCond.textContent = `${cond} (HUMIDITY: ${45 + (hash % 20)}%)`;
     }
   }
 
-  // Initialize FATE Application
   window.fateApp = new FateApp();
 });
