@@ -322,17 +322,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     switchTab(tabName) {
       const tabBtns = document.querySelectorAll('.nav-tab-btn');
-      const tabViews = document.querySelectorAll('.tab-view');
+      const tabSections = document.querySelectorAll('.hud-tab-content');
 
-      tabBtns.forEach(b => {
-        if (b.dataset.tab === tabName) b.classList.add('active');
-        else b.classList.remove('active');
+      tabBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
       });
 
-      tabViews.forEach(v => {
-        if (v.id === `tab-${tabName}`) v.classList.add('active');
-        else v.classList.remove('active');
+      tabSections.forEach(section => {
+        section.classList.toggle('active', section.id === `tab-${tabName}`);
       });
+
+      // Auto-scroll smooth down to Code Studio when switching to suite tab
+      if (tabName === 'suite' && this.codeArea) {
+        setTimeout(() => {
+          this.codeArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          this.codeArea.focus();
+        }, 150);
+      }
     }
 
     setTheme(themeName) {
