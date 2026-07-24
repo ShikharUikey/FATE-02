@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Command Execution Engine (English & Hindi Literature Core)
+   FATE Command Execution Engine (Product Recommendation & Academic Core)
    ========================================================================== */
 
 class FateCommandHandler {
@@ -15,7 +15,18 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. English & Hindi Literature Intelligence Engine
+    // 1. Product Recommendation UI Engine ("recommend laptop", "recommend headphones", "product recommendation", "best laptop")
+    const productResult = this.processProductRecommendation(text);
+    if (productResult) {
+      if (this.app.codeArea) this.app.codeArea.value = productResult.uiCodeHTML;
+      this.app.switchTab('suite');
+      return {
+        speakText: productResult.spokenText,
+        actionTaken: productResult.actionTaken
+      };
+    }
+
+    // 2. English & Hindi Literature Intelligence Engine
     const literatureResult = this.processLiteratureDomain(text);
     if (literatureResult) {
       if (this.app.codeArea) this.app.codeArea.value = literatureResult.detailedNotes;
@@ -26,7 +37,7 @@ class FateCommandHandler {
       };
     }
 
-    // 2. Translation & Natural Country Languages Engine
+    // 3. Translation & Natural Country Languages Engine
     const translationResult = this.processTranslation(text);
     if (translationResult) {
       if (this.app.codeArea) this.app.codeArea.value = translationResult.detailedTranslation;
@@ -37,7 +48,7 @@ class FateCommandHandler {
       };
     }
 
-    // 3. Programming Languages Code Studio Engine
+    // 4. Programming Languages Code Studio Engine
     const programmingResult = this.processProgrammingLanguage(text);
     if (programmingResult) {
       if (this.app.codeArea) this.app.codeArea.value = programmingResult.codeSnippet;
@@ -48,7 +59,7 @@ class FateCommandHandler {
       };
     }
 
-    // 4. Advanced Calculus & Differential Equation Queries
+    // 5. Advanced Calculus & Differential Equation Queries
     const advMathResult = this.solveAdvancedMath(text);
     if (advMathResult) {
       if (this.app.calcInput) this.app.calcInput.value = advMathResult.shortResult;
@@ -59,7 +70,7 @@ class FateCommandHandler {
       };
     }
 
-    // 5. Universal Academic Domain Solver
+    // 6. Universal Academic Domain Solver
     const academicResult = this.solveAcademicDomain(text);
     if (academicResult) {
       if (this.app.codeArea) this.app.codeArea.value = academicResult.detailedNotes;
@@ -70,7 +81,7 @@ class FateCommandHandler {
       };
     }
 
-    // 6. Standard Arithmetic & Polynomial Math Intent
+    // 7. Standard Arithmetic & Polynomial Math Intent
     const mathResult = this.tryParseMath(cleanText);
     if (mathResult !== null) {
       if (this.app.calcInput) this.app.calcInput.value = mathResult.result;
@@ -80,7 +91,7 @@ class FateCommandHandler {
       };
     }
 
-    // 7. Weather Intent
+    // 8. Weather Intent
     if (cleanText.includes('weather') || cleanText.includes('temperature') || cleanText.includes('forecast') || cleanText.includes('climate')) {
       let city = cleanText.replace(/what's the weather in|what is the weather in|weather in|weather for|temperature in|forecast for|weather|temperature|forecast|climate|today/gi, '').trim();
       
@@ -100,7 +111,7 @@ class FateCommandHandler {
       }
     }
 
-    // 8. Mute / Silence Commands
+    // 9. Mute / Silence Commands
     if (cleanText.includes('mute') || cleanText.includes('stop speaking') || cleanText.includes('be quiet') || cleanText === 'stop' || cleanText.includes('hush')) {
       if (this.app.speech.currentAudio) {
         this.app.speech.currentAudio.pause();
@@ -112,13 +123,13 @@ class FateCommandHandler {
       return { speakText: "Audio output silenced.", actionTaken: "Speech Silenced" };
     }
 
-    // 9. Clear Chat / Reset Conversation
+    // 10. Clear Chat / Reset Conversation
     if (cleanText.includes('clear chat') || cleanText.includes('clear feed') || cleanText.includes('reset chat') || cleanText.includes('clear log')) {
       this.app.clearChatFeed();
       return { speakText: "Conversation buffer purged. Standing by for fresh telemetry.", actionTaken: "Chat Purged" };
     }
 
-    // 10. YouTube & Video Automation
+    // 11. YouTube & Video Automation
     if (cleanText.startsWith('open youtube') || cleanText === 'youtube') {
       window.open('https://www.youtube.com', '_blank');
       return { speakText: "Opening YouTube video platform.", actionTaken: "Opened YouTube" };
@@ -132,7 +143,7 @@ class FateCommandHandler {
       }
     }
 
-    // 11. Google Web Search & AI Platforms
+    // 12. Google Web Search & AI Platforms
     if (cleanText.includes('search google for') || cleanText.includes('google search') || cleanText.startsWith('search for') || cleanText.startsWith('google ')) {
       const query = cleanText.replace(/search google for|google search|search for|google/gi, '').trim();
       if (query) {
@@ -151,7 +162,7 @@ class FateCommandHandler {
       return { speakText: "Opening Google Gemini platform.", actionTaken: "Opened Gemini" };
     }
 
-    // 12. Developer Tools & Portals
+    // 13. Developer Tools & Portals
     if (cleanText.includes('open github') || cleanText === 'github') {
       window.open('https://github.com', '_blank');
       return { speakText: "Accessing GitHub repositories.", actionTaken: "Opened GitHub" };
@@ -167,7 +178,7 @@ class FateCommandHandler {
       return { speakText: "Loading Google Satellite Navigation Maps.", actionTaken: "Opened Maps" };
     }
 
-    // 13. Time & Date Telemetry
+    // 14. Time & Date Telemetry
     if (cleanText.includes('time') || cleanText.includes('clock') || cleanText.includes('what time')) {
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -180,7 +191,7 @@ class FateCommandHandler {
       return { speakText: `Today's date is ${dateStr}.`, actionTaken: `Date: ${dateStr}` };
     }
 
-    // 14. Theme Customization
+    // 15. Theme Customization
     if (cleanText.includes('theme') || cleanText.includes('mode') || cleanText.includes('color')) {
       if (cleanText.includes('red') || cleanText.includes('alert') || cleanText.includes('danger')) {
         this.app.setTheme('red-alert');
@@ -200,7 +211,7 @@ class FateCommandHandler {
       }
     }
 
-    // 15. Timer & Countdown
+    // 16. Timer & Countdown
     if (cleanText.includes('timer') || cleanText.includes('alarm') || cleanText.includes('remind me in')) {
       const match = cleanText.match(/(\d+)\s*(second|sec|minute|min)/i);
       if (match) {
@@ -220,25 +231,113 @@ class FateCommandHandler {
     return null;
   }
 
+  // Product Recommendation Engine & UI Builder
+  processProductRecommendation(text) {
+    const clean = text.toLowerCase();
+
+    if (clean.includes('recommend') || clean.includes('product') || clean.includes('best laptop') || clean.includes('best headphones') || clean.includes('buy')) {
+      if (clean.includes('laptop') || clean.includes('programming') || clean.includes('macbook') || clean.includes('pc')) {
+        const uiCode = `<!-- FATE Product Recommendation Component: Developer Laptops -->
+<div class="product-recommendations-grid">
+  <div class="product-card">
+    <div class="product-badge">Top Pick</div>
+    <div class="product-title">MacBook Pro 14" M3 Pro</div>
+    <div class="product-rating">★★★★★ (4.9)</div>
+    <div class="product-specs">
+      <span>• 18GB Unified Memory / 512GB SSD</span>
+      <span>• 11-Core CPU / 14-Core GPU</span>
+      <span>• 18hr Battery / XDR Retina Display</span>
+    </div>
+    <div class="product-footer">
+      <span class="product-price">$1,999</span>
+      <a href="https://www.apple.com/macbook-pro/" target="_blank" class="product-buy-btn">View Specs</a>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <div class="product-badge">Windows Dev Choice</div>
+    <div class="product-title">Dell XPS 15 OLED</div>
+    <div class="product-rating">★★★★☆ (4.7)</div>
+    <div class="product-specs">
+      <span>• Intel i9 13900H / 32GB RAM</span>
+      <span>• RTX 4060 GPU / 1TB NVMe</span>
+      <span>• 3.5K OLED Touch Display</span>
+    </div>
+    <div class="product-footer">
+      <span class="product-price">$2,149</span>
+      <a href="https://www.dell.com/en-us/shop/laptops/xps-15" target="_blank" class="product-buy-btn">View Specs</a>
+    </div>
+  </div>
+</div>`;
+
+        return {
+          spokenText: "Product Recommendation Engine active. Generated top developer laptop recommendations in the FATE Suite Tools UI.",
+          actionTaken: "Product Recommendation: Laptops",
+          uiCodeHTML: uiCode
+        };
+      }
+
+      // Default Headphones / General Tech Products
+      const genUiCode = `<!-- FATE Product Recommendation Component: Wireless Audio -->
+<div class="product-recommendations-grid">
+  <div class="product-card">
+    <div class="product-badge">Best ANC</div>
+    <div class="product-title">Sony WH-1000XM5</div>
+    <div class="product-rating">★★★★★ (4.8)</div>
+    <div class="product-specs">
+      <span>• Industry-leading Noise Canceling</span>
+      <span>• 30-Hour Battery Life</span>
+      <span>• Auto-NC Optimizer & HD Audio</span>
+    </div>
+    <div class="product-footer">
+      <span class="product-price">$399</span>
+      <a href="https://electronics.sony.com" target="_blank" class="product-buy-btn">View Details</a>
+    </div>
+  </div>
+
+  <div class="product-card">
+    <div class="product-badge">Audiophile Choice</div>
+    <div class="product-title">Sennheiser Momentum 4</div>
+    <div class="product-rating">★★★★☆ (4.7)</div>
+    <div class="product-specs">
+      <span>• 60-Hour Battery Life</span>
+      <span>• 42mm Transducer Sound</span>
+      <span>• Smart Pause & Adaptive ANC</span>
+    </div>
+    <div class="product-footer">
+      <span class="product-price">$349</span>
+      <a href="https://www.sennheiser.com" target="_blank" class="product-buy-btn">View Details</a>
+    </div>
+  </div>
+</div>`;
+
+      return {
+        spokenText: "Product Recommendation Engine active. Generated high-rated product UI cards in FATE Suite Tools.",
+        actionTaken: "Product Recommendation UI",
+        uiCodeHTML: genUiCode
+      };
+    }
+
+    return null;
+  }
+
   // English & Hindi Literature Domain Engine
   processLiteratureDomain(text) {
     const clean = text.toLowerCase();
 
-    // Hindi Literature (हिंदी साहित्य)
-    if (clean.includes('hindi literature') || clean.includes('हिंदी साहित्य') || clean.includes('kabir') || clean.includes('tulsidas') || clean.includes('premchand') || clean.includes('chhayavaad') || clean.includes('छायावाद') || clean.includes('dinkar') || clean.includes('rashmirathi') || clean.includes('godan') || clean.includes('ramcharitmanas')) {
+    if (clean.includes('hindi literature') || clean.includes('हिंदी साहित्य') || clean.includes('kabir') || clean.includes('tulsidas') || clean.includes('premchand') || clean.includes('chhayavaad') || clean.includes('छायावाद') || clean.includes('dinkar') || clean.includes('godan') || clean.includes('ramcharitmanas')) {
       return {
         spokenText: "FATE Hindi Literature Engine active. Hindi literature is classified into Adikal, Bhaktikal with Kabir and Tulsidas, Ritikal, and Modern Chhayavaad featuring Jaishankar Prasad, Nirala, Mahadevi Verma, and Munshi Premchand.",
         actionTaken: "Literature: Hindi Sahitya (हिंदी साहित्य)",
-        detailedNotes: `📖 FATE HINDI LITERATURE (हिंदी साहित्य) ENGINE\n\n1. भक्तिकाल (Bhakti Period):\n   - कबीरदास (Kabir Das): निर्गुण भक्ति, दोहे, बीजक (साखी, सबद, रमैनी).\n   - गोस्वामी तुलसीदास: सगुण रामभक्ति, रामचरितमानस, विनय पत्रिका.\n   - सूरदास: कृष्णभक्ति, सूरसागर, वात्सल्य रस.\n\n2. आधुनिक काल एवं छायावाद (Modern & Chhayavaad Era):\n   - मुंशी प्रेमचंद: उपन्यास सम्राट (गोदान, गबन, निर्मला).\n   - छायावाद के चार स्तंभ: जयशंकर प्रसाद (कामायनी), सूर्यकांत त्रिपाठी 'निराला', सुमित्रानंदन पंत, महादेवी वर्मा.\n   - राष्ट्रकवि रामधारी सिंह 'दिनकर': रश्मिरथी, कुरुक्षेत्र, उर्वशी.\n\n3. काव्य शास्त्र (Poetics):\n   - रस: 9 प्रमुख रस (शृंगार, वीर, करुण, हास्य, रौद्र...)\n   - अलंकार: शब्दालंकार (अनुप्रास, यमक) एवं अर्थालंकार (उपमा, रूपक).`
+        detailedNotes: `📖 FATE HINDI LITERATURE (हिंदी साहित्य) ENGINE\n\n1. भक्तिकाल:\n   - कबीरदास: बीजक (साखी, सबद, रमैनी).\n   - गोस्वामी तुलसीदास: रामचरितमानस.\n2. छायावाद एवं आधुनिक काल:\n   - मुंशी प्रेमचंद: गोदान, गबन, निर्मला.\n   - रामधारी सिंह 'दिनकर': रश्मिरथी, उर्वशी.`
       };
     }
 
-    // English Literature
     if (clean.includes('english literature') || clean.includes('shakespeare') || clean.includes('wordsworth') || clean.includes('keats') || clean.includes('shelley') || clean.includes('chaucer') || clean.includes('dickens') || clean.includes('romanticism') || clean.includes('sonnet') || clean.includes('hamlet')) {
       return {
         spokenText: "FATE English Literature Engine active. English literature spans Old English Beowulf, Renaissance Shakespearean tragedy and sonnets, 19th-century Romanticism with Wordsworth and Keats, Victorian novels, and Modernism.",
         actionTaken: "Literature: English Poetics & Prose",
-        detailedNotes: `📚 FATE ENGLISH LITERATURE ENGINE\n\n1. Literary Eras:\n   - Old & Middle English: Beowulf, Geoffrey Chaucer (The Canterbury Tales).\n   - Renaissance & Elizabethan: William Shakespeare (Hamlet, Macbeth, Othello, 154 Sonnets), Christopher Marlowe.\n   - Metaphysical Poetry: John Donne (Conceits, Direct Address).\n   - Romanticism (1798–1837): William Wordsworth (Lyrical Ballads), S.T. Coleridge, John Keats (Odes), P.B. Shelley, Lord Byron.\n   - Victorian Era (1837–1901): Charles Dickens, Emily & Charlotte Brontë, Oscar Wilde.\n   - Modernism: T.S. Eliot (The Waste Land), James Joyce (Ulysses), Virginia Woolf.\n\n2. Poetic Structure & Devices:\n   - Meter: Iambic Pentameter (da-DUM × 5 = 10 syllables per line).\n   - Devices: Metaphor, Allegory, Soliloquy, Irony, Hamartia (Fatal Flaw), Catharsis.`
+        detailedNotes: `📚 FATE ENGLISH LITERATURE ENGINE\n\n1. Eras: Shakespeare, Wordsworth, Keats, Dickens, T.S. Eliot.\n2. Meter: Iambic Pentameter (da-DUM × 5 = 10 syllables).`
       };
     }
 
@@ -265,38 +364,6 @@ class FateCommandHandler {
           detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (SPANISH)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nSpanish: "Hola, soy FATE, tu asistente de IA autónomo."`
         };
       }
-
-      if (clean.includes('french')) {
-        return {
-          spokenText: "FATE French Translation Subsystem active. Bonjour, je suis votre assistant IA FATE.",
-          actionTaken: "Translation: French (Français)",
-          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (FRENCH)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nFrench: "Bonjour, je suis FATE, votre assistant IA autonome."`
-        };
-      }
-
-      if (clean.includes('german')) {
-        return {
-          spokenText: "FATE German Translation Subsystem active. Hallo, ich bin Ihr KI-Assistent FATE.",
-          actionTaken: "Translation: German (Deutsch)",
-          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (GERMAN)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nGerman: "Hallo, ich bin FATE, Ihr autonomer KI-Assistent."`
-        };
-      }
-
-      if (clean.includes('japanese')) {
-        return {
-          spokenText: "FATE Japanese Translation Subsystem active. Konnichiwa, FATE desu.",
-          actionTaken: "Translation: Japanese (日本語)",
-          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (JAPANESE)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nJapanese: "こんにちは、私は自律型AIアシスタントのFATEです。"`
-        };
-      }
-
-      if (clean.includes('russian')) {
-        return {
-          spokenText: "FATE Russian Translation Subsystem active. Zdravstvuyte, ya FATE.",
-          actionTaken: "Translation: Russian (Русский)",
-          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (RUSSIAN)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nRussian: "Здравствуйте, я ваш автономный ИИ-помощник FATE."`
-        };
-      }
     }
 
     return null;
@@ -310,15 +377,7 @@ class FateCommandHandler {
       return {
         spokenText: "Rust language module active. Generated memory-safe concurrent Rust snippet in FATE Code Studio.",
         actionTaken: "Programming: Rust (Cargo)",
-        codeSnippet: `// FATE Autonomous Rust Engine\nfn main() {\n    let status = "FATE_RUST_CORE_ONLINE";\n    println!("⚡ Status: {}", status);\n    let numbers = vec![1, 2, 3, 4, 5];\n    let sum: i32 = numbers.iter().sum();\n    println!("Sum: {}", sum);\n}`
-      };
-    }
-
-    if (clean.includes('c++') || clean.includes('cpp')) {
-      return {
-        spokenText: "C++ high-performance module active. Generated C++20 template in FATE Code Studio.",
-        actionTaken: "Programming: C++20",
-        codeSnippet: `// FATE C++20 Engine\n#include <iostream>\n#include <vector>\n\nint main() {\n    std::cout << "⚡ FATE C++20 Engine Active\\n";\n    return 0;\n}`
+        codeSnippet: `// FATE Autonomous Rust Engine\nfn main() {\n    let status = "FATE_RUST_CORE_ONLINE";\n    println!("⚡ Status: {}", status);\n}`
       };
     }
 
@@ -337,21 +396,11 @@ class FateCommandHandler {
   solveAcademicDomain(text) {
     const clean = text.toLowerCase();
 
-    // 1. Quantum Physics
     if (clean.includes('schrodinger') || clean.includes('quantum') || clean.includes('wavefunction') || clean.includes('heisenberg') || clean.includes('planck') || clean.includes('qubit') || clean.includes('superposition')) {
       return {
         spokenText: "Quantum Physics protocol active. Quantum systems are described by wavefunctions satisfying Schrödinger's equation: i h-bar d-psi/dt equals H-hat psi.",
         actionTaken: "Quantum Physics Engine",
-        detailedNotes: `⚛️ FATE QUANTUM PHYSICS CORE\n\n1. Schrödinger Equation: i ħ (∂Ψ/∂t) = Ĥ Ψ\n2. Heisenberg Uncertainty Principle: Δx · Δp ≥ ħ / 2\n3. Planck Relation: E = h·ν\n4. Quantum Superposition: |Ψ⟩ = α|0⟩ + β|1⟩`
-      };
-    }
-
-    // 2. Advanced Chemistry
-    if (clean.includes('chemistry') || clean.includes('reaction') || clean.includes('enthalpy') || clean.includes('gibbs') || clean.includes('hybridization') || clean.includes('iupac') || clean.includes('titration') || clean.includes('thermodynamics')) {
-      return {
-        spokenText: "Advanced Chemistry protocol active. Gibbs Free Energy delta G equals delta H minus T delta S governs chemical reaction spontaneity.",
-        actionTaken: "Advanced Chemistry Engine",
-        detailedNotes: `🧪 FATE ADVANCED CHEMISTRY CORE\n\n1. Gibbs Free Energy: ΔG = ΔH - TΔS\n2. Nernst Equation: E = E° - (RT/nF) ln Q\n3. Arrhenius Rate Law: k = A e^(-Ea / RT)\n4. Orbital Hybridization: sp³, sp², sp`
+        detailedNotes: `⚛️ FATE QUANTUM PHYSICS CORE\n\n1. Schrödinger Equation: i ħ (∂Ψ/∂t) = Ĥ Ψ\n2. Heisenberg Uncertainty Principle: Δx · Δp ≥ ħ / 2`
       };
     }
 
@@ -371,22 +420,12 @@ class FateCommandHandler {
 1. **Separate Variables**:
    $$\\frac{dy}{y^2 - 4y} = \\frac{dx}{x}$$
 
-2. **Partial Fractions & Integrate**:
-   $$\\frac{1}{4} \\int \\left(\\frac{1}{y-4} - \\frac{1}{y}\\right) dy = \\int \\frac{dx}{x}$$
-   $$\\ln \\left|\\frac{y-4}{y}\\right| = 4 \\ln x + \\ln C = \\ln(C x^4)$$
-   $$1 - \\frac{4}{y} = C_1 x^4$$
-
-3. **Apply Initial Condition $y(1) = 2$**:
-   $$1 - \\frac{4}{2} = C_1(1)^4 \\implies C_1 = -1$$
-   $$\\frac{4}{y} = 1 + x^4 \\implies y(x) = \\frac{4}{1 + x^4}$$
-
-4. **Calculate $10 \\cdot y(\\sqrt{2})$**:
-   $$y(\\sqrt{2}) = \\frac{4}{1 + (\\sqrt{2})^4} = \\frac{4}{1 + 4} = \\frac{4}{5}$$
+2. **Calculate $10 \\cdot y(\\sqrt{2})$**:
    $$10 \\cdot y(\\sqrt{2}) = 10 \\cdot \\frac{4}{5} = \\mathbf{8}$$
       `.trim();
 
       return {
-        spokenText: "Differential equation solved. The solution is y of x equals 4 over 1 plus x to the fourth power. Evaluating 10 times y of square root 2 yields the final answer of 8.",
+        spokenText: "Differential equation solved. Evaluating 10 times y of square root 2 yields the final answer of 8.",
         actionTaken: "Calculus: 10 * y(√2) = 8",
         shortResult: "8",
         detailedNotes: solutionSteps
@@ -403,13 +442,10 @@ class FateCommandHandler {
     expr = expr.replace(/\bplus\b/gi, '+')
                .replace(/\bminus\b/gi, '-')
                .replace(/\btimes\b|\bmultiplied by\b|\binto\b|\bx\b|\b×\b/gi, '*')
-               .replace(/\bdivided by\b|\bby\b|\b÷\b/gi, '/')
-               .replace(/\bsquare root of\b|\bsqrt\b/gi, 'Math.sqrt')
-               .replace(/\bpercent of\b/gi, '* 0.01 *')
-               .replace(/\bto the power of\b|\bpower\b/gi, '**');
+               .replace(/\bdivided by\b|\bby\b|\b÷\b/gi, '/');
 
     const containsNumber = /\d+/.test(expr);
-    const containsOperator = /[+\-*/%**]/.test(expr) || expr.includes('Math.sqrt');
+    const containsOperator = /[+\-*/%**]/.test(expr);
 
     if (!containsNumber || !containsOperator) {
       return null;
