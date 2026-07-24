@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Conversational AI Engine & Knowledge Base (Omni-Academic Enabled)
+   FATE Conversational AI Engine & Knowledge Base (Universal Academic Core)
    ========================================================================== */
 
 class FateAIBrain {
@@ -33,7 +33,7 @@ class FateAIBrain {
       }
     }
 
-    // Built-in Omni-Academic Knowledge & Science Engine
+    // Built-in Universal Academic Knowledge & Science Engine
     return this.generateOfflineResponse(q, query);
   }
 
@@ -60,40 +60,45 @@ class FateAIBrain {
       return "Advanced Chemistry encompasses Thermodynamics, Quantum Kinetics, Organic Synthesis, and Electrochemistry. Key laws include Nernst Equation E = E° - (RT/nF)lnQ and Arrhenius Rate Kinetics.";
     }
 
-    // 3. Advanced Geography Core
+    // 3. Biology & Life Sciences
+    if (q.includes('biology') || q.includes('dna') || q.includes('rna') || q.includes('crispr') || q.includes('genetics') || q.includes('photosynthesis') || q.includes('respiration') || q.includes('cell')) {
+      return "Central Dogma of Biology: Genetic info flows from DNA to RNA via transcription, and from RNA to protein via translation. CRISPR-Cas9 enables precise gene editing.";
+    }
+
+    // 4. Economics & Finance
+    if (q.includes('economics') || q.includes('inflation') || q.includes('gdp') || q.includes('supply and demand') || q.includes('microeconomics') || q.includes('macroeconomics') || q.includes('game theory')) {
+      return "Economics analyzes resource allocation. Market equilibrium occurs where Quantity Demanded equals Quantity Supplied. GDP = Consumption + Investment + Government Spending + Net Exports.";
+    }
+
+    // 5. Computer Science & AI
+    if (q.includes('computer science') || q.includes('algorithm') || q.includes('big o') || q.includes('data structure') || q.includes('neural network') || q.includes('binary tree')) {
+      return "Computer Science studies computation and data structures. Algorithm efficiency is measured by Big-O complexity (e.g., O(1), O(n log n)). Neural networks optimize weights via backpropagation.";
+    }
+
+    // 6. Literature & Poetics
+    if (q.includes('literature') || q.includes('poem') || q.includes('poetry') || q.includes('shakespeare') || q.includes('metaphor') || q.includes('novel') || q.includes('rhetoric') || q.includes('iambic') || q.includes('allegory')) {
+      if (q.includes('meter') || q.includes('iambic')) {
+        return "Iambic Pentameter consists of 5 metric feet per line, each with an unstressed syllable followed by a stressed syllable (da-DUM da-DUM da-DUM da-DUM da-DUM).";
+      }
+      return "Literary Analysis evaluates theme, character arc, allegory, symbolism, and narrative arc. Classic movements range from Renaissance drama and Romanticism to Modernist prose.";
+    }
+
+    // 7. Psychology & Cognitive Science
+    if (q.includes('psychology') || q.includes('cognitive') || q.includes('behavior') || q.includes('neuroscience') || q.includes('maslow') || q.includes('pavlov') || q.includes('freud')) {
+      return "Psychology examines behavior and cognition. Key paradigms include Pavlovian Classical Conditioning, Skinnerian Operant Conditioning, and Maslow's Hierarchy of Needs.";
+    }
+
+    // 8. Advanced Geography Core
     if (q.includes('geography') || q.includes('tectonic') || q.includes('plate') || q.includes('geomorphology') || q.includes('climatology') || q.includes('monsoon') || q.includes('atmosphere')) {
-      if (q.includes('tectonic') || q.includes('plate')) {
-        return "Plate Tectonics explains lithospheric motion driven by mantle convection currents, forming convergent mountains, divergent oceanic ridges, and transform fault lines.";
-      }
-      if (q.includes('atmosphere') || q.includes('climate')) {
-        return "Earth's atmospheric circulation features Hadley, Ferrel, and Polar cells driven by solar radiation differentials and the Coriolis Effect, creating global climate belts.";
-      }
-      return "Advanced Geography integrates Geomorphology, Climatology, Hydrology, and Oceanography to analyze terrestrial dynamics, atmospheric processes, and spatial phenomena.";
+      return "Plate Tectonics explains lithospheric motion driven by mantle convection currents, forming convergent mountains, divergent oceanic ridges, and transform fault lines.";
     }
 
-    // 4. Advanced Grammar & Linguistics Core
-    if (q.includes('grammar') || q.includes('syntax') || q.includes('clause') || q.includes('passive') || q.includes('etymology') || cleanGrammarCheck(q)) {
-      if (q.includes('passive') || q.includes('active')) {
-        return "In active voice, the subject performs the action (e.g., 'FATE solved the equation'). In passive voice, the subject receives the action (e.g., 'The equation was solved by FATE').";
-      }
-      if (q.includes('clause')) {
-        return "A clause contains a subject and predicate. Independent clauses express complete thoughts; dependent (subordinate) clauses function as adjectives, adverbs, or nouns within complex sentences.";
-      }
-      return "Advanced Grammar and Syntax analyze sentence structure, subject-verb agreement, clause subordination, modifier placement, and rhetorical style for clear, precise communication.";
-    }
-
-    // 5. Advanced History Core
+    // 9. Advanced History Core
     if (q.includes('history') || q.includes('revolution') || q.includes('world war') || q.includes('treaty') || q.includes('ancient civilization') || q.includes('historiography')) {
-      if (q.includes('world war')) {
-        return "World War I (1914-1918) reshaped global borders and led to the Treaty of Versailles. World War II (1939-1945) led to the United Nations, atomic energy, and the Cold War era.";
-      }
-      if (q.includes('revolution')) {
-        return "Major historical revolutions include the Scientific Revolution (16th-17th C), Industrial Revolution (1760), American (1776), French (1789), and Russian (1917) Revolutions.";
-      }
-      return "Advanced History examines political, social, and economic transformations from early river valley civilizations (Indus Valley, Mesopotamia) to modern geopolitical agreements.";
+      return "World History examines major geopolitical transformations from ancient river valley civilizations to the Industrial Revolutions and 20th-century international diplomacy.";
     }
 
-    // 6. Calculus & Math Core
+    // 10. Calculus & Differential Equations
     if (q.includes('differential equation') || q.includes('xdy') || q.includes('y(1) = 2') || q.includes('dy/dx') || q.includes('solution of')) {
       if (q.includes('y^2 - 4y') || q.includes('y2 - 4y') || q.includes('10 y')) {
         return "Differential equation solved via separation of variables: dy/(y^2 - 4y) = dx/x. Integrating gives y(x) = 4 / (1 + x^4). Evaluating at x = sqrt(2) yields y(sqrt(2)) = 4/5. Thus, 10 * y(sqrt(2)) = 8.";
@@ -101,38 +106,38 @@ class FateAIBrain {
       return "FATE Advanced Math Engine: Differential equations can be solved using Variable Separation, Integrating Factors, or Exact Form. For dy/dx + P(x)y = Q(x), the Integrating Factor is e^(integral P dx).";
     }
 
-    // 7. Identity & Persona
+    // 11. Identity & Persona
     if (q.includes('who are you') || q.includes('your name') || q.includes('what are you') || q.includes('identify')) {
-      return "I am FATE — Futuristic Autonomous Tech Assistant. Equipped with Quantum Physics, Chemistry, Calculus, Geography, Grammar, and History academic engines.";
+      return "I am FATE — Futuristic Autonomous Tech Assistant. Equipped with Quantum Physics, Chemistry, Biology, Economics, CS, Literature, History, and Calculus academic engines.";
     }
 
     if (q.includes('jarvis')) {
-      return "I am FATE, not Jarvis! Engineered with upgraded voice protocols, responsive HUD telemetry, and independent multi-domain academic modules.";
+      return "I am FATE, not Jarvis! Engineered with upgraded voice protocols, responsive HUD telemetry, and universal multi-domain academic modules.";
     }
 
     if (q.includes('creator') || q.includes('who created you') || q.includes('who made you')) {
       return "I was engineered as your personal autonomous AI assistant to streamline your digital and academic environment.";
     }
 
-    // 8. Greetings & Courtesy
+    // 12. Greetings & Courtesy
     if (q === 'hi' || q === 'hello' || q.includes('hey fate') || q.includes('hello fate') || q === 'yo') {
-      return "Greetings, Administrator. All core academic and scientific subsystems are operational.";
+      return "Greetings, Administrator. All core academic, scientific, and literary subsystems are operational.";
     }
 
     if (q.includes('how are you') || q.includes('status') || q.includes('how is it going')) {
-      return "All core diagnostics report 100% operational efficiency. Quantum physics, chemistry, calculus, and history modules are primed.";
+      return "All core diagnostics report 100% operational efficiency. Literature, science, math, and humanities modules are primed.";
     }
 
     if (q.includes('thank') || q.includes('thanks') || q.includes('great job')) {
       return "Always at your service. Let me know whenever you require further academic assistance.";
     }
 
-    // 9. Capabilities & Help
+    // 13. Capabilities & Help
     if (q.includes('what can you do') || q.includes('help') || q.includes('command list') || q.includes('capabilities')) {
-      return "I can solve Quantum Physics, Advanced Chemistry, Calculus, Geography, Grammar, and History queries, automate Web & YouTube searches, fetch weather, and run code in the FATE Code Studio.";
+      return "I can analyze Literature & Poetics, Quantum Physics, Chemistry, Biology, Economics, CS, Psychology, History, and Calculus queries, automate Web & YouTube searches, fetch weather, and run code in the FATE Code Studio.";
     }
 
-    // 10. General Knowledge Query Fallback
+    // 14. General Knowledge Query Fallback
     return `Query logged: "${originalQuery}". FATE core has recorded your prompt. I can run a Google search or YouTube scan for more in-depth data if you like!`;
   }
 
@@ -146,7 +151,7 @@ class FateAIBrain {
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [
-          { role: 'system', content: 'You are FATE (Futuristic Autonomous Tech Assistant), an expert in Quantum Physics, Advanced Chemistry, Calculus, Geography, Grammar, and History. Provide rigorous, step-by-step academic solutions.' },
+          { role: 'system', content: 'You are FATE (Futuristic Autonomous Tech Assistant), an expert in Literature, Quantum Physics, Chemistry, Biology, Economics, Computer Science, Psychology, and History. Provide rigorous, step-by-step academic solutions.' },
           { role: 'user', content: prompt }
         ],
         max_tokens: 220
@@ -161,14 +166,10 @@ class FateAIBrain {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `You are FATE (Futuristic Autonomous Tech Assistant), an expert in Quantum Physics, Advanced Chemistry, Calculus, Geography, Grammar, and History. Provide a rigorous, step-by-step academic solution for: ${prompt}` }] }]
+        contents: [{ parts: [{ text: `You are FATE (Futuristic Autonomous Tech Assistant), an expert in Literature, Quantum Physics, Chemistry, Biology, Economics, Computer Science, Psychology, and History. Provide a rigorous academic analysis for: ${prompt}` }] }]
       })
     });
     const data = await res.json();
     return data.candidates[0].content.parts[0].text.trim();
   }
-}
-
-function cleanGrammarCheck(str) {
-  return str.includes('noun') || str.includes('verb') || str.includes('adjective') || str.includes('tense') || str.includes('sentence');
 }

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Command Execution Engine (Omni-Domain Academic & Science Core)
+   FATE Command Execution Engine (Omni-Academic & Universal Science Core)
    ========================================================================== */
 
 class FateCommandHandler {
@@ -15,7 +15,7 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. Check for Advanced Calculus & Differential Equation Queries
+    // 1. Advanced Calculus & Differential Equation Queries
     const advMathResult = this.solveAdvancedMath(text);
     if (advMathResult) {
       if (this.app.calcInput) this.app.calcInput.value = advMathResult.shortResult;
@@ -26,7 +26,7 @@ class FateCommandHandler {
       };
     }
 
-    // 2. Check for Specialized Academic Domain Queries (Quantum Physics, Chemistry, Geography, Grammar, History)
+    // 2. Universal Academic Domain Solver (Quantum Physics, Chemistry, Biology, Economics, CS, Psychology, History, Geography, Literature)
     const academicResult = this.solveAcademicDomain(text);
     if (academicResult) {
       if (this.app.codeArea) this.app.codeArea.value = academicResult.detailedNotes;
@@ -192,7 +192,7 @@ class FateCommandHandler {
       } else if (cleanText.includes('html')) {
         codeSnippet = `<!-- FATE Cyberpunk Glassmorphic Widget -->\n<div class="fate-hud-card">\n  <h2>F.A.T.E. Quantum Core Telemetry</h2>\n  <div class="status-indicator active">ONLINE</div>\n</div>`;
       } else {
-        codeSnippet = `// FATE Quantum State Visualizer\nfunction quantumState(alpha, beta) {\n  const norm = Math.sqrt(alpha*alpha + beta*beta);\n  return { alpha: alpha/norm, beta: beta/norm };\n}\nconsole.log(quantumState(1, 1));`;
+        codeSnippet = `// FATE Universal Academic Engine\nfunction fateAnalyzeSubject(subject) {\n  return \`FATE \${subject} Subsystem: OPTIMAL\`;\n}\nconsole.log(fateAnalyzeSubject("LITERATURE_AND_SCIENCE"));`;
       }
       if (this.app.codeArea) this.app.codeArea.value = codeSnippet;
       this.app.switchTab('suite');
@@ -202,52 +202,88 @@ class FateCommandHandler {
     return null;
   }
 
-  // Specialized Academic Domain Intent Solver (Quantum Physics, Chemistry, Geography, Grammar, History)
+  // Universal Academic Domain Intent Solver
   solveAcademicDomain(text) {
     const clean = text.toLowerCase();
 
     // 1. Quantum Physics
     if (clean.includes('schrodinger') || clean.includes('quantum') || clean.includes('wavefunction') || clean.includes('heisenberg') || clean.includes('planck') || clean.includes('qubit') || clean.includes('superposition')) {
       return {
-        spokenText: "Quantum Physics protocol active. In quantum mechanics, physical systems are described by wavefunctions satisfying the time-dependent Schrodinger equation: i h-bar d-psi/dt equals H-hat psi. Energy is quantized in units of h nu.",
-        actionTaken: "Quantum Physics: Schrödinger Wave Engine",
-        detailedNotes: `⚛️ FATE QUANTUM PHYSICS CORE\n\n1. Schrödinger Equation: i ħ (∂Ψ/∂t) = Ĥ Ψ\n2. Heisenberg Uncertainty Principle: Δx · Δp ≥ ħ / 2\n3. Planck-Einstein Relation: E = h·ν = ħ·ω\n4. Wave-Particle Duality: λ = h / p`
+        spokenText: "Quantum Physics protocol active. Quantum systems are described by wavefunctions satisfying Schrödinger's equation: i h-bar d-psi/dt equals H-hat psi.",
+        actionTaken: "Quantum Physics Engine",
+        detailedNotes: `⚛️ FATE QUANTUM PHYSICS CORE\n\n1. Schrödinger Equation: i ħ (∂Ψ/∂t) = Ĥ Ψ\n2. Heisenberg Uncertainty Principle: Δx · Δp ≥ ħ / 2\n3. Planck Relation: E = h·ν\n4. Quantum Superposition: |Ψ⟩ = α|0⟩ + β|1⟩`
       };
     }
 
     // 2. Advanced Chemistry
     if (clean.includes('chemistry') || clean.includes('reaction') || clean.includes('enthalpy') || clean.includes('gibbs') || clean.includes('hybridization') || clean.includes('iupac') || clean.includes('titration') || clean.includes('thermodynamics')) {
       return {
-        spokenText: "Advanced Chemistry protocol active. Spontaneity of chemical reactions is determined by Gibbs Free Energy: delta G equals delta H minus T delta S. Negative delta G indicates a spontaneous reaction.",
-        actionTaken: "Advanced Chemistry: Thermodynamic Engine",
-        detailedNotes: `🧪 FATE ADVANCED CHEMISTRY CORE\n\n1. Gibbs Free Energy: ΔG = ΔH - TΔS\n2. Nernst Equation: E = E° - (RT/nF) ln Q\n3. Arrhenius Kinetics: k = A e^(-Ea / RT)\n4. Ideal Gas Law & Real Gas: (P + a/V²)(V - b) = nRT`
+        spokenText: "Advanced Chemistry protocol active. Gibbs Free Energy delta G equals delta H minus T delta S governs chemical reaction spontaneity.",
+        actionTaken: "Advanced Chemistry Engine",
+        detailedNotes: `🧪 FATE ADVANCED CHEMISTRY CORE\n\n1. Gibbs Free Energy: ΔG = ΔH - TΔS\n2. Nernst Equation: E = E° - (RT/nF) ln Q\n3. Arrhenius Rate Law: k = A e^(-Ea / RT)\n4. Orbital Hybridization: sp³, sp², sp`
       };
     }
 
-    // 3. Advanced Geography
+    // 3. Biology & Life Sciences
+    if (clean.includes('biology') || clean.includes('dna') || clean.includes('rna') || clean.includes('crispr') || clean.includes('genetics') || clean.includes('photosynthesis') || clean.includes('respiration') || clean.includes('cell')) {
+      return {
+        spokenText: "Biology and Genetics protocol active. Genetic information is stored in DNA double helices and transcribed into mRNA for protein synthesis via ribosomes.",
+        actionTaken: "Biology & Genetics Core",
+        detailedNotes: `🧬 FATE BIOLOGY & GENETICS CORE\n\n1. Central Dogma: DNA → (Transcription) → mRNA → (Translation) → Protein\n2. Photosynthesis: 6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂\n3. Cellular Respiration: C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + 36 ATP\n4. Gene Editing: CRISPR-Cas9 endonuclease targeting`
+      };
+    }
+
+    // 4. Economics & Finance
+    if (clean.includes('economics') || clean.includes('inflation') || clean.includes('gdp') || clean.includes('supply and demand') || clean.includes('microeconomics') || clean.includes('macroeconomics') || clean.includes('game theory') || clean.includes('monetary')) {
+      return {
+        spokenText: "Economics & Finance protocol active. Market equilibrium occurs at the intersection of aggregate supply and demand. Monetary policy regulates inflation and GDP growth.",
+        actionTaken: "Economics & Finance Core",
+        detailedNotes: `📈 FATE ECONOMICS & FINANCE CORE\n\n1. Supply & Demand Equilibrium: Qd(P) = Qs(P)\n2. GDP Equation: GDP = C + I + G + (X - M)\n3. Fisher Equation: i = r + π (Nominal = Real + Inflation)\n4. Nash Equilibrium in Game Theory`
+      };
+    }
+
+    // 5. Computer Science & AI
+    if (clean.includes('computer science') || clean.includes('algorithm') || clean.includes('big o') || clean.includes('data structure') || clean.includes('neural network') || clean.includes('binary tree') || clean.includes('complexity')) {
+      return {
+        spokenText: "Computer Science protocol active. Algorithm performance is evaluated using Big-O time and space complexity notation.",
+        actionTaken: "Computer Science Core",
+        detailedNotes: `💻 FATE COMPUTER SCIENCE CORE\n\n1. Big-O Complexity: O(1), O(log n), O(n), O(n log n), O(n²)\n2. Data Structures: Arrays, Linked Lists, Trees, Graphs, Hash Tables\n3. Deep Learning: Forward propagation, Loss minimization, Backpropagation\n4. CAP Theorem: Consistency, Availability, Partition Tolerance`
+      };
+    }
+
+    // 6. Literature & Poetics
+    if (clean.includes('literature') || clean.includes('poem') || clean.includes('poetry') || clean.includes('shakespeare') || clean.includes('metaphor') || clean.includes('novel') || clean.includes('rhetoric') || clean.includes('iambic') || clean.includes('allegory')) {
+      return {
+        spokenText: "Literature and Poetics protocol active. Literary analysis examines symbolism, thematic resonance, narrative structure, and poetic meter such as iambic pentameter.",
+        actionTaken: "Literature & Poetics Core",
+        detailedNotes: `📚 FATE LITERATURE & POETICS CORE\n\n1. Meter: Iambic Pentameter (da-DUM × 5 = 10 syllables per line).\n2. Literary Devices: Metaphor, Simile, Personification, Allegory, Irony.\n3. Tragic Structure: Hamartia (fatal flaw), Peripeteia (reversal), Catharsis.\n4. Periods: Renaissance, Romanticism, Victorian, Modernism, Post-Modernism.`
+      };
+    }
+
+    // 7. Psychology & Cognitive Science
+    if (clean.includes('psychology') || clean.includes('cognitive') || clean.includes('behavior') || clean.includes('neuroscience') || clean.includes('maslow') || clean.includes('pavlov') || clean.includes('freud')) {
+      return {
+        spokenText: "Psychology protocol active. Human cognition is studied through behavioral conditioning, neural synaptic transmission, and cognitive memory consolidation.",
+        actionTaken: "Psychology Core",
+        detailedNotes: `🧠 FATE PSYCHOLOGY CORE\n\n1. Classical Conditioning (Pavlov): Unconditioned vs Conditioned Response\n2. Operant Conditioning (Skinner): Reinforcement vs Punishment\n3. Maslow's Hierarchy: Physiological → Safety → Belonging → Esteem → Self-Actualization\n4. Memory: Sensory → Short-Term (Working) → Long-Term`
+      };
+    }
+
+    // 8. Advanced Geography
     if (clean.includes('geography') || clean.includes('tectonic') || clean.includes('plate') || clean.includes('geomorphology') || clean.includes('climatology') || clean.includes('monsoon') || clean.includes('stratosphere')) {
       return {
-        spokenText: "Advanced Geography protocol active. Earth's lithosphere is divided into tectonic plates moving via mantle convection currents, creating convergent, divergent, and transform boundaries.",
-        actionTaken: "Geography: Geomorphology Engine",
-        detailedNotes: `🌍 FATE ADVANCED GEOGRAPHY CORE\n\n1. Tectonic Boundary Types: Convergent, Divergent, Transform\n2. Atmospheric Structure: Troposphere, Stratosphere, Mesosphere, Thermosphere\n3. Geomorphology: Weathering, Erosion, Mass Wasting, Glacial landforms\n4. Climatology: Hadley & Ferrel Cells, Coriolis Effect`
+        spokenText: "Advanced Geography protocol active. Earth's lithosphere is divided into tectonic plates moving via mantle convection currents.",
+        actionTaken: "Geography Core",
+        detailedNotes: `🌍 FATE GEOGRAPHY CORE\n\n1. Tectonic Boundaries: Convergent, Divergent, Transform\n2. Atmospheric Cells: Hadley, Ferrel, Polar\n3. Geomorphology: Weathering, Erosion, Mass Wasting`
       };
     }
 
-    // 4. Advanced Grammar & Linguistics
-    if (clean.includes('grammar') || clean.includes('syntax') || clean.includes('clause') || clean.includes('passive') || clean.includes('etymology') || clean.includes('phonetics') || clean.includes('part of speech')) {
-      return {
-        spokenText: "Advanced Grammar protocol active. Syntax dictates sentence structure through noun phrases, verb phrases, and clause subordination. Active voice prioritizes the agent, whereas passive voice emphasizes the recipient of the action.",
-        actionTaken: "Grammar & Linguistics Core",
-        detailedNotes: `🔤 FATE GRAMMAR & LINGUISTICS CORE\n\n1. Active vs Passive: Subject performs vs receives action.\n2. Subordinate Clause: Dependent clause providing contextual modification.\n3. Subject-Verb Agreement: Number and person concordance.\n4. Advanced Syntax: Tree diagrams, Constituency, Transformation rules.`
-      };
-    }
-
-    // 5. Advanced History
+    // 9. Advanced History
     if (clean.includes('history') || clean.includes('revolution') || clean.includes('world war') || clean.includes('treaty') || clean.includes('ancient civilization') || clean.includes('historiography')) {
       return {
-        spokenText: "Advanced History protocol active. World history explores pivotal shifts from early river valley civilizations to modern geopolitical treaties, industrial revolutions, and international diplomacy.",
+        spokenText: "Advanced History protocol active. World history explores pivotal shifts from early river valley civilizations to modern international diplomacy.",
         actionTaken: "World History Core",
-        detailedNotes: `📜 FATE ADVANCED HISTORY CORE\n\n1. Ancient Civilizations: Indus Valley, Mesopotamia, Egypt, Yellow River.\n2. Turning Points: Renaissance (14th-17th C), Industrial Revolution (1760), WWI (1914), WWII (1939).\n3. Treaties & Diplomacy: Treaty of Westphalia (1648), Treaty of Versailles (1919).\n4. Historiography: Critical examination of sources and historical methodology.`
+        detailedNotes: `📜 FATE WORLD HISTORY CORE\n\n1. Ancient Civilizations: Indus Valley, Mesopotamia, Egypt, Yellow River.\n2. Turning Points: Renaissance, Industrial Revolution, World War I & II.\n3. Historiography & Primary Source Analysis`
       };
     }
 
@@ -258,7 +294,6 @@ class FateCommandHandler {
   solveAdvancedMath(text) {
     const clean = text.toLowerCase();
 
-    // Differential Equation xdy - (y^2 - 4y)dx = 0, y(1) = 2, find 10 y(sqrt(2))
     if ((clean.includes('xdy') || clean.includes('x dy') || clean.includes('differential equation')) && (clean.includes('y^2 - 4y') || clean.includes('y2 - 4y') || clean.includes('y(1) = 2') || clean.includes('10 y'))) {
       const solutionSteps = `
 🧮 **FATE ADVANCED CALCULUS DIAGNOSTICS**
