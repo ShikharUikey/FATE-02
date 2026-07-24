@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Command Execution Engine (Omni-Academic & Universal Science Core)
+   FATE Command Execution Engine (Polyglot Programming & Natural Languages Core)
    ========================================================================== */
 
 class FateCommandHandler {
@@ -15,7 +15,29 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. Advanced Calculus & Differential Equation Queries
+    // 1. Translation & Natural Country Languages Engine ("translate hello to hindi", "how to say thank you in french")
+    const translationResult = this.processTranslation(text);
+    if (translationResult) {
+      if (this.app.codeArea) this.app.codeArea.value = translationResult.detailedTranslation;
+      this.app.switchTab('suite');
+      return {
+        speakText: translationResult.spokenText,
+        actionTaken: translationResult.actionTaken
+      };
+    }
+
+    // 2. Programming Languages Code Studio Engine ("generate rust code", "cpp code", "java script", "sql query", "python script")
+    const programmingResult = this.processProgrammingLanguage(text);
+    if (programmingResult) {
+      if (this.app.codeArea) this.app.codeArea.value = programmingResult.codeSnippet;
+      this.app.switchTab('suite');
+      return {
+        speakText: programmingResult.spokenText,
+        actionTaken: programmingResult.actionTaken
+      };
+    }
+
+    // 3. Advanced Calculus & Differential Equation Queries
     const advMathResult = this.solveAdvancedMath(text);
     if (advMathResult) {
       if (this.app.calcInput) this.app.calcInput.value = advMathResult.shortResult;
@@ -26,7 +48,7 @@ class FateCommandHandler {
       };
     }
 
-    // 2. Universal Academic Domain Solver (Quantum Physics, Chemistry, Biology, Economics, CS, Psychology, History, Geography, Literature)
+    // 4. Universal Academic Domain Solver (Quantum Physics, Chemistry, Biology, Economics, CS, Psychology, History, Geography, Literature)
     const academicResult = this.solveAcademicDomain(text);
     if (academicResult) {
       if (this.app.codeArea) this.app.codeArea.value = academicResult.detailedNotes;
@@ -37,7 +59,7 @@ class FateCommandHandler {
       };
     }
 
-    // 3. Standard Arithmetic & Polynomial Math Intent
+    // 5. Standard Arithmetic & Polynomial Math Intent
     const mathResult = this.tryParseMath(cleanText);
     if (mathResult !== null) {
       if (this.app.calcInput) this.app.calcInput.value = mathResult.result;
@@ -47,7 +69,7 @@ class FateCommandHandler {
       };
     }
 
-    // 4. Weather Intent
+    // 6. Weather Intent
     if (cleanText.includes('weather') || cleanText.includes('temperature') || cleanText.includes('forecast') || cleanText.includes('climate')) {
       let city = cleanText.replace(/what's the weather in|what is the weather in|weather in|weather for|temperature in|forecast for|weather|temperature|forecast|climate|today/gi, '').trim();
       
@@ -67,7 +89,7 @@ class FateCommandHandler {
       }
     }
 
-    // 5. Mute / Silence Commands
+    // 7. Mute / Silence Commands
     if (cleanText.includes('mute') || cleanText.includes('stop speaking') || cleanText.includes('be quiet') || cleanText === 'stop' || cleanText.includes('hush')) {
       if (this.app.speech.currentAudio) {
         this.app.speech.currentAudio.pause();
@@ -79,13 +101,13 @@ class FateCommandHandler {
       return { speakText: "Audio output silenced.", actionTaken: "Speech Silenced" };
     }
 
-    // 6. Clear Chat / Reset Conversation
+    // 8. Clear Chat / Reset Conversation
     if (cleanText.includes('clear chat') || cleanText.includes('clear feed') || cleanText.includes('reset chat') || cleanText.includes('clear log')) {
       this.app.clearChatFeed();
       return { speakText: "Conversation buffer purged. Standing by for fresh telemetry.", actionTaken: "Chat Purged" };
     }
 
-    // 7. YouTube & Video Automation
+    // 9. YouTube & Video Automation
     if (cleanText.startsWith('open youtube') || cleanText === 'youtube') {
       window.open('https://www.youtube.com', '_blank');
       return { speakText: "Opening YouTube video platform.", actionTaken: "Opened YouTube" };
@@ -99,7 +121,7 @@ class FateCommandHandler {
       }
     }
 
-    // 8. Google Web Search & AI Platforms
+    // 10. Google Web Search & AI Platforms
     if (cleanText.includes('search google for') || cleanText.includes('google search') || cleanText.startsWith('search for') || cleanText.startsWith('google ')) {
       const query = cleanText.replace(/search google for|google search|search for|google/gi, '').trim();
       if (query) {
@@ -118,7 +140,7 @@ class FateCommandHandler {
       return { speakText: "Opening Google Gemini platform.", actionTaken: "Opened Gemini" };
     }
 
-    // 9. Developer Tools & Portals
+    // 11. Developer Tools & Portals
     if (cleanText.includes('open github') || cleanText === 'github') {
       window.open('https://github.com', '_blank');
       return { speakText: "Accessing GitHub repositories.", actionTaken: "Opened GitHub" };
@@ -134,7 +156,7 @@ class FateCommandHandler {
       return { speakText: "Loading Google Satellite Navigation Maps.", actionTaken: "Opened Maps" };
     }
 
-    // 10. Time & Date Telemetry
+    // 12. Time & Date Telemetry
     if (cleanText.includes('time') || cleanText.includes('clock') || cleanText.includes('what time')) {
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -147,7 +169,7 @@ class FateCommandHandler {
       return { speakText: `Today's date is ${dateStr}.`, actionTaken: `Date: ${dateStr}` };
     }
 
-    // 11. Theme Customization
+    // 13. Theme Customization
     if (cleanText.includes('theme') || cleanText.includes('mode') || cleanText.includes('color')) {
       if (cleanText.includes('red') || cleanText.includes('alert') || cleanText.includes('danger')) {
         this.app.setTheme('red-alert');
@@ -167,7 +189,7 @@ class FateCommandHandler {
       }
     }
 
-    // 12. Timer & Countdown
+    // 14. Timer & Countdown
     if (cleanText.includes('timer') || cleanText.includes('alarm') || cleanText.includes('remind me in')) {
       const match = cleanText.match(/(\d+)\s*(second|sec|minute|min)/i);
       if (match) {
@@ -184,25 +206,129 @@ class FateCommandHandler {
       }
     }
 
-    // 13. Code Studio Automation
-    if (cleanText.includes('code') || cleanText.includes('script') || cleanText.includes('python') || cleanText.includes('html') || cleanText.includes('javascript')) {
-      let codeSnippet = '';
-      if (cleanText.includes('python')) {
-        codeSnippet = `# FATE Quantum Mechanics & Wavefunction Simulation\nimport numpy as np\n\ndef schrodinger_particle_in_box(n, L, x):\n    """1D Particle in a box wavefunction psi_n(x)"""\n    return np.sqrt(2/L) * np.sin((n * np.pi * x) / L)\n\nprint("Psi_1 at x=0.5L:", schrodinger_particle_in_box(1, 1.0, 0.5))`;
-      } else if (cleanText.includes('html')) {
-        codeSnippet = `<!-- FATE Cyberpunk Glassmorphic Widget -->\n<div class="fate-hud-card">\n  <h2>F.A.T.E. Quantum Core Telemetry</h2>\n  <div class="status-indicator active">ONLINE</div>\n</div>`;
-      } else {
-        codeSnippet = `// FATE Universal Academic Engine\nfunction fateAnalyzeSubject(subject) {\n  return \`FATE \${subject} Subsystem: OPTIMAL\`;\n}\nconsole.log(fateAnalyzeSubject("LITERATURE_AND_SCIENCE"));`;
+    return null;
+  }
+
+  // Country Languages & Translation Subsystem
+  processTranslation(text) {
+    const clean = text.toLowerCase();
+
+    if (clean.includes('translate') || clean.includes('in hindi') || clean.includes('in spanish') || clean.includes('in french') || clean.includes('in german') || clean.includes('in japanese') || clean.includes('in russian')) {
+      if (clean.includes('hindi')) {
+        return {
+          spokenText: "FATE Hindi Translation Subsystem active. Namaste, main aapka AI assistant FATE hoon.",
+          actionTaken: "Translation: Hindi (हिंदी)",
+          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (HINDI)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nHindi: "नमस्ते, मैं आपका स्वायत्त एआई सहायक फेट (FATE) हूँ।"\n\nTransliteration: Namaste, main aapka svaayatt AI sahaayak FATE hoon.`
+        };
       }
-      if (this.app.codeArea) this.app.codeArea.value = codeSnippet;
-      this.app.switchTab('suite');
-      return { speakText: "Code logic generated and loaded in FATE Code Studio.", actionTaken: "Code Generated" };
+
+      if (clean.includes('spanish')) {
+        return {
+          spokenText: "FATE Spanish Translation Subsystem active. Hola, soy tu asistente de IA FATE.",
+          actionTaken: "Translation: Spanish (Español)",
+          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (SPANISH)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nSpanish: "Hola, soy FATE, tu asistente de IA autónomo."`
+        };
+      }
+
+      if (clean.includes('french')) {
+        return {
+          spokenText: "FATE French Translation Subsystem active. Bonjour, je suis votre assistant IA FATE.",
+          actionTaken: "Translation: French (Français)",
+          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (FRENCH)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nFrench: "Bonjour, je suis FATE, votre assistant IA autonome."`
+        };
+      }
+
+      if (clean.includes('german')) {
+        return {
+          spokenText: "FATE German Translation Subsystem active. Hallo, ich bin Ihr KI-Assistent FATE.",
+          actionTaken: "Translation: German (Deutsch)",
+          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (GERMAN)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nGerman: "Hallo, ich bin FATE, Ihr autonomer KI-Assistent."`
+        };
+      }
+
+      if (clean.includes('japanese')) {
+        return {
+          spokenText: "FATE Japanese Translation Subsystem active. Konnichiwa, FATE desu.",
+          actionTaken: "Translation: Japanese (日本語)",
+          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (JAPANESE)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nJapanese: "こんにちは、私は自律型AIアシスタントのFATEです。"\n\nRomaji: Konnichiwa, watashi wa jiritsugata AI ashisutanto no FATE desu.`
+        };
+      }
+
+      if (clean.includes('russian')) {
+        return {
+          spokenText: "FATE Russian Translation Subsystem active. Zdravstvuyte, ya FATE.",
+          actionTaken: "Translation: Russian (Русский)",
+          detailedTranslation: `🌐 FATE MULTILINGUAL TRANSLATION (RUSSIAN)\n\nEnglish: "Hello, I am FATE, your autonomous AI assistant."\nRussian: "Здравствуйте, я ваш автономный ИИ-помощник FATE."`
+        };
+      }
     }
 
     return null;
   }
 
-  // Universal Academic Domain Intent Solver
+  // Programming Languages Subsystem (Python, JS, TS, Rust, C++, Java, Go, SQL, Bash)
+  processProgrammingLanguage(text) {
+    const clean = text.toLowerCase();
+
+    if (clean.includes('rust')) {
+      return {
+        spokenText: "Rust language module active. Generated memory-safe concurrent Rust snippet in FATE Code Studio.",
+        actionTaken: "Programming: Rust (Cargo)",
+        codeSnippet: `// FATE Autonomous Rust Engine\nfn main() {\n    let status = "FATE_RUST_CORE_ONLINE";\n    println!("⚡ Status: {}", status);\n    let numbers = vec![1, 2, 3, 4, 5];\n    let sum: i32 = numbers.iter().sum();\n    println!("Sum: {}", sum);\n}`
+      };
+    }
+
+    if (clean.includes('c++') || clean.includes('cpp')) {
+      return {
+        spokenText: "C++ high-performance module active. Generated C++20 template in FATE Code Studio.",
+        actionTaken: "Programming: C++20",
+        codeSnippet: `// FATE C++20 Engine\n#include <iostream>\n#include <vector>\n#include <algorithm>\n\nint main() {\n    std::cout << "⚡ FATE C++20 Engine Active\\n";\n    std::vector<int> data = {10, 20, 30, 40};\n    for(const auto& val : data) {\n        std::cout << "Value: " << val << "\\n";\n    }\n    return 0;\n}`
+      };
+    }
+
+    if (clean.includes('java ') || clean.includes('java script') || clean.includes('java')) {
+      if (clean.includes('javascript') || clean.includes('js')) {
+        return {
+          spokenText: "JavaScript Async ES6 module active. Generated JS code snippet in Code Studio.",
+          actionTaken: "Programming: JavaScript ES6",
+          codeSnippet: `// FATE ES6 Async Controller\nasync function fateFetchData(url) {\n  const res = await fetch(url);\n  return await res.json();\n}\nfateFetchData('/api/status').then(console.log);`
+        };
+      }
+      return {
+        spokenText: "Java 21 Virtual Threads module active. Generated Object-Oriented Java snippet in Code Studio.",
+        actionTaken: "Programming: Java 21",
+        codeSnippet: `// FATE Java 21 Class\npublic class FateCore {\n    public static void main(String[] args) {\n        System.out.println("⚡ FATE Java 21 Systems Primed.");\n    }\n}`
+      };
+    }
+
+    if (clean.includes('python')) {
+      return {
+        spokenText: "Python 3.13 AI/ML module active. Generated Python automation script in Code Studio.",
+        actionTaken: "Programming: Python 3.13",
+        codeSnippet: `# FATE Python 3.13 Automation\nimport sys\n\ndef main():\n    print(f"⚡ FATE Python Core running on {sys.version}")\n\nif __name__ == '__main__':\n    main()`
+      };
+    }
+
+    if (clean.includes('sql') || clean.includes('database') || clean.includes('query')) {
+      return {
+        spokenText: "SQL Relational Query Engine active. Generated optimized SQL query in Code Studio.",
+        actionTaken: "Programming: SQL Query",
+        codeSnippet: `-- FATE Relational SQL Telemetry Query\nSELECT \n    system_id, \n    status, \n    COUNT(*) AS active_nodes\nFROM fate_telemetry_logs\nWHERE timestamp >= NOW() - INTERVAL '1 hour'\nGROUP BY system_id, status\nHAVING COUNT(*) > 5;`
+      };
+    }
+
+    if (clean.includes('go ') || clean.includes('golang')) {
+      return {
+        spokenText: "Go Goroutine Concurrent module active. Generated Go code snippet in Code Studio.",
+        actionTaken: "Programming: Go (Golang)",
+        codeSnippet: `// FATE Concurrent Go Engine\npackage main\nimport ("fmt"; "time")\n\nfunc worker(id int) {\n    fmt.Printf("Worker %d active\\n", id)\n}\n\nfunc main() {\n    go worker(1)\n    time.Sleep(100 * time.Millisecond)\n}`
+      };
+    }
+
+    return null;
+  }
+
+  // Universal Academic Domain Solver
   solveAcademicDomain(text) {
     const clean = text.toLowerCase();
 
