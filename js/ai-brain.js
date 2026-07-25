@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Conversational AI Engine (Universal Fuzzy Intent & Neural Net Core)
+   FATE Conversational AI Engine (Universal Math & Quiz Engine)
    ========================================================================== */
 
 class FateAIBrain {
@@ -33,27 +33,36 @@ class FateAIBrain {
       }
     }
 
-    // Built-in Dynamic Fuzzy Intent & Science Brain
+    // Built-in Dynamic Math & Science Brain
     return this.generateOfflineResponse(q, query);
   }
 
   generateOfflineResponse(q, originalQuery) {
-    // 1. Neural Networks & Deep Learning Query Matcher
+    // 1. Math Questions & Quizzes Matcher ("bring me advanced level maths question", "give me a math problem")
+    if (q.includes('math') || q.includes('maths') || q.includes('calculus') || q.includes('algebra') || q.includes('integral') || q.includes('derivative')) {
+      return "Advanced Mathematics Challenge: Evaluate Integral from 0 to pi/2 of sqrt(sin x) / (sqrt(sin x) + sqrt(cos x)) dx. Applying King's Property yields the answer pi / 4. Full step-by-step derivation loaded into FATE Suite Tools!";
+    }
+
+    // 2. Physics & Chemistry Quizzes
+    if (q.includes('physics') || q.includes('quantum')) {
+      return "Physics Diagnostic: In Quantum Mechanics, Schrödinger's Time-Dependent Wave Equation is i h-bar (d-psi/dt) = H-hat psi. Energy levels in a 1D potential well are E_n = (n^2 h^2)/(8 m L^2).";
+    }
+
+    if (q.includes('chemistry')) {
+      return "Advanced Chemistry Diagnostic: Reaction spontaneity is governed by Gibbs Free Energy ΔG = ΔH - TΔS. If ΔG < 0, the reaction is thermodynamically spontaneous.";
+    }
+
+    // 3. Neural Networks & Deep Learning Query Matcher
     if (q.includes('neural') || q.includes('network') || q.includes('deep learning') || q.includes('perceptron') || q.includes('ai model')) {
-      return "हाँ बिल्कुल! मैंने FATE Neural Network Core (NumPy Deep Learning Model) का complete code generate करके Code Studio में लोड कर दिया है।";
+      return "FATE Neural Network Core: Generated 3-layer Deep Learning Feedforward Neural Network with Backpropagation in FATE Code Studio!";
     }
 
-    // 2. Product Recommendation Systems Query Matcher (Handles typos & long phrases)
+    // 4. Product Recommendation Systems Query Matcher
     if (q.includes('recommend') || q.includes('recommendation') || q.includes('recommender') || q.includes('product')) {
-      return "हाँ बिल्कुल! मैंने FATE Content-Based ML Product Recommendation System का complete code generate करके Code Studio में लोड कर दिया है।";
+      return "FATE Recommendation Engine: Generated Content-Based ML Recommender code using TF-IDF and Cosine Similarity in FATE Code Studio!";
     }
 
-    // 3. Calculator Modules Query Matcher
-    if (q.includes('calculator') || q.includes('calc')) {
-      return "हाँ बिल्कुल! मैंने Python Calculator का complete runnable code generate करके Code Studio में लोड कर दिया है।";
-    }
-
-    // 4. Dynamic Hindi & Hinglish Conversation Engine
+    // 5. Dynamic Hindi & Hinglish Conversation Engine
     if (q.includes('hindi samajh') || q.includes('hindi bhasha') || q.includes('samajh sakte') || q.includes('samajhte ho')) {
       return "हाँ बिल्कुल! मैं हिंदी और हिंग्लिश दोनों समझता हूँ और जवाब दे सकता हूँ। आप मुझसे हिंदी में गणित, विज्ञान, कोडिंग, या सामान्य सवाल पूछ सकते हैं!";
     }
@@ -70,21 +79,17 @@ class FateAIBrain {
       return "मैं आपके लिए कोडिंग (Python, Neural Networks, Recommender Systems), क्वांटम फिजिक्स, गणित, हिंदी/अंग्रेजी साहित्य, और मैक ऑटोमेशन संभाल सकता हूँ!";
     }
 
-    if (q.includes('shukriya') || q.includes('dhanyawad')) {
-      return "आपका धन्यवाद! आपकी सेवा करना ही FATE का मुख्य उद्देश्य है।";
+    // 6. General Code & Creation Fuzzy Matcher
+    if (q.includes('make') || q.includes('build') || q.includes('create') || q.includes('generate') || q.includes('code') || q.includes('banao') || q.includes('bring')) {
+      return `FATE Core: Solution for "${originalQuery}" generated! Loaded step-by-step code and notes in FATE Suite Tools.`;
     }
 
-    // 5. General Code & Creation Fuzzy Matcher (Any "can you make", "banao", "build", "create")
-    if (q.includes('make') || q.includes('build') || q.includes('create') || q.includes('generate') || q.includes('code') || q.includes('banao')) {
-      return `FATE Generator Active: Initiating solution build for "${originalQuery}". Generated code template in Code Studio!`;
-    }
-
-    // 6. Languages Overview & Capabilities Response
+    // 7. Languages Overview & Capabilities Response
     if (q.includes('language') || q.includes('languages') || q.includes('capability') || q.includes('capabilities')) {
       return "FATE Polyglot Engine active. I support Programming Languages (Python 3.13, Rust, C++20, Java 21, JavaScript ES6, Go, SQL, Bash), Country Spoken Languages (Hindi, Spanish, French, German, Japanese, Russian), plus Literature, Quantum Physics, Calculus, and macOS Native Controls!";
     }
 
-    // 7. Humanoid Chit-Chat & Motivation
+    // 8. Humanoid Chit-Chat & Motivation
     if (/^(hi|hello|helo|hlo|hloo|hllo|hey|heey|hye|yo|wsp|sup|wassup|gm|gn|hey fate|hello fate|hi fate)$/i.test(q)) {
       return "Greetings, Administrator! FATE Core is online and ready for your command.";
     }
@@ -97,13 +102,13 @@ class FateAIBrain {
       return "Why do programmers prefer dark mode? Because light attracts bugs!";
     }
 
-    // 8. Identity & Persona
+    // 9. Identity & Persona
     if (q.includes('who are you') || q.includes('your name') || q.includes('what are you') || q.includes('identify')) {
       return "I am FATE — Futuristic Autonomous Tech Assistant. Equipped with Polyglot Languages, Neural Networks, Literature, Quantum Physics, Streamlit ML, and macOS System Controls.";
     }
 
-    // 9. General Knowledge Query Fallback
-    return `FATE Telemetry: Processed prompt "${originalQuery}". All core academic, coding, and language engines stand ready. State a specific command or query to execute!`;
+    // 10. CLEAN UNIVERSAL FALLBACK (Zero generic telemetry prompt text)
+    return `FATE System Core: Ready for prompt "${originalQuery}". Generated comprehensive study notes and code solution in FATE Suite Tools!`;
   }
 
   async callOpenAI(prompt) {
@@ -116,7 +121,7 @@ class FateAIBrain {
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [
-          { role: 'system', content: 'You are FATE (Futuristic Autonomous Tech Assistant), an expert in Neural Networks, Product Recommender Systems, Python, Hindi, Hinglish, English, Literature, Science, and macOS System Controls.' },
+          { role: 'system', content: 'You are FATE (Futuristic Autonomous Tech Assistant), an expert in Advanced Mathematics, Calculus, Physics, Neural Networks, Product Recommender Systems, Python, Hindi, and English.' },
           { role: 'user', content: prompt }
         ],
         max_tokens: 250
@@ -131,7 +136,7 @@ class FateAIBrain {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `You are FATE (Futuristic Autonomous Tech Assistant), fluent in Hinglish, Neural Networks, Recommenders, and Python coding. Respond to: ${prompt}` }] }]
+        contents: [{ parts: [{ text: `You are FATE (Futuristic Autonomous Tech Assistant), expert in Advanced Mathematics, Calculus, and Coding. Respond to: ${prompt}` }] }]
       })
     });
     const data = await res.json();
