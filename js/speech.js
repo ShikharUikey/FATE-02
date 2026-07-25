@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Speech Engine - macOS Native Hindi Voice (Lekha) & Echo Prevention
+   FATE Speech Engine - Ultra-Reliable Multilingual Native Speech Subsystem
    ========================================================================== */
 
 class FateSpeechEngine {
@@ -76,7 +76,7 @@ class FateSpeechEngine {
 
       this.recognition.onerror = (event) => {
         if (event.error !== 'no-speech' && event.error !== 'aborted') {
-          console.warn('FATE Speech Recognition Error:', event.error);
+          console.warn('FATE Speech Recognition Warning:', event.error);
           this.isListening = false;
           if (this.onStateChangeCallback) this.onStateChangeCallback('idle');
         }
@@ -173,7 +173,13 @@ class FateSpeechEngine {
       return;
     }
 
-    this.lastSpokenText = text;
+    // Strip out long code snippets or markdown for audio speech synthesis so audio stays concise & clear
+    let speakableText = text.replace(/```[\s\S]*?```/g, 'Code loaded into FATE Suite Tools.').trim();
+    if (speakableText.length > 250) {
+      speakableText = speakableText.substring(0, 240) + '... Full response displayed on HUD.';
+    }
+
+    this.lastSpokenText = speakableText;
     this.pauseListeningForSpeech();
 
     if (this.currentAudio) {
@@ -186,13 +192,13 @@ class FateSpeechEngine {
 
     // Auto-detect Hindi text and route to native macOS Lekha voice
     let activeVoice = this.macVoice;
-    if (/[\u0900-\u097F]/.test(text)) {
+    if (/[\u0900-\u097F]/.test(speakableText)) {
       activeVoice = 'Lekha';
     }
 
-    // Coqui / macOS Native Speech Engine
+    // Native macOS Speech Engine Proxy (/api/tts)
     if (this.ttsEngineMode === 'coqui') {
-      const ttsUrl = `/api/tts?voice=${encodeURIComponent(activeVoice)}&text=${encodeURIComponent(text)}`;
+      const ttsUrl = `/api/tts?voice=${encodeURIComponent(activeVoice)}&text=${encodeURIComponent(speakableText)}`;
       const audio = new Audio(ttsUrl);
       this.currentAudio = audio;
 
@@ -209,22 +215,22 @@ class FateSpeechEngine {
       };
 
       audio.onerror = (e) => {
-        console.warn('macOS Native Speech error, falling back to WebSpeech:', e);
-        this.speakWebSpeech(text, onComplete);
+        console.warn('macOS Native Speech endpoint error, falling back to WebSpeech:', e);
+        this.speakWebSpeech(speakableText, onComplete);
       };
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch((err) => {
-          console.warn('Audio Autoplay policy caught, trying WebSpeech:', err);
-          this.speakWebSpeech(text, onComplete);
+          console.warn('Audio Autoplay policy caught, trying WebSpeech fallback:', err);
+          this.speakWebSpeech(speakableText, onComplete);
         });
       }
 
       return;
     }
 
-    this.speakWebSpeech(text, onComplete);
+    this.speakWebSpeech(speakableText, onComplete);
   }
 
   speakWebSpeech(text, onComplete) {
