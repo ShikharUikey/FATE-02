@@ -173,8 +173,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Settings Inputs
-      const voicePitchInput = document.getElementById('voice-pitch');
+      // Settings Inputs & Suite Action Toolbar
+      const copyCodeBtn = document.getElementById('copy-code-btn');
+      const clearCodeBtn = document.getElementById('clear-code-btn');
+      const downloadCodeBtn = document.getElementById('download-code-btn');
+
+      if (copyCodeBtn && this.codeArea) {
+        copyCodeBtn.addEventListener('click', () => {
+          if (this.codeArea.value.trim()) {
+            navigator.clipboard.writeText(this.codeArea.value);
+            alert('📋 Code snippet copied to clipboard!');
+            if (typeof audioFX !== 'undefined') audioFX.playSuccess();
+          } else {
+            alert('Code Studio is empty.');
+          }
+        });
+      }
+
+      if (clearCodeBtn && this.codeArea) {
+        clearCodeBtn.addEventListener('click', () => {
+          this.codeArea.value = '';
+          if (typeof audioFX !== 'undefined') audioFX.playTick();
+        });
+      }
+
+      if (downloadCodeBtn && this.codeArea) {
+        downloadCodeBtn.addEventListener('click', () => {
+          const content = this.codeArea.value;
+          if (!content.trim()) {
+            alert('Code Studio is empty.');
+            return;
+          }
+          const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = content.includes('import ') || content.includes('def ') ? 'fate_solution.py' : 'fate_output.txt';
+          link.click();
+          URL.revokeObjectURL(url);
+          if (typeof audioFX !== 'undefined') audioFX.playSuccess();
+        });
+      }
       const voiceRateInput = document.getElementById('voice-rate');
       const ttsEngineSelect = document.getElementById('tts-engine-select');
       const macVoiceSelect = document.getElementById('mac-voice-select');
