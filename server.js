@@ -98,11 +98,11 @@ const server = http.createServer((req, res) => {
         }
 
         if (action === 'open_path') {
-          const rawTarget = payload.targetPath || 'Downloads';
+          const rawTarget = (payload.targetPath || 'Downloads').trim();
           const userHome = process.env.HOME;
 
           let targetFullPath = '';
-          const lower = rawTarget.toLowerCase().trim();
+          const lower = rawTarget.toLowerCase();
 
           if (lower === 'downloads' || lower === 'download') targetFullPath = path.join(userHome, 'Downloads');
           else if (lower === 'desktop') targetFullPath = path.join(userHome, 'Desktop');
@@ -115,7 +115,8 @@ const server = http.createServer((req, res) => {
           }
 
           if (targetFullPath && fs.existsSync(targetFullPath)) {
-            exec(`open "${targetFullPath}"`, (err) => {
+            const safePath = targetFullPath.replace(/"/g, '\\"');
+            exec(`open "${safePath}"`, (err) => {
               if (err) return res.writeHead(400).end(JSON.stringify({ error: err.message }));
               res.writeHead(200, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ message: `Opened ${targetFullPath}`, path: targetFullPath }));
@@ -123,16 +124,19 @@ const server = http.createServer((req, res) => {
             return;
           }
 
-          // Use macOS Spotlight search (mdfind) to find exact file/folder by name
-          exec(`mdfind -name "${rawTarget}" | head -n 1`, (err, stdout) => {
+          // Use macOS Spotlight search (mdfind) with shell sanitization
+          const safeQuery = rawTarget.replace(/"/g, '\\"');
+          exec(`mdfind -name "${safeQuery}" | head -n 1`, (err, stdout) => {
             const foundPath = (stdout || '').trim();
             if (foundPath && fs.existsSync(foundPath)) {
-              exec(`open "${foundPath}"`, () => {
+              const safeFound = foundPath.replace(/"/g, '\\"');
+              exec(`open "${safeFound}"`, () => {
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ message: `Spotlight found & opened ${foundPath}`, path: foundPath }));
               });
             } else {
-              exec(`open "${path.join(userHome, 'Downloads')}"`, () => {
+              const defaultFolder = path.join(userHome, 'Downloads');
+              exec(`open "${defaultFolder}"`, () => {
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ message: `Opened Downloads folder` }));
               });
