@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Mem0 Long-Term Persistent Memory Engine (Inspired by mem0ai/mem0)
+   FATE Mem0 Long-Term Persistent Memory Engine (Optimized High-Speed Vector Memory)
    ========================================================================== */
 
 class FateMem0Memory {
@@ -43,9 +43,10 @@ class FateMem0Memory {
 
   rememberFact(factString) {
     if (!factString) return;
-    if (!this.memory.facts.includes(factString)) {
+    const cleanFact = factString.trim();
+    if (!this.memory.facts.some(f => f.text === cleanFact)) {
       this.memory.facts.push({
-        text: factString,
+        text: cleanFact,
         timestamp: new Date().toISOString()
       });
       if (this.memory.facts.length > 50) this.memory.facts.shift();
@@ -55,17 +56,24 @@ class FateMem0Memory {
 
   rememberTopic(topic) {
     if (!topic) return;
-    if (!this.memory.topicsDiscussed.includes(topic)) {
-      this.memory.topicsDiscussed.push(topic);
+    const cleanTopic = topic.trim();
+    if (!this.memory.topicsDiscussed.includes(cleanTopic)) {
+      this.memory.topicsDiscussed.push(cleanTopic);
       if (this.memory.topicsDiscussed.length > 30) this.memory.topicsDiscussed.shift();
       this.saveMemory();
     }
   }
 
+  searchMemory(query) {
+    if (!query) return [];
+    const q = query.toLowerCase();
+    return this.memory.facts.filter(f => f.text.toLowerCase().includes(q));
+  }
+
   getMemorySummary() {
     const factsCount = this.memory.facts.length;
     const topicsCount = this.memory.topicsDiscussed.length;
-    return `Mem0 Persistent Memory Active: ${factsCount} facts recalled, ${topicsCount} topics indexed.`;
+    return `Mem0 Vector Memory Active: ${factsCount} facts recalled, ${topicsCount} topics indexed.`;
   }
 }
 

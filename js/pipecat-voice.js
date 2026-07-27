@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Pipecat Low-Latency Voice Pipeline (Inspired by pipecat-ai/pipecat)
+   FATE Pipecat Low-Latency Voice Pipeline (Optimized Audio Queue)
    ========================================================================== */
 
 class FatePipecatPipeline {
@@ -12,7 +12,7 @@ class FatePipecatPipeline {
 
   interrupt() {
     this.interrupted = true;
-    this.audioQueue = [];
+    this.audioQueue.length = 0; // Fast array clear
     if (this.speech && this.speech.currentAudio) {
       this.speech.currentAudio.pause();
       this.speech.currentAudio = null;
@@ -20,7 +20,7 @@ class FatePipecatPipeline {
     if (this.speech && this.speech.synthesis) {
       this.speech.synthesis.cancel();
     }
-    console.log('⚡ Pipecat Voice Pipeline Interrupted by User Speech.');
+    console.log('⚡ Pipecat Voice Pipeline Interrupted by User Input.');
   }
 
   enqueueSpeech(text, callback) {
@@ -43,7 +43,7 @@ class FatePipecatPipeline {
     if (this.speech) {
       this.speech.speak(item.text, () => {
         if (item.callback) item.callback();
-        this.processQueue();
+        requestAnimationFrame(() => this.processQueue());
       });
     } else {
       this.isProcessingQueue = false;

@@ -1,25 +1,32 @@
 /* ==========================================================================
-   FATE Open-Interpreter Desktop Automation Engine (Inspired by Open-Interpreter)
+   FATE Open-Interpreter Desktop Automation Engine (Optimized Failsafe Subsystem)
    ========================================================================== */
 
 class FateOpenInterpreter {
   constructor() {
     this.activeTasks = [];
+    this.timeoutMs = 5000;
   }
 
   async executeTask(actionName, payload = {}) {
     console.log(`🤖 Open-Interpreter Executing: ${actionName}`, payload);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+
     try {
       const res = await fetch('/api/mac/command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: actionName, ...payload })
+        body: JSON.stringify({ action: actionName, ...payload }),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
       const data = await res.json();
       return data;
     } catch (e) {
-      console.warn('Open-Interpreter Execution Error:', e);
+      clearTimeout(timeoutId);
+      console.warn('Open-Interpreter Execution Error/Timeout:', e.message);
       return { error: e.message };
     }
   }
