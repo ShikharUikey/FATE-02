@@ -153,8 +153,36 @@ class FateCommandHandler {
     return null;
   }
 
-  // Web & Multi-Tab Browser Automation Subsystem ("open youtube, vercel, github", "open vercel on chrome")
+  // Web & Multi-Tab Browser Automation Subsystem ("open youtube and search python", "open vercel on chrome")
   processWebBrowserAutomation(clean) {
+    // Dedicated Ultra-Strong YouTube Search Engine ("open youtube and search <video>", "play <video> on youtube")
+    if (clean.includes('youtube') && (clean.includes('search') || clean.includes('play') || clean.includes('watch') || clean.includes('chalao') || clean.includes('find'))) {
+      const query = clean
+        .replace(/open youtube and search for|open youtube and search|search youtube for|youtube search for|youtube search|play|watch|on youtube|youtube me search karo|youtube par video chalao|youtube par|search for|find/gi, '')
+        .replace(/open|youtube/gi, '')
+        .trim();
+
+      if (query) {
+        const targetUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+        const isChrome = clean.includes('on chrome') || clean.includes('in chrome');
+
+        if (isChrome) {
+          fetch('/api/mac/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'open_url_in_chrome', url: targetUrl })
+          });
+        } else {
+          window.open(targetUrl, '_blank');
+        }
+
+        return {
+          spokenText: `YouTube database par "${query}" search launch kar diya hai.`,
+          actionTaken: `YouTube Search: ${query}`
+        };
+      }
+    }
+
     const webAppMap = {
       'youtube': { name: 'YouTube', url: 'https://www.youtube.com' },
       'vercel': { name: 'Vercel', url: 'https://vercel.com' },
