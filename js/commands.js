@@ -227,22 +227,102 @@ class FateCommandHandler {
       return { spokenText: "Master audio volume decreased by 15 percent.", actionTaken: "macOS: Volume Decreased" };
     }
 
-    // Dynamic Generic App Launcher Intent ("open calculator", "open safari", "open terminal")
-    if (clean.startsWith('open ') && !clean.includes('youtube') && !clean.includes('github')) {
-      const appName = clean.replace(/^open\s+/i, '').trim();
+    // Dynamic Generic App Launcher Intent ("open chrome", "open vs code", "open whatsapp", "open settings", "open capcut")
+    if ((clean.startsWith('open ') || clean.startsWith('launch ') || clean.startsWith('start ') || clean.endsWith(' kholo')) && !clean.includes('youtube') && !clean.includes('github') && !clean.includes('folder') && !clean.includes('file')) {
+      let appName = clean.replace(/^(open|launch|start)\s+/i, '').replace(/\s+kholo$/i, '').trim();
+
+      // Normalize App Names from User Screenshot
+      const appMap = {
+        'antigravity': 'Antigravity',
+        'app store': 'App Store',
+        'automator': 'Automator',
+        'books': 'Books',
+        'calculator': 'Calculator',
+        'calendar': 'Calendar',
+        'canva': 'Canva',
+        'capcut': 'CapCut 2',
+        'cap cut': 'CapCut 2',
+        'chatgpt': 'ChatGPT Classic',
+        'chat gpt': 'ChatGPT Classic',
+        'chess': 'Chess',
+        'claude': 'Claude',
+        'clock': 'Clock',
+        'contacts': 'Contacts',
+        'davinci': 'DaVinci Resolve',
+        'davinci resolve': 'DaVinci Resolve',
+        'dictionary': 'Dictionary',
+        'duplicate file finder': 'Duplicate File Finder',
+        'exceedshare': 'ExceedShare',
+        'facetime': 'FaceTime',
+        'find my': 'Find My',
+        'font book': 'Font Book',
+        'freeform': 'Freeform',
+        'games': 'Games',
+        'chrome': 'Google Chrome',
+        'google chrome': 'Google Chrome',
+        'home': 'Home',
+        'image capture': 'Image Capture',
+        'image playground': 'Image Playground',
+        'iphone mirroring': 'iPhone Mirroring',
+        'journal': 'Journal',
+        'keynote': 'Keynote',
+        'kiro': 'Kiro',
+        'localsend': 'LocalSend',
+        'mail': 'Mail',
+        'maps': 'Maps',
+        'messages': 'Messages',
+        'mission control': 'Mission Control',
+        'music': 'Music',
+        'notes': 'Notes',
+        'pages': 'Pages',
+        'passwords': 'Passwords',
+        'pdf reader': 'PDF Reader',
+        'phone': 'Phone',
+        'photo booth': 'Photo Booth',
+        'camera': 'Photo Booth',
+        'photos': 'Photos',
+        'podcasts': 'Podcasts',
+        'preview': 'Preview',
+        'quicktime': 'QuickTime Player',
+        'reminders': 'Reminders',
+        'safari': 'Safari',
+        'shortcuts': 'Shortcuts',
+        'siri': 'Siri',
+        'stickies': 'Stickies',
+        'stocks': 'Stocks',
+        'settings': 'System Settings',
+        'system settings': 'System Settings',
+        'textedit': 'TextEdit',
+        'time machine': 'Time Machine',
+        'tips': 'Tips',
+        'tv': 'TV',
+        'utilities': 'Utilities',
+        'vs code': 'Visual Studio Code',
+        'vscode': 'Visual Studio Code',
+        'visual studio code': 'Visual Studio Code',
+        'vlc': 'VLC',
+        'voice memos': 'Voice Memos',
+        'vpnify': 'Vpnify',
+        'weather': 'Weather',
+        'whatsapp': 'WhatsApp',
+        'whats app': 'WhatsApp'
+      };
+
+      const resolvedApp = appMap[appName.toLowerCase()] || appName;
+
       if (appName) {
         if (window.fateInterpreter) {
-          window.fateInterpreter.launchApp(appName);
+          window.fateInterpreter.launchApp(resolvedApp);
         } else {
           fetch('/api/mac/command', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'open_app', appName })
+            body: JSON.stringify({ action: 'open_app', appName: resolvedApp })
           });
         }
         return {
-          spokenText: `Launching macOS application ${appName}.`,
-          actionTaken: `macOS: Opened ${appName}`
+          spokenText: `${resolvedApp} application launch kar diya hai.`,
+          actionTaken: `macOS: Opened ${resolvedApp}`
         };
       }
     }

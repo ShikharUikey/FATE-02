@@ -80,11 +80,70 @@ const server = http.createServer((req, res) => {
         }
 
         if (action === 'open_app') {
-          const appName = payload.appName || 'Finder';
-          exec(`open -a "${appName}"`, (err) => {
-            if (err) return res.writeHead(400).end(JSON.stringify({ error: `Could not launch ${appName}` }));
+          const rawApp = (payload.appName || 'Finder').trim();
+          const lowerApp = rawApp.toLowerCase();
+
+          // Intelligent Alias Mapping for macOS Applications
+          const appAliases = {
+            'chrome': 'Google Chrome',
+            'google chrome': 'Google Chrome',
+            'vscode': 'Visual Studio Code',
+            'vs code': 'Visual Studio Code',
+            'visual studio code': 'Visual Studio Code',
+            'code': 'Visual Studio Code',
+            'capcut': 'CapCut 2',
+            'cap cut': 'CapCut 2',
+            'capcut 2': 'CapCut 2',
+            'chatgpt': 'ChatGPT Classic',
+            'chat gpt': 'ChatGPT Classic',
+            'chatgpt classic': 'ChatGPT Classic',
+            'davinci': 'DaVinci Resolve',
+            'davinci resolve': 'DaVinci Resolve',
+            'camera': 'Photo Booth',
+            'photo booth': 'Photo Booth',
+            'facetime': 'FaceTime',
+            'find my': 'Find My',
+            'findmy': 'Find My',
+            'image capture': 'Image Capture',
+            'iphone mirroring': 'iPhone Mirroring',
+            'mission control': 'Mission Control',
+            'pdf reader': 'PDF Reader',
+            'quicktime': 'QuickTime Player',
+            'quicktime player': 'QuickTime Player',
+            'settings': 'System Settings',
+            'system settings': 'System Settings',
+            'time machine': 'Time Machine',
+            'voice memos': 'Voice Memos',
+            'vlc player': 'VLC',
+            'vlc': 'VLC',
+            'whatsapp': 'WhatsApp',
+            'whats app': 'WhatsApp',
+            'app store': 'App Store',
+            'font book': 'Font Book',
+            'duplicate file finder': 'Duplicate File Finder'
+          };
+
+          const targetApp = appAliases[lowerApp] || rawApp;
+          const safeApp = targetApp.replace(/"/g, '\\"');
+
+          exec(`open -a "${safeApp}"`, (err) => {
+            if (err) {
+              console.warn(`Direct open -a failed for ${targetApp}, attempting Spotlight:`, err.message);
+              exec(`mdfind "kMDItemKind == 'Application' && kMDItemDisplayName == '*${safeApp}*'" | head -n 1`, (spotErr, stdout) => {
+                const foundPath = (stdout || '').trim();
+                if (foundPath) {
+                  exec(`open "${foundPath.replace(/"/g, '\\"')}"`, () => {
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: `Spotlight launched ${targetApp}`, path: foundPath }));
+                  });
+                } else {
+                  res.writeHead(400).end(JSON.stringify({ error: `Could not launch ${targetApp}` }));
+                }
+              });
+              return;
+            }
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: `Successfully launched ${appName}` }));
+            res.end(JSON.stringify({ message: `Successfully launched ${targetApp}` }));
           });
           return;
         }
