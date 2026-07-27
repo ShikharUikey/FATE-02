@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Command Execution Engine (Universal Academic Quiz & Intent Core)
+   FATE Command Execution Engine (macOS Camera & App Automation Core)
    ========================================================================== */
 
 class FateCommandHandler {
@@ -15,7 +15,16 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. Math & Academic Quiz / Problem Generator Intent ("bring me advanced level maths question", "give me a math problem", etc.)
+    // 1. macOS System Voice Automation & App Launcher Commands ("open camera", "photo booth", "screenshot", "volume up")
+    const macResult = this.processMacAutomation(cleanText);
+    if (macResult) {
+      return {
+        speakText: macResult.spokenText,
+        actionTaken: macResult.actionTaken
+      };
+    }
+
+    // 2. Math & Academic Quiz / Problem Generator Intent
     const mathQuizResult = this.processMathQuizGenerator(cleanText);
     if (mathQuizResult) {
       if (this.app.codeArea) this.app.codeArea.value = mathQuizResult.detailedNotes;
@@ -26,7 +35,7 @@ class FateCommandHandler {
       };
     }
 
-    // 2. Universal Code Generator Intent (Neural Networks, Recommenders, Calculators, Python apps)
+    // 3. Universal Code Generator Intent
     const codeGenResult = this.processUniversalCodeGen(cleanText, text);
     if (codeGenResult) {
       if (this.app.codeArea) this.app.codeArea.value = codeGenResult.codeSnippet;
@@ -37,7 +46,7 @@ class FateCommandHandler {
       };
     }
 
-    // 3. GitHub Live Resource Explorer API Integration
+    // 4. GitHub Live Resource Explorer API Integration
     const githubResult = this.processGitHubExplorer(text);
     if (githubResult) {
       this.app.switchTab('suite');
@@ -47,7 +56,7 @@ class FateCommandHandler {
       };
     }
 
-    // 4. Language & Capabilities Overview Engine
+    // 5. Language & Capabilities Overview Engine
     const languagesResult = this.processLanguagesOverview(cleanText);
     if (languagesResult) {
       if (this.app.codeArea) this.app.codeArea.value = languagesResult.detailedNotes;
@@ -58,47 +67,7 @@ class FateCommandHandler {
       };
     }
 
-    // 5. macOS System Voice Automation Commands
-    const macResult = this.processMacAutomation(text);
-    if (macResult) {
-      return {
-        speakText: macResult.spokenText,
-        actionTaken: macResult.actionTaken
-      };
-    }
-
-    // 6. Voice Task Manager & Reminders
-    const taskResult = this.processVoiceTaskManager(text);
-    if (taskResult) {
-      if (this.app.codeArea) this.app.codeArea.value = taskResult.taskNotes;
-      this.app.switchTab('suite');
-      return {
-        speakText: taskResult.spokenText,
-        actionTaken: taskResult.actionTaken
-      };
-    }
-
-    // 7. Multi-Voice Personality Matrix Selector
-    const personaResult = this.processPersonaMatrix(text);
-    if (personaResult) {
-      return {
-        speakText: personaResult.spokenText,
-        actionTaken: personaResult.actionTaken
-      };
-    }
-
-    // 8. Advanced Calculus & Differential Equation Queries
-    const advMathResult = this.solveAdvancedMath(text);
-    if (advMathResult) {
-      if (this.app.calcInput) this.app.calcInput.value = advMathResult.shortResult;
-      this.app.switchTab('suite');
-      return {
-        speakText: advMathResult.spokenText,
-        actionTaken: advMathResult.actionTaken
-      };
-    }
-
-    // 9. Standard Arithmetic & Polynomial Math Intent
+    // 6. Standard Arithmetic & Polynomial Math Intent
     const mathResult = this.tryParseMath(cleanText);
     if (mathResult !== null) {
       if (this.app.calcInput) this.app.calcInput.value = mathResult.result;
@@ -108,7 +77,7 @@ class FateCommandHandler {
       };
     }
 
-    // 10. Weather Intent
+    // 7. Weather Intent
     if (cleanText.includes('weather') || cleanText.includes('temperature') || cleanText.includes('forecast') || cleanText.includes('climate')) {
       let city = cleanText.replace(/what's the weather in|what is the weather in|weather in|weather for|temperature in|forecast for|weather|temperature|forecast|climate|today/gi, '').trim();
       
@@ -128,7 +97,7 @@ class FateCommandHandler {
       }
     }
 
-    // 11. Mute / Silence Commands
+    // 8. Mute / Silence Commands
     if (cleanText.includes('mute') || cleanText.includes('stop speaking') || cleanText.includes('be quiet') || cleanText === 'stop' || cleanText.includes('hush')) {
       if (this.app.speech.currentAudio) {
         this.app.speech.currentAudio.pause();
@@ -140,19 +109,19 @@ class FateCommandHandler {
       return { speakText: "Audio output silenced.", actionTaken: "Speech Silenced" };
     }
 
-    // 12. Clear Chat / Reset Conversation
+    // 9. Clear Chat / Reset Conversation
     if (cleanText.includes('clear chat') || cleanText.includes('clear feed') || cleanText.includes('reset chat') || cleanText.includes('clear log')) {
       this.app.clearChatFeed();
       return { speakText: "Conversation buffer purged. Standing by for fresh telemetry.", actionTaken: "Chat Purged" };
     }
 
-    // 13. YouTube & Video Automation
+    // 10. YouTube & Video Automation
     if (cleanText.startsWith('open youtube') || cleanText === 'youtube') {
       window.open('https://www.youtube.com', '_blank');
       return { speakText: "Opening YouTube video platform.", actionTaken: "Opened YouTube" };
     }
 
-    // 14. Theme Customization
+    // 11. Theme Customization
     if (cleanText.includes('theme') || cleanText.includes('mode') || cleanText.includes('color')) {
       if (cleanText.includes('red') || cleanText.includes('alert')) {
         this.app.setTheme('red-alert');
@@ -175,7 +144,77 @@ class FateCommandHandler {
     return null;
   }
 
-  // Advanced Math & Academic Quiz / Problem Generator Intent
+  // macOS Camera, System Voice Automation & App Launcher Subsystem
+  processMacAutomation(clean) {
+    // Photo Booth / Open Camera Intent
+    if (clean.includes('open camera') || clean.includes('camera') || clean.includes('take photo') || clean.includes('photo booth') || clean.includes('photo booth kholo') || clean.includes('camera kholo')) {
+      if (window.fateInterpreter) {
+        window.fateInterpreter.launchApp('Photo Booth');
+      } else {
+        fetch('/api/mac/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'open_app', appName: 'Photo Booth' })
+        });
+      }
+      return {
+        spokenText: "Photo Booth camera application launch kar diya hai.",
+        actionTaken: "macOS: Opened Photo Booth Camera"
+      };
+    }
+
+    // Screenshot Intent
+    if (clean.includes('screenshot') || clean.includes('screencapture') || clean.includes('take screenshot')) {
+      if (window.fateInterpreter) {
+        window.fateInterpreter.takeScreenshot();
+      } else {
+        fetch('/api/mac/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'screenshot' })
+        });
+      }
+      return {
+        spokenText: "Screen capture executed. Screenshot saved to your macOS Desktop.",
+        actionTaken: "macOS: Screenshot Captured"
+      };
+    }
+
+    // Volume Control Intent
+    if (clean.includes('volume up') || clean.includes('increase volume') || clean.includes('volume badhao')) {
+      if (window.fateInterpreter) window.fateInterpreter.setVolume('up');
+      return { spokenText: "Master audio volume increased by 15 percent.", actionTaken: "macOS: Volume Increased" };
+    }
+
+    if (clean.includes('volume down') || clean.includes('decrease volume') || clean.includes('volume kam karo')) {
+      if (window.fateInterpreter) window.fateInterpreter.setVolume('down');
+      return { spokenText: "Master audio volume decreased by 15 percent.", actionTaken: "macOS: Volume Decreased" };
+    }
+
+    // Dynamic Generic App Launcher Intent ("open calculator", "open safari", "open terminal")
+    if (clean.startsWith('open ') && !clean.includes('youtube') && !clean.includes('github')) {
+      const appName = clean.replace(/^open\s+/i, '').trim();
+      if (appName) {
+        if (window.fateInterpreter) {
+          window.fateInterpreter.launchApp(appName);
+        } else {
+          fetch('/api/mac/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'open_app', appName })
+          });
+        }
+        return {
+          spokenText: `Launching macOS application ${appName}.`,
+          actionTaken: `macOS: Opened ${appName}`
+        };
+      }
+    }
+
+    return null;
+  }
+
+  // Advanced Math Quiz Generator
   processMathQuizGenerator(clean) {
     if ((clean.includes('math') || clean.includes('maths') || clean.includes('calculus')) && (clean.includes('bring') || clean.includes('give') || clean.includes('question') || clean.includes('problem') || clean.includes('advanced') || clean.includes('quiz') || clean.includes('test'))) {
       const mathProblem = `
@@ -208,7 +247,7 @@ $$I = \\int_{0}^{\\pi/2} \\frac{\\sqrt{\\sin x}}{\\sqrt{\\sin x} + \\sqrt{\\cos 
     return null;
   }
 
-  // Universal Code & System Generator Intent
+  // Universal Code Generator
   processUniversalCodeGen(clean, originalText) {
     const isCreationQuery = /make|build|create|generate|code|banao|write|setup|develop|design|system|module/i.test(clean);
 
@@ -322,11 +361,6 @@ print("⚡ FATE AI Recommendation Engine Ready!")
     }
     return null;
   }
-
-  processMacAutomation(text) { return null; }
-  processVoiceTaskManager(text) { return null; }
-  processPersonaMatrix(text) { return null; }
-  solveAdvancedMath(text) { return null; }
 
   tryParseMath(text) {
     let expr = text.replace(/what is|calculate|solve|how much is|compute/gi, '').trim();
