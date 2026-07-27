@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Mem0 Long-Term Persistent Memory Engine (Schedule & Memory Store)
+   FATE Mem0 Long-Term Persistent Memory Engine (Multi-Date Schedule Store)
    ========================================================================== */
 
 class FateMem0Memory {
@@ -22,7 +22,7 @@ class FateMem0Memory {
         facts: [],
         topicsDiscussed: [],
         sessionHistory: [],
-        dailySchedule: null
+        schedules: {}
       };
     } catch (e) {
       return {
@@ -30,7 +30,7 @@ class FateMem0Memory {
         facts: [],
         topicsDiscussed: [],
         sessionHistory: [],
-        dailySchedule: null
+        schedules: {}
       };
     }
   }
@@ -43,25 +43,35 @@ class FateMem0Memory {
     }
   }
 
-  setSchedule(scheduleText) {
-    if (!scheduleText) return;
-    this.memory.dailySchedule = {
-      text: scheduleText.trim(),
-      date: new Date().toLocaleDateString()
-    };
-    this.saveMemory();
+  formatDateKey(dateOffsetDays = 0) {
+    const d = new Date();
+    d.setDate(d.getDate() + dateOffsetDays);
+    return d.toISOString().split('T')[0];
   }
 
-  getSchedule() {
-    if (!this.memory.dailySchedule || !this.memory.dailySchedule.text) {
+  setSchedule(scheduleText, dateOffsetDays = 0) {
+    if (!scheduleText) return;
+    const dateKey = this.formatDateKey(dateOffsetDays);
+    if (!this.memory.schedules) this.memory.schedules = {};
+    this.memory.schedules[dateKey] = scheduleText.trim();
+    this.saveMemory();
+    return dateKey;
+  }
+
+  getSchedule(dateOffsetDays = 0) {
+    const dateKey = this.formatDateKey(dateOffsetDays);
+    if (!this.memory.schedules || !this.memory.schedules[dateKey]) {
       return null;
     }
-    return this.memory.dailySchedule.text;
+    return this.memory.schedules[dateKey];
   }
 
-  clearSchedule() {
-    this.memory.dailySchedule = null;
-    this.saveMemory();
+  clearSchedule(dateOffsetDays = 0) {
+    const dateKey = this.formatDateKey(dateOffsetDays);
+    if (this.memory.schedules && this.memory.schedules[dateKey]) {
+      delete this.memory.schedules[dateKey];
+      this.saveMemory();
+    }
   }
 
   rememberFact(factString) {

@@ -55,15 +55,19 @@ class FateAIBrain {
   generateFridayResponse(q, originalQuery) {
     // 1. Manually Fed FRIDAY Greetings & Tactical Status Diagnostics
     if (q.includes('wake up') || q.includes('wakeup') || q.includes('wake up friday') || q.includes('wake up fate')) {
+      const todaySched = window.fateMem0 ? window.fateMem0.getSchedule(0) : null;
+      if (todaySched) {
+        return `All systems online, Boss! Here is your schedule for today: ${todaySched}.`;
+      }
       return "All systems online and standing by, Boss!";
     }
 
-    if (q.includes('friday mode') || q.includes('friday protocol') || q === 'friday') {
-      return "FRIDAY Protocol fully engaged, Boss! Systems online.";
-    }
-
     if (q.includes('good morning') || q.includes('morning')) {
-      return `Good morning, Boss! FATE Core is online and operating at 100% efficiency. Ready when you are. What are we building or exploring today?`;
+      const todaySched = window.fateMem0 ? window.fateMem0.getSchedule(0) : null;
+      if (todaySched) {
+        return `Good morning, Boss! Systems online. Here is your schedule for today: ${todaySched}.`;
+      }
+      return `Good morning, Boss! FATE Core is online and operating at 100% efficiency. Ready when you are.`;
     }
 
     if (q.includes('good afternoon')) {

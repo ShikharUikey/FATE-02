@@ -167,61 +167,65 @@ class FateCommandHandler {
     return null;
   }
 
-  // Persistent Daily Schedule Manager Subsystem ("set schedule ...", "what's the schedule for today")
+  // Multi-Date Schedule Manager Subsystem ("make schedule for tomorrow ...", "what's the schedule for today")
   processScheduleManager(clean, originalText) {
-    // A. Setting / Updating Schedule Intent ("set schedule ...", "add schedule ...", "my schedule today is ...", "schedule set karo ...")
-    if (clean.includes('schedule') && (clean.includes('set') || clean.includes('add') || clean.includes('create') || clean.includes('karo') || clean.includes('my schedule is') || clean.includes('today is') || clean.startsWith('set schedule') || clean.startsWith('add schedule'))) {
+    const isTomorrow = clean.includes('tomorrow') || clean.includes('kal');
+    const offset = isTomorrow ? 1 : 0;
+    const dateLabel = isTomorrow ? 'Tomorrow' : 'Today';
+
+    // A. Setting / Updating Schedule Intent ("set schedule ...", "make a schedule for tomorrow ...", "add schedule for tomorrow ...")
+    const isSettingIntent = clean.includes('set') || clean.includes('make') || clean.includes('add') || clean.includes('create') || clean.includes('karo') || clean.includes('is');
+    const hasItems = originalText.length > 18 || /:\s*|\b(at|am|pm|baje|workout|gym|meeting|study|coding|flight|session)\b/i.test(originalText);
+
+    if (clean.includes('schedule') && isSettingIntent && hasItems && !clean.includes('what') && !clean.includes('show') && !clean.includes('tell')) {
       const scheduleContent = originalText
         .replace(/^(hey fate|fate|ok fate|hello fate|hi fate)\s*/i, '')
-        .replace(/set schedule for today to|set schedule for today|set schedule to|set schedule|add schedule|create schedule|schedule set karo|my schedule today is|my schedule is|schedule:/gi, '')
+        .replace(/set schedule for tomorrow to|set schedule for tomorrow|make a schedule for tomorrow|make schedule for tomorrow|schedule for tomorrow is|set schedule for today to|set schedule for today|set schedule to|set schedule|make schedule|add schedule|create schedule|schedule set karo|my schedule today is|my schedule is|schedule:/gi, '')
         .trim();
 
       if (scheduleContent) {
         if (window.fateMem0) {
-          window.fateMem0.setSchedule(scheduleContent);
-        } else {
-          localStorage.setItem('fate_daily_schedule', scheduleContent);
+          window.fateMem0.setSchedule(scheduleContent, offset);
         }
 
-        const detailView = `📅 FATE DAILY SCHEDULE SAVED\n==================================================\n\n${scheduleContent}\n\n==================================================\nStatus: Saved & Indexed in Mem0 Memory`;
+        const detailView = `📅 FATE ${dateLabel.toUpperCase()}'S SCHEDULE SAVED\n==================================================\n\n${scheduleContent}\n\n==================================================\nStatus: Saved & Indexed in Mem0 Memory`;
         if (this.app.codeArea) this.app.codeArea.value = detailView;
         this.app.switchTab('suite');
 
         return {
-          spokenText: `Today's schedule has been saved, Boss: ${scheduleContent}.`,
-          actionTaken: `Schedule Set: ${scheduleContent}`
+          spokenText: `${dateLabel}'s schedule has been saved, Boss: ${scheduleContent}.`,
+          actionTaken: `Schedule Set (${dateLabel}): ${scheduleContent}`
         };
       }
     }
 
-    // B. Querying Schedule Intent ("what is the schedule for today", "what's the schedule for today", "show my schedule", "schedule for today", "today schedule", "schedule batao", "aaj ka schedule kya hai")
+    // B. Querying Schedule Intent ("what is the schedule for today", "tomorrow schedule", "show schedule", "schedule")
     if (clean.includes('schedule')) {
-      const savedSchedule = window.fateMem0 ? window.fateMem0.getSchedule() : localStorage.getItem('fate_daily_schedule');
+      const savedSchedule = window.fateMem0 ? window.fateMem0.getSchedule(offset) : null;
 
       if (savedSchedule) {
-        const detailView = `📅 FATE DAILY SCHEDULE MATRIX\n==================================================\n\n${savedSchedule}\n\n==================================================\nStatus: Active & Indexed in Mem0 Memory`;
+        const detailView = `📅 FATE ${dateLabel.toUpperCase()}'S SCHEDULE MATRIX\n==================================================\n\n${savedSchedule}\n\n==================================================\nStatus: Active & Indexed in Mem0 Memory`;
         if (this.app.codeArea) this.app.codeArea.value = detailView;
         this.app.switchTab('suite');
 
         return {
-          spokenText: `Here is your schedule for today, Boss: ${savedSchedule}.`,
-          actionTaken: `Schedule Query: ${savedSchedule}`
+          spokenText: `Here is your schedule for ${dateLabel.toLowerCase()}, Boss: ${savedSchedule}.`,
+          actionTaken: `Schedule Query (${dateLabel}): ${savedSchedule}`
         };
       } else {
         return {
-          spokenText: "No schedule set for today yet, Boss! Tell me 'set schedule ...' to save your tasks.",
-          actionTaken: "Schedule Query: No schedule set"
+          spokenText: `No schedule set for ${dateLabel.toLowerCase()} yet, Boss! Tell me 'set schedule for ${dateLabel.toLowerCase()} ...' to save your tasks.`,
+          actionTaken: `Schedule Query (${dateLabel}): No schedule set`
         };
       }
     }
 
     // C. Clearing Schedule Intent ("clear schedule", "reset schedule", "delete schedule")
     if (clean.includes('clear schedule') || clean.includes('reset schedule') || clean.includes('delete schedule')) {
-      if (window.fateMem0) window.fateMem0.clearSchedule();
-      localStorage.removeItem('fate_daily_schedule');
+      if (window.fateMem0) window.fateMem0.clearSchedule(offset);
       return {
-        spokenText: "Daily schedule buffer cleared, Boss!",
-        actionTaken: "Schedule Cleared"
+        spokenText: `${dateLabel}'s schedule cleared, Boss!`,
+        actionTaken: `Schedule Cleared (${dateLabel})`
       };
     }
 
