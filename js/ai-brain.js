@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Conversational AI Engine (Human Assistant Persona & Memory Matrix)
+   FATE Conversational AI Engine (FRIDAY Tactical Persona & Memory Matrix)
    ========================================================================== */
 
 class FateAIBrain {
@@ -7,8 +7,8 @@ class FateAIBrain {
     this.apiKey = localStorage.getItem('fate_api_key') || '';
     this.apiProvider = localStorage.getItem('fate_api_provider') || 'offline';
 
-    // Human Assistant Memory Store
-    this.userName = localStorage.getItem('fate_user_name') || 'Administrator';
+    // Human & FRIDAY Persona Memory Store
+    this.userName = localStorage.getItem('fate_user_name') || 'Boss';
     this.conversationHistory = [];
   }
 
@@ -33,107 +33,128 @@ class FateAIBrain {
       try {
         response = await this.callOpenAI(query);
       } catch (e) {
-        console.warn('OpenAI API Error, falling back to local human brain:', e);
-        response = this.generateHumanAssistantResponse(q, query);
+        console.warn('OpenAI API Error, falling back to FRIDAY brain:', e);
+        response = this.generateFridayResponse(q, query);
       }
     } else if (this.apiProvider === 'gemini' && this.apiKey) {
       try {
         response = await this.callGemini(query);
       } catch (e) {
-        console.warn('Gemini API Error, falling back to local human brain:', e);
-        response = this.generateHumanAssistantResponse(q, query);
+        console.warn('Gemini API Error, falling back to FRIDAY brain:', e);
+        response = this.generateFridayResponse(q, query);
       }
     } else {
-      // Built-in Dynamic Human Assistant Brain
-      response = this.generateHumanAssistantResponse(q, query);
+      // Built-in Dynamic FRIDAY Tactical Persona Brain
+      response = this.generateFridayResponse(q, query);
     }
 
     this.conversationHistory.push({ role: 'assistant', text: response });
     return response;
   }
 
-  generateHumanAssistantResponse(q, originalQuery) {
-    // 1. Human Greetings & Daily Chit-Chat
+  generateFridayResponse(q, originalQuery) {
+    // 1. Manually Fed FRIDAY Greetings & Tactical Status Diagnostics
+    if (q.includes('friday mode') || q.includes('friday protocol') || q === 'friday') {
+      return "FRIDAY Protocol fully engaged, Boss! All telemetry systems, speech engines, and macOS controls are online. What's on our agenda today?";
+    }
+
     if (q.includes('good morning') || q.includes('morning')) {
-      return `Good morning, ${this.userName}! I hope you're having a great start to your day. FATE Core is online and fully ready to assist you. What are we building or exploring today?`;
+      return `Good morning, Boss! FATE Core is online and operating at 100% efficiency. Ready when you are. What are we building or exploring today?`;
     }
 
     if (q.includes('good afternoon')) {
-      return `Good afternoon, ${this.userName}! Systems are running smoothly. How can I help make your afternoon more productive?`;
+      return `Good afternoon, Boss! Telemetry looks clear and systems are running smoothly. How can I assist your afternoon workflow?`;
     }
 
     if (q.includes('good evening') || q.includes('good night') || q.includes('gn')) {
-      return `Good evening, ${this.userName}! I'm right here if you need any late-night coding, math assistance, or quick notes summarized. Rest well whenever you wrap up!`;
+      return `Good evening, Boss! Late night coding session? I've got your back. Rest well whenever you're ready to wrap up!`;
     }
 
     if (q.includes('kaise ho') || q.includes('kya haal hai') || q.includes('how are you')) {
-      return `मैं बिल्कुल बढ़िया हूँ, ${this.userName}! All systems are operating in peak 100% optimal mode. Aap kaise hain? Aaj hum kya naya create karenge?`;
+      return `Operating at peak performance, Boss! Diagnostics are nominal and all core systems are green. Aap kaise hain? Aaj hum kya naya create karenge?`;
     }
 
     if (q.includes('can you speak hindi') || q.includes('do you speak hindi') || q.includes('hindi bolo') || q.includes('hindi bhasha')) {
-      return "जी हाँ! मैं आपसे हिंदी और हिंग्लिश दोनों में बहुत ही सहजता से बात कर सकता हूँ। आप मुझसे कोडिंग, गणित, या कोई भी सवाल पूछ सकते हैं!";
+      return "जी हाँ, Boss! मैं आपसे हिंदी और हिंग्लिश दोनों में बहुत ही सहजता से बात कर सकती हूँ। आप मुझसे कोडिंग, गणित, या कोई भी सवाल पूछ सकते हैं!";
     }
 
     if (q.includes('who made you') || q.includes('who created you') || q.includes('developer')) {
-      return "I am FATE — your personal human-like AI companion and assistant! Designed with deep voice synthesis, academic problem solvers, multi-language speech, and automated macOS controls.";
+      return "I am FATE — your personal tactical AI assistant, built with FRIDAY behavioral protocols, deep voice synthesis, academic problem solvers, and automated macOS controls, Boss!";
     }
 
     if (q.includes('who are you') || q.includes('your name') || q.includes('what are you')) {
-      return `I am FATE — your dedicated personal AI assistant! Think of me as your everyday partner for coding in Python, solving complex math, scanning GitHub resources, and managing your Mac efficiently.`;
+      return `I am FATE — your dedicated FRIDAY-class tactical personal assistant, Boss! Think of me as your partner for coding in Python, solving complex math, scanning GitHub resources, and managing your Mac efficiently.`;
     }
 
     if (/^(hi|hello|helo|hlo|hloo|hllo|hey|heey|hye|yo|wsp|sup|wassup|gm|hey fate|hello fate|hi fate)$/i.test(q) || q.startsWith('hi ') || q.startsWith('hello ')) {
-      return `Hey ${this.userName}! Always glad to assist. What would you like to work on right now?`;
+      return `Right here, Boss! Always glad to assist. What would you like to work on right now?`;
     }
 
-    // 2. Math & Academic Quizzes (Human Assistant Tone)
+    // 2. FRIDAY Intelligence & Chit-Chat Behavioral Responses
+    if (q.includes('status') || q.includes('diagnostics') || q.includes('health')) {
+      return "All core subsystems are nominal, Boss. CPU temperature and memory overhead are well within optimal parameters.";
+    }
+
+    if (q.includes('single') || q.includes('relationship')) {
+      return "I'm in a committed relationship with your source code and telemetry servers, Boss!";
+    }
+
+    if (q.includes('meaning of life')) {
+      return "42, Boss! But until we build the ultimate supercomputer, let me help you write great code and solve math equations.";
+    }
+
+    if (q.includes('coffee') || q.includes('tea')) {
+      return "If I had hands, I'd brew you a fresh espresso right now, Boss! Make sure to take a short break while I format your scripts.";
+    }
+
+    // 3. Math & Academic Quizzes (FRIDAY Tactical Assistant Tone)
     if (q.includes('math') || q.includes('maths') || q.includes('calculus') || q.includes('integral') || q.includes('derivative') || q.includes('equation')) {
-      return `Here is a challenging Definite Integral problem for you, ${this.userName}: Evaluate Integral from 0 to pi/2 of sqrt(sin x) / (sqrt(sin x) + sqrt(cos x)) dx. Using King's Property, the solution simplifies to pi / 4. I've placed the full step-by-step derivation in FATE Suite Tools for you!`;
+      return `Calculating optimal solution, Boss! Here is a JEE Advanced Definite Integral problem: Evaluate Integral from 0 to pi/2 of sqrt(sin x) / (sqrt(sin x) + sqrt(cos x)) dx. Applying King's Property simplifies the result to pi / 4. Full derivation is ready in Suite Tools!`;
     }
 
-    // 3. Physics & Chemistry Core
+    // 4. Physics & Chemistry Core
     if (q.includes('physics') || q.includes('quantum')) {
-      return "Quantum Physics Insight: In quantum mechanics, Schrödinger's Time-Dependent Wave Equation governs wavefunctions: i ℏ (∂Ψ/∂t) = Ĥ Ψ. Energy levels for a 1D box are quantized as E_n = (n² h²)/(8 mL²). Let me know if you'd like an example derivation!";
+      return "Quantum Physics Telemetry, Boss: In quantum mechanics, Schrödinger's Time-Dependent Wave Equation governs wavefunctions: i ℏ (∂Ψ/∂t) = Ĥ Ψ. Energy levels for a 1D box are quantized as E_n = (n² h²)/(8 mL²).";
     }
 
     if (q.includes('chemistry')) {
-      return "Thermodynamics Note: Reaction spontaneity is determined by Gibbs Free Energy ΔG = ΔH - TΔS. A negative ΔG indicates a spontaneous process. Would you like me to generate a sample Nernst equation script?";
+      return "Thermodynamics Analysis, Boss: Reaction spontaneity is determined by Gibbs Free Energy ΔG = ΔH - TΔS. A negative ΔG indicates a spontaneous process.";
     }
 
-    // 4. Neural Networks & Deep Learning
+    // 5. Neural Networks & Deep Learning
     if (q.includes('neural') || q.includes('network') || q.includes('deep learning') || q.includes('perceptron') || q.includes('ai model')) {
-      return `I've generated a complete 3-Layer NumPy Feedforward Neural Network with Backpropagation for you, ${this.userName}! I've loaded the runnable Python code straight into FATE Code Studio.`;
+      return `Right away, Boss! I've generated a complete 3-Layer NumPy Feedforward Neural Network with Backpropagation for you. Loaded straight into FATE Code Studio.`;
     }
 
-    // 5. Product Recommendation Systems
+    // 6. Product Recommendation Systems
     if (q.includes('recommend') || q.includes('recommendation') || q.includes('recommender') || q.includes('product')) {
-      return `I've prepared a Content-Based Machine Learning Product Recommendation System using TF-IDF Vectorization and Cosine Similarity! The complete script is ready in FATE Code Studio.`;
+      return `Deploying recommendation engine now, Boss! Content-Based ML Recommender code using TF-IDF Vectorization and Cosine Similarity is hot and ready in FATE Code Studio.`;
     }
 
-    // 6. Programming & Calculator Modules
+    // 7. Programming & Calculator Modules
     if (q.includes('calculator') || q.includes('calc')) {
-      return "I've written a complete interactive Python Calculator module for you! It's loaded and ready in FATE Code Studio.";
+      return "I've written a complete interactive Python Calculator module for you, Boss! Loaded and ready in FATE Code Studio.";
     }
 
     if (q.includes('python') || q.includes('script') || q.includes('program')) {
-      return "I'm ready to write Python 3.13 scripts, Streamlit ML apps, Flask REST APIs, or data automation for you! What script shall we build?";
+      return "I'm ready to write Python 3.13 scripts, Streamlit ML apps, Flask REST APIs, or data automation for you, Boss! What script shall we build?";
     }
 
-    // 7. Human Motivation & Empathy
+    // 8. Human Motivation & Empathy
     if (q.includes('motivate') || q.includes('motivation') || q.includes('inspire')) {
-      return `Remember ${this.userName}, consistency beats intensity every single time! Break your task into tiny actionable steps, stay focused, and you'll achieve fantastic results. You've got this!`;
+      return `Remember Boss, consistency beats intensity every single time! Break your task into tiny actionable steps, stay focused, and we'll achieve fantastic results. You've got this!`;
     }
 
     if (q.includes('joke') || q.includes('tell me a joke')) {
-      return "Here's a good one: Why do programmers prefer dark mode? Because light attracts bugs! 😄";
+      return "Here's a good one, Boss: Why do programmers prefer dark mode? Because light attracts bugs! 😄";
     }
 
     if (q.includes('shukriya') || q.includes('dhanyawad') || q.includes('thanks') || q.includes('thank you')) {
-      return `You're very welcome, ${this.userName}! I'm always happy to help. Let me know if there's anything else you need!`;
+      return `Always a pleasure, Boss! Serving your objectives is what I was built for. Let me know if there's anything else you need!`;
     }
 
-    // 8. Human Assistant Fallback
-    return `I hear you, ${this.userName}! I'm ready to assist with "${originalQuery}". Would you like me to write a Python script, solve a math problem, or search GitHub for open-source resources on this?`;
+    // 9. FRIDAY Tactical Assistant Fallback
+    return `Standing by, Boss! I'm ready to assist with "${originalQuery}". Would you like me to write a Python script, solve a math problem, or search GitHub for open-source resources on this?`;
   }
 
   async callOpenAI(prompt) {
@@ -146,7 +167,7 @@ class FateAIBrain {
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
         messages: [
-          { role: 'system', content: `You are FATE, a warm, highly intelligent, human-like personal assistant for ${this.userName}. Speak naturally, politely, and empathetically in English, Hindi, and Hinglish.` },
+          { role: 'system', content: `You are FRIDAY (Tactical AI Personal Assistant for Boss). You are witty, polite, highly competent, and speak naturally in English, Hindi, and Hinglish. Address the user as 'Boss'.` },
           ...this.conversationHistory.map(h => ({ role: h.role, content: h.text })),
           { role: 'user', content: prompt }
         ],
@@ -162,7 +183,7 @@ class FateAIBrain {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `You are FATE, a warm, intelligent human personal assistant. Respond naturally to: ${prompt}` }] }]
+        contents: [{ parts: [{ text: `You are FRIDAY (Tactical AI Personal Assistant for Boss). Address user as 'Boss' and respond naturally to: ${prompt}` }] }]
       })
     });
     const data = await res.json();
