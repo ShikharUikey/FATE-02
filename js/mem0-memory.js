@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FATE Mem0 Long-Term Persistent Memory Engine (Optimized High-Speed Vector Memory)
+   FATE Mem0 Long-Term Persistent Memory Engine (Schedule & Memory Store)
    ========================================================================== */
 
 class FateMem0Memory {
@@ -13,7 +13,7 @@ class FateMem0Memory {
       const data = localStorage.getItem(this.storageKey);
       return data ? JSON.parse(data) : {
         userProfile: {
-          name: 'Administrator',
+          name: 'Boss',
           role: 'Lead Developer',
           preferredLanguage: 'Hinglish',
           preferredTheme: 'default',
@@ -21,14 +21,16 @@ class FateMem0Memory {
         },
         facts: [],
         topicsDiscussed: [],
-        sessionHistory: []
+        sessionHistory: [],
+        dailySchedule: null
       };
     } catch (e) {
       return {
-        userProfile: { name: 'Administrator' },
+        userProfile: { name: 'Boss' },
         facts: [],
         topicsDiscussed: [],
-        sessionHistory: []
+        sessionHistory: [],
+        dailySchedule: null
       };
     }
   }
@@ -39,6 +41,27 @@ class FateMem0Memory {
     } catch (e) {
       console.warn('FATE Mem0 Storage Warning:', e);
     }
+  }
+
+  setSchedule(scheduleText) {
+    if (!scheduleText) return;
+    this.memory.dailySchedule = {
+      text: scheduleText.trim(),
+      date: new Date().toLocaleDateString()
+    };
+    this.saveMemory();
+  }
+
+  getSchedule() {
+    if (!this.memory.dailySchedule || !this.memory.dailySchedule.text) {
+      return null;
+    }
+    return this.memory.dailySchedule.text;
+  }
+
+  clearSchedule() {
+    this.memory.dailySchedule = null;
+    this.saveMemory();
   }
 
   rememberFact(factString) {

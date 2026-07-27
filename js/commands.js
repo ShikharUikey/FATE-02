@@ -20,6 +20,15 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
+    // 0. Persistent Daily Schedule Manager Intent ("set schedule ...", "what's the schedule for today", "show my schedule")
+    const scheduleResult = this.processScheduleManager(cleanText, text);
+    if (scheduleResult) {
+      return {
+        speakText: scheduleResult.spokenText,
+        actionTaken: scheduleResult.actionTaken
+      };
+    }
+
     // 1. Web & Multi-Tab Browser Automation Engine ("open youtube, vercel, github", "open github and search voice pack")
     const webResult = this.processWebBrowserAutomation(cleanText);
     if (webResult) {
@@ -153,6 +162,67 @@ class FateCommandHandler {
         this.app.setTheme('default');
         return { speakText: "Restoring Cyan Cyberpunk default theme.", actionTaken: "Theme: Cyan Cyberpunk" };
       }
+    }
+
+    return null;
+  }
+
+  // Persistent Daily Schedule Manager Subsystem ("set schedule ...", "what's the schedule for today")
+  processScheduleManager(clean, originalText) {
+    // A. Setting / Updating Schedule Intent ("set schedule ...", "add schedule ...", "my schedule today is ...", "schedule set karo ...")
+    if (clean.includes('schedule') && (clean.includes('set') || clean.includes('add') || clean.includes('create') || clean.includes('karo') || clean.includes('my schedule is') || clean.includes('today is') || clean.startsWith('set schedule') || clean.startsWith('add schedule'))) {
+      const scheduleContent = originalText
+        .replace(/^(hey fate|fate|ok fate|hello fate|hi fate)\s*/i, '')
+        .replace(/set schedule for today to|set schedule for today|set schedule to|set schedule|add schedule|create schedule|schedule set karo|my schedule today is|my schedule is|schedule:/gi, '')
+        .trim();
+
+      if (scheduleContent) {
+        if (window.fateMem0) {
+          window.fateMem0.setSchedule(scheduleContent);
+        } else {
+          localStorage.setItem('fate_daily_schedule', scheduleContent);
+        }
+
+        const detailView = `📅 FATE DAILY SCHEDULE SAVED\n==================================================\n\n${scheduleContent}\n\n==================================================\nStatus: Saved & Indexed in Mem0 Memory`;
+        if (this.app.codeArea) this.app.codeArea.value = detailView;
+        this.app.switchTab('suite');
+
+        return {
+          spokenText: `Today's schedule has been saved, Boss: ${scheduleContent}.`,
+          actionTaken: `Schedule Set: ${scheduleContent}`
+        };
+      }
+    }
+
+    // B. Querying Schedule Intent ("what is the schedule for today", "what's the schedule for today", "show my schedule", "schedule for today", "today schedule", "schedule batao", "aaj ka schedule kya hai")
+    if (clean.includes('schedule')) {
+      const savedSchedule = window.fateMem0 ? window.fateMem0.getSchedule() : localStorage.getItem('fate_daily_schedule');
+
+      if (savedSchedule) {
+        const detailView = `📅 FATE DAILY SCHEDULE MATRIX\n==================================================\n\n${savedSchedule}\n\n==================================================\nStatus: Active & Indexed in Mem0 Memory`;
+        if (this.app.codeArea) this.app.codeArea.value = detailView;
+        this.app.switchTab('suite');
+
+        return {
+          spokenText: `Here is your schedule for today, Boss: ${savedSchedule}.`,
+          actionTaken: `Schedule Query: ${savedSchedule}`
+        };
+      } else {
+        return {
+          spokenText: "No schedule set for today yet, Boss! Tell me 'set schedule ...' to save your tasks.",
+          actionTaken: "Schedule Query: No schedule set"
+        };
+      }
+    }
+
+    // C. Clearing Schedule Intent ("clear schedule", "reset schedule", "delete schedule")
+    if (clean.includes('clear schedule') || clean.includes('reset schedule') || clean.includes('delete schedule')) {
+      if (window.fateMem0) window.fateMem0.clearSchedule();
+      localStorage.removeItem('fate_daily_schedule');
+      return {
+        spokenText: "Daily schedule buffer cleared, Boss!",
+        actionTaken: "Schedule Cleared"
+      };
     }
 
     return null;
