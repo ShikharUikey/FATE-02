@@ -144,8 +144,25 @@ class FateCommandHandler {
     return null;
   }
 
-  // macOS Camera, System Voice Automation & App Launcher Subsystem
+  // macOS Camera, Finder, System Voice Automation & App Launcher Subsystem
   processMacAutomation(clean) {
+    // Finder Application Intent
+    if (clean.includes('open finder') || clean === 'finder' || clean.includes('finder kholo') || clean.includes('open files') || clean.includes('my files') || clean.includes('files kholo') || clean.includes('file manager')) {
+      if (window.fateInterpreter) {
+        window.fateInterpreter.launchApp('Finder');
+      } else {
+        fetch('/api/mac/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'open_app', appName: 'Finder' })
+        });
+      }
+      return {
+        spokenText: "macOS Finder application launch kar diya hai.",
+        actionTaken: "macOS: Opened Finder"
+      };
+    }
+
     // Photo Booth / Open Camera Intent
     if (clean.includes('open camera') || clean.includes('camera') || clean.includes('take photo') || clean.includes('photo booth') || clean.includes('photo booth kholo') || clean.includes('camera kholo')) {
       if (window.fateInterpreter) {
