@@ -15,7 +15,16 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. macOS System Voice Automation & App Launcher Commands ("open camera", "photo booth", "screenshot", "volume up")
+    // 1. Web & Multi-Tab Browser Automation Engine ("open youtube, vercel, github", "open vercel on chrome")
+    const webResult = this.processWebBrowserAutomation(cleanText);
+    if (webResult) {
+      return {
+        speakText: webResult.spokenText,
+        actionTaken: webResult.actionTaken
+      };
+    }
+
+    // 2. macOS System Voice Automation & App Launcher Commands
     const macResult = this.processMacAutomation(cleanText);
     if (macResult) {
       return {
@@ -139,6 +148,67 @@ class FateCommandHandler {
         this.app.setTheme('default');
         return { speakText: "Restoring Cyan Cyberpunk default theme.", actionTaken: "Theme: Cyan Cyberpunk" };
       }
+    }
+
+    return null;
+  }
+
+  // Web & Multi-Tab Browser Automation Subsystem ("open youtube, vercel, github", "open vercel on chrome")
+  processWebBrowserAutomation(clean) {
+    const webAppMap = {
+      'youtube': { name: 'YouTube', url: 'https://www.youtube.com' },
+      'vercel': { name: 'Vercel', url: 'https://vercel.com' },
+      'github': { name: 'GitHub', url: 'https://github.com' },
+      'google': { name: 'Google', url: 'https://www.google.com' },
+      'chatgpt': { name: 'ChatGPT', url: 'https://chatgpt.com' },
+      'chat gpt': { name: 'ChatGPT', url: 'https://chatgpt.com' },
+      'linkedin': { name: 'LinkedIn', url: 'https://www.linkedin.com' },
+      'twitter': { name: 'Twitter/X', url: 'https://x.com' },
+      'x': { name: 'X', url: 'https://x.com' },
+      'reddit': { name: 'Reddit', url: 'https://www.reddit.com' },
+      'stackoverflow': { name: 'StackOverflow', url: 'https://stackoverflow.com' },
+      'stack overflow': { name: 'StackOverflow', url: 'https://stackoverflow.com' },
+      'nptel': { name: 'NPTEL', url: 'https://nptel.ac.in' },
+      'coursera': 'https://www.coursera.org',
+      'udemy': { name: 'Udemy', url: 'https://www.udemy.com' },
+      'figma': { name: 'Figma', url: 'https://www.figma.com' },
+      'gmail': { name: 'Gmail', url: 'https://mail.google.com' }
+    };
+
+    const isChromeExplicit = clean.includes('on chrome') || clean.includes('in chrome') || clean.includes('chrome par') || clean.includes('chrome me');
+    const cleanNoChrome = clean.replace(/on chrome|in chrome|chrome par|chrome me/gi, '').trim();
+
+    // Check for Multi-Tab Web Launcher (e.g. "open youtube, vercel, github" or "open youtube and github")
+    const matchedSites = [];
+    Object.keys(webAppMap).forEach(key => {
+      if (cleanNoChrome.includes(key)) {
+        const item = webAppMap[key];
+        const siteObj = typeof item === 'string' ? { name: key, url: item } : item;
+        if (!matchedSites.some(s => s.url === siteObj.url)) {
+          matchedSites.push(siteObj);
+        }
+      }
+    });
+
+    if (matchedSites.length > 0 && (clean.includes('open') || clean.includes('launch') || clean.includes('kholo') || clean.includes('youtube') || clean.includes('vercel') || clean.includes('github'))) {
+      const siteNames = matchedSites.map(s => s.name).join(', ');
+
+      matchedSites.forEach(site => {
+        if (isChromeExplicit) {
+          fetch('/api/mac/command', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'open_url_in_chrome', url: site.url })
+          });
+        } else {
+          window.open(site.url, '_blank');
+        }
+      });
+
+      return {
+        spokenText: `${siteNames} web platforms ${isChromeExplicit ? 'Google Chrome par' : ''} launch kar diye hain.`,
+        actionTaken: `Web: Opened ${siteNames} ${isChromeExplicit ? '(Chrome)' : ''}`
+      };
     }
 
     return null;
