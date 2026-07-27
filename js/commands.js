@@ -13,9 +13,14 @@ class FateCommandHandler {
     let cleanText = lowerText.replace(/^(hey fate|fate|ok fate|hello fate|hi fate)\s*/i, '').trim();
     if (!cleanText) cleanText = lowerText;
 
+    // Phonetic speech recognition normalization (WebSpeech API transcript fixes)
+    cleanText = cleanText
+      .replace(/\bget hub\b|\bgit hub\b|\bgethub\b|\bgit-hub\b/gi, 'github')
+      .replace(/\bget lab\b|\bgit lab\b/gi, 'gitlab');
+
     console.log('FATE Executing Intent:', cleanText);
 
-    // 1. Web & Multi-Tab Browser Automation Engine ("open youtube, vercel, github", "open vercel on chrome")
+    // 1. Web & Multi-Tab Browser Automation Engine ("open youtube, vercel, github", "open github and search voice pack")
     const webResult = this.processWebBrowserAutomation(cleanText);
     if (webResult) {
       return {
@@ -153,8 +158,49 @@ class FateCommandHandler {
     return null;
   }
 
-  // Web & Multi-Tab Browser Automation Subsystem ("open youtube and search python", "open vercel on chrome")
+  // Web & Multi-Tab Browser Automation Subsystem ("open youtube and search python", "open github and search libraries")
   processWebBrowserAutomation(clean) {
+    // Dedicated Ultra-Strong GitHub Search Engine ("open github and search <query>", "search <query> on get hub")
+    if (clean.includes('github') && (clean.includes('search') || clean.includes('libraries') || clean.includes('library') || clean.includes('pack') || clean.includes('repo') || clean.includes('code') || clean.includes('find') || clean.includes('for'))) {
+      const query = clean
+        .replace(/open github and search for|open github and search|search github for|github search for|github search|on github|search for|search|open github and|open github|github|libraries|library|pack/gi, '')
+        .trim() || 'ai';
+
+      const targetUrl = `https://github.com/search?q=${encodeURIComponent(query)}`;
+      const isChrome = clean.includes('on chrome') || clean.includes('in chrome');
+
+      if (isChrome) {
+        fetch('/api/mac/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'open_url_in_chrome', url: targetUrl })
+        });
+      } else {
+        window.open(targetUrl, '_blank');
+      }
+
+      // Also query GitHub REST API to fetch live repo results in FATE Code Studio
+      fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=5`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.items && data.items.length) {
+            let output = `🐙 FATE GITHUB SEARCH ENGINE\nQuery: "${query}"\n==================================================\n\n`;
+            data.items.forEach((repo, i) => {
+              output += `${i + 1}. ⭐ ${repo.full_name} (${repo.stargazers_count} stars)\n`;
+              output += `   Description: ${repo.description || 'No description'}\n`;
+              output += `   Clone: git clone ${repo.clone_url}\n\n`;
+            });
+            if (this.app.codeArea) this.app.codeArea.value = output;
+            this.app.switchTab('suite');
+          }
+        }).catch(err => console.warn('GitHub API fetch warning:', err));
+
+      return {
+        spokenText: `GitHub database par "${query}" search launch kar diya hai, Boss!`,
+        actionTaken: `GitHub Search: ${query}`
+      };
+    }
+
     // Dedicated Ultra-Strong YouTube Search Engine ("open youtube and search <video>", "play <video> on youtube")
     if (clean.includes('youtube') && (clean.includes('search') || clean.includes('play') || clean.includes('watch') || clean.includes('chalao') || clean.includes('find'))) {
       const query = clean
