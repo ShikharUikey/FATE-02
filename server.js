@@ -79,6 +79,54 @@ const server = http.createServer((req, res) => {
           return;
         }
 
+        if (action === 'volume_mute') {
+          exec(`osascript -e "set volume output muted true"`, () => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Master volume muted' }));
+          });
+          return;
+        }
+
+        if (action === 'volume_max') {
+          exec(`osascript -e "set volume output volume 100"`, () => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Master volume set to 100%' }));
+          });
+          return;
+        }
+
+        if (action === 'brightness_up') {
+          exec(`osascript -e 'tell application "System Events" to repeat 3 times' -e 'key code 144' -e 'end repeat'`, () => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Display brightness increased' }));
+          });
+          return;
+        }
+
+        if (action === 'brightness_down') {
+          exec(`osascript -e 'tell application "System Events" to repeat 3 times' -e 'key code 145' -e 'end repeat'`, () => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Display brightness decreased' }));
+          });
+          return;
+        }
+
+        if (action === 'lock_screen') {
+          exec(`pmset displaysleepnow`, () => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Display locked' }));
+          });
+          return;
+        }
+
+        if (action === 'sleep_mac') {
+          exec(`osascript -e 'tell application "System Events" to sleep'`, () => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Mac put to sleep' }));
+          });
+          return;
+        }
+
         if (action === 'open_app') {
           const rawApp = (payload.appName || 'Finder').trim();
           const lowerApp = rawApp.toLowerCase();

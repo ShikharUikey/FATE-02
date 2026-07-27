@@ -314,7 +314,18 @@ class FateCommandHandler {
       };
     }
 
-    // Volume Control Intent
+    // Brightness Control Intents
+    if (clean.includes('brightness up') || clean.includes('increase brightness') || clean.includes('brightness badhao')) {
+      fetch('/api/mac/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'brightness_up' }) });
+      return { spokenText: "Display brightness increased.", actionTaken: "macOS: Brightness Increased" };
+    }
+
+    if (clean.includes('brightness down') || clean.includes('decrease brightness') || clean.includes('brightness kam karo')) {
+      fetch('/api/mac/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'brightness_down' }) });
+      return { spokenText: "Display brightness decreased.", actionTaken: "macOS: Brightness Decreased" };
+    }
+
+    // Volume Control Intents
     if (clean.includes('volume up') || clean.includes('increase volume') || clean.includes('volume badhao')) {
       if (window.fateInterpreter) window.fateInterpreter.setVolume('up');
       return { spokenText: "Master audio volume increased by 15 percent.", actionTaken: "macOS: Volume Increased" };
@@ -323,6 +334,38 @@ class FateCommandHandler {
     if (clean.includes('volume down') || clean.includes('decrease volume') || clean.includes('volume kam karo')) {
       if (window.fateInterpreter) window.fateInterpreter.setVolume('down');
       return { spokenText: "Master audio volume decreased by 15 percent.", actionTaken: "macOS: Volume Decreased" };
+    }
+
+    if (clean.includes('mute volume') || clean.includes('mute audio') || clean.includes('volume mute')) {
+      fetch('/api/mac/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'volume_mute' }) });
+      return { spokenText: "Master audio volume muted.", actionTaken: "macOS: Volume Muted" };
+    }
+
+    if (clean.includes('max volume') || clean.includes('full volume') || clean.includes('volume 100')) {
+      fetch('/api/mac/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'volume_max' }) });
+      return { spokenText: "Master audio volume set to 100 percent.", actionTaken: "macOS: Volume 100%" };
+    }
+
+    // Lock Screen & Sleep Intents
+    if (clean.includes('lock screen') || clean.includes('lock mac') || clean.includes('screen lock')) {
+      fetch('/api/mac/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'lock_screen' }) });
+      return { spokenText: "macOS screen display locked.", actionTaken: "macOS: Screen Locked" };
+    }
+
+    if (clean.includes('sleep mac') || clean.includes('system sleep') || clean.includes('mac sleep')) {
+      fetch('/api/mac/command', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'sleep_mac' }) });
+      return { spokenText: "Putting macOS system to sleep.", actionTaken: "macOS: System Sleep" };
+    }
+
+    // Battery & Storage Telemetry Diagnostics
+    if (clean.includes('battery')) {
+      if (window.fateInterpreter) window.fateInterpreter.getBatteryStatus();
+      return { spokenText: "Checking macOS battery diagnostics telemetry.", actionTaken: "macOS: Battery Status" };
+    }
+
+    if (clean.includes('storage') || clean.includes('disk space')) {
+      if (window.fateInterpreter) window.fateInterpreter.getStorageDiagnostics();
+      return { spokenText: "Checking macOS primary storage diagnostics.", actionTaken: "macOS: Storage Status" };
     }
 
     // Dynamic Generic App Launcher Intent ("open chrome", "open vs code", "open whatsapp", "open settings", "open capcut")
