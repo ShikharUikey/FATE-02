@@ -54,8 +54,12 @@ class FateAIBrain {
 
   generateFridayResponse(q, originalQuery) {
     // 1. Manually Fed FRIDAY Greetings & Tactical Status Diagnostics
+    if (q.includes('wake up') || q.includes('wakeup') || q.includes('wake up friday') || q.includes('wake up fate')) {
+      return "All systems online and standing by, Boss!";
+    }
+
     if (q.includes('friday mode') || q.includes('friday protocol') || q === 'friday') {
-      return "FRIDAY Protocol fully engaged, Boss! All telemetry systems, speech engines, and macOS controls are online. What's on our agenda today?";
+      return "FRIDAY Protocol fully engaged, Boss! Systems online.";
     }
 
     if (q.includes('good morning') || q.includes('morning')) {
@@ -153,8 +157,8 @@ class FateAIBrain {
       return `Always a pleasure, Boss! Serving your objectives is what I was built for. Let me know if there's anything else you need!`;
     }
 
-    // 9. FRIDAY Tactical Assistant Fallback
-    return `Standing by, Boss! I'm ready to assist with "${originalQuery}". Would you like me to write a Python script, solve a math problem, or search GitHub for open-source resources on this?`;
+    // 9. FRIDAY Tactical Assistant Fallback (Minimal & Crisp)
+    return `Standing by, Boss! Systems online.`;
   }
 
   async callOpenAI(prompt) {
