@@ -144,9 +144,28 @@ class FateCommandHandler {
     return null;
   }
 
-  // macOS Camera, Finder, System Voice Automation & App Launcher Subsystem
+  // macOS Camera, Finder, File/Folder Opener, System Voice Automation Subsystem
   processMacAutomation(clean) {
-    // Finder Application Intent
+    // 1. Open Finder and specific File/Folder Intent ("open finder and example", "open folder downloads", "open file notes.txt")
+    if (clean.includes('open finder and') || clean.includes('open folder') || clean.includes('open file') || clean.includes('folder kholo') || clean.includes('file kholo')) {
+      let targetName = clean.replace(/open finder and|open folder|open file|folder kholo|file kholo|open/gi, '').trim() || 'Downloads';
+      
+      if (window.fateInterpreter) {
+        window.fateInterpreter.openPath(targetName);
+      } else {
+        fetch('/api/mac/command', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'open_path', targetPath: targetName })
+        });
+      }
+      return {
+        spokenText: `${targetName} file manager path launch kar diya hai.`,
+        actionTaken: `macOS: Opened File/Folder '${targetName}'`
+      };
+    }
+
+    // 2. Pure Finder Application Intent
     if (clean.includes('open finder') || clean === 'finder' || clean.includes('finder kholo') || clean.includes('open files') || clean.includes('my files') || clean.includes('files kholo') || clean.includes('file manager')) {
       if (window.fateInterpreter) {
         window.fateInterpreter.launchApp('Finder');

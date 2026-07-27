@@ -43,6 +43,10 @@ class FateOpenInterpreter {
     return await this.executeTask('open_app', { appName });
   }
 
+  async openPath(targetPath) {
+    return await this.executeTask('open_path', { targetPath });
+  }
+
   async getBatteryStatus() {
     return await this.executeTask('battery');
   }
