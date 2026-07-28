@@ -201,18 +201,59 @@ class FateVisualizer {
 
   drawArcReactorVisualizer() {
     if (this.threeRenderer && this.threeScene && this.threeCamera) {
-      const speed = this.state === 'speaking' ? 0.03 : this.state === 'listening' ? 0.05 : 0.01;
+      const isSpeaking = this.state === 'speaking';
+      const isListening = this.state === 'listening';
+
+      // Real-time Soundgram Audio Frequency Wave Simulation
+      const soundFreq = isSpeaking 
+        ? Math.abs(Math.sin(Date.now() * 0.015) * Math.cos(Date.now() * 0.022)) * 1.8 
+        : isListening ? Math.abs(Math.sin(Date.now() * 0.008)) * 0.8 : 0.2;
+
+      // 3D Logo Vibration & Soundgram Scaling
+      const baseScale = 1.0 + soundFreq * 0.25;
+      const vibrateX = isSpeaking ? (Math.random() - 0.5) * 2.5 : 0;
+      const vibrateY = isSpeaking ? (Math.random() - 0.5) * 2.5 : 0;
+
       if (this.spherePoints) {
+        const speed = isSpeaking ? 0.04 : isListening ? 0.06 : 0.015;
         this.spherePoints.rotation.y += speed;
         this.spherePoints.rotation.x += speed * 0.5;
 
-        const scale = 1.0 + Math.sin(Date.now() * (this.state === 'speaking' ? 0.01 : 0.003)) * (this.state === 'speaking' ? 0.15 : 0.05);
-        this.spherePoints.scale.set(scale, scale, scale);
+        // Apply 3D Logo Vibration & Soundgram Pulse
+        this.spherePoints.scale.set(baseScale, baseScale, baseScale);
+        this.spherePoints.position.set(vibrateX, vibrateY, 0);
       }
+
       if (this.torusRing) {
+        const speed = isSpeaking ? 0.04 : 0.015;
         this.torusRing.rotation.z -= speed * 1.5;
         this.torusRing.rotation.y += speed * 0.8;
+        this.torusRing.scale.set(baseScale * 1.05, baseScale * 1.05, baseScale * 1.05);
       }
+
+      // Also vibrate and scale the central UI Arc Core element & STARK Concentric Rings
+      const arcCoreElem = document.getElementById('arc-reactor-core');
+      const outerRingElem = document.querySelector('.stark-ring-outer');
+      const midRingElem = document.querySelector('.stark-ring-mid');
+
+      if (arcCoreElem) {
+        const coreScale = 1.0 + soundFreq * 0.28;
+        const coreVibeX = isSpeaking ? (Math.random() - 0.5) * 3 : 0;
+        const coreVibeY = isSpeaking ? (Math.random() - 0.5) * 3 : 0;
+        arcCoreElem.style.transform = `translate(${coreVibeX}px, ${coreVibeY}px) scale(${coreScale})`;
+        arcCoreElem.style.boxShadow = `0 0 ${35 + soundFreq * 40}px var(--primary-color)`;
+      }
+
+      if (outerRingElem) {
+        const ringScale = 1.0 + soundFreq * 0.15;
+        outerRingElem.style.transform = `scale(${ringScale})`;
+      }
+
+      if (midRingElem) {
+        const ringScale = 1.0 + soundFreq * 0.2;
+        midRingElem.style.transform = `scale(${ringScale})`;
+      }
+
       this.threeRenderer.render(this.threeScene, this.threeCamera);
       return;
     }
