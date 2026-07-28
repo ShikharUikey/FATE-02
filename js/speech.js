@@ -207,6 +207,19 @@ class FateSpeechEngine {
     }
   }
 
+  smoothHinglishPhonetics(text) {
+    if (!text) return text;
+    let t = text;
+    t = t.replace(/\bkaise\b/gi, 'kyse')
+         .replace(/\bkya\b/gi, 'kyaa')
+         .replace(/\bdiya\b/gi, 'deeyaa')
+         .replace(/\bchalao\b/gi, 'chalaaoo')
+         .replace(/\bkholo\b/gi, 'kholoo')
+         .replace(/\bkaro\b/gi, 'karoo')
+         .replace(/\bshukriya\b/gi, 'shookreeyaa');
+    return t;
+  }
+
   speak(text, onComplete) {
     if (!text) {
       if (onComplete) onComplete();
@@ -230,20 +243,20 @@ class FateSpeechEngine {
       this.synthesis.cancel();
     }
 
-    // Detect Devanagari Hindi or Hinglish words for authentic natural Indian voice routing
-    const isHinglish = /\b(kar|diya|hai|hain|kaise|kya|haal|batao|kholo|chalao|banao|ji|haan|nahi|nahin|sab|hum|aap|bhi|sahajta|baat|sakta|sakti|hoon|rahe|rakhta|rakhti|karte|karo|bhojpuri)\b/i.test(speakableText);
-
-    let activeVoice = this.macVoice;
-
+    // Single Unified Voice per Persona (1 Voice for English, Hindi & Hinglish)
+    let activeVoice = this.macVoice || 'Samantha';
     if (this.voicePersona === 'jarvis_male') {
-      activeVoice = isHinglish || /[\u0900-\u097F]/.test(speakableText) ? 'Rishi' : 'Daniel';
-    } else {
-      activeVoice = isHinglish || /[\u0900-\u097F]/.test(speakableText) ? 'Lekha' : 'Samantha';
+      activeVoice = 'Daniel';
+    } else if (this.voicePersona === 'fate_female') {
+      activeVoice = 'Samantha';
     }
+
+    // Apply Phonetic Speech Smoothing for smooth Hinglish pronunciation in single voice
+    let processedText = this.smoothHinglishPhonetics(speakableText);
 
     // Native macOS Speech Engine Proxy (/api/tts)
     if (this.ttsEngineMode === 'coqui') {
-      const ttsUrl = `/api/tts?voice=${encodeURIComponent(activeVoice)}&text=${encodeURIComponent(speakableText)}`;
+      const ttsUrl = `/api/tts?voice=${encodeURIComponent(activeVoice)}&text=${encodeURIComponent(processedText)}`;
       const audio = new Audio(ttsUrl);
       this.currentAudio = audio;
 
