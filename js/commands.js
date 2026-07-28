@@ -373,6 +373,47 @@ class FateCommandHandler {
 
   // Web & Multi-Tab Browser Automation Subsystem ("open youtube and search python", "open github and search libraries")
   processWebBrowserAutomation(clean) {
+    // Dedicated LinkedIn Deep Integration ("open linkedin", "my linkedin", "write linkedin post about <topic>")
+    if (clean.includes('linkedin')) {
+      const isPostRequest = clean.includes('write') || clean.includes('post') || clean.includes('create') || clean.includes('draft') || clean.includes('make');
+
+      if (isPostRequest) {
+        const topic = clean
+          .replace(/write a linkedin post about|write linkedin post about|create linkedin post about|draft linkedin post about|linkedin post for|write linkedin post|create linkedin post|draft linkedin post|linkedin post|post about|post|write|create|draft/gi, '')
+          .replace(/on linkedin|linkedin/gi, '')
+          .trim() || 'AI & Modern Software Engineering';
+
+        const linkedinPostDraft = `🚀 Exciting Breakthrough in ${topic.toUpperCase()}!
+
+I'm thrilled to share our latest milestone in ${topic}! Working at the intersection of AI, automation, and full-stack development has reinforced how crucial consistency and clean architecture are.
+
+Key Takeaways:
+• Modular & Scalable Architecture
+• Real-Time Low-Latency Voice Processing
+• User-Centric Design & Automation Workflow
+
+What are your thoughts on ${topic}? Let's connect and innovate together!
+
+#${topic.replace(/\s+/g, '')} #ArtificialIntelligence #SoftwareEngineering #WebDevelopment #TechInnovation #SAGEUniversity #ShikharUikey`;
+
+        if (this.app.codeArea) this.app.codeArea.value = linkedinPostDraft;
+        this.app.switchTab('suite');
+        window.open('https://www.linkedin.com/feed/', '_blank');
+
+        return {
+          spokenText: `LinkedIn post on ${topic} drafted and loaded into Code Studio, Boss! Opening LinkedIn Feed.`,
+          actionTaken: `LinkedIn Post Draft: ${topic}`
+        };
+      }
+
+      // Open LinkedIn Profile (https://www.linkedin.com/in/shikharuikey)
+      window.open('https://www.linkedin.com/in/shikharuikey', '_blank');
+      return {
+        spokenText: "Opening your LinkedIn profile, Boss!",
+        actionTaken: "Opened LinkedIn Profile (shikharuikey)"
+      };
+    }
+
     // Dedicated Ultra-Strong GitHub Search Engine ("open github and search <query>", "search <query> on get hub")
     if (clean.includes('github') && (clean.includes('search') || clean.includes('libraries') || clean.includes('library') || clean.includes('pack') || clean.includes('repo') || clean.includes('code') || clean.includes('find') || clean.includes('for'))) {
       const query = clean
