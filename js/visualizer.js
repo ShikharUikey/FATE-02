@@ -210,12 +210,12 @@ class FateVisualizer {
         : isListening ? Math.abs(Math.sin(Date.now() * 0.008)) * 0.8 : 0.2;
 
       // 3D Logo Vibration & Soundgram Scaling
-      const baseScale = 1.0 + soundFreq * 0.25;
-      const vibrateX = isSpeaking ? (Math.random() - 0.5) * 2.5 : 0;
-      const vibrateY = isSpeaking ? (Math.random() - 0.5) * 2.5 : 0;
+      const baseScale = 1.0 + soundFreq * 0.35;
+      const vibrateX = isSpeaking ? (Math.random() - 0.5) * 6 : 0;
+      const vibrateY = isSpeaking ? (Math.random() - 0.5) * 6 : 0;
 
       if (this.spherePoints) {
-        const speed = isSpeaking ? 0.04 : isListening ? 0.06 : 0.015;
+        const speed = isSpeaking ? 0.06 : isListening ? 0.06 : 0.015;
         this.spherePoints.rotation.y += speed;
         this.spherePoints.rotation.x += speed * 0.5;
 
@@ -225,10 +225,10 @@ class FateVisualizer {
       }
 
       if (this.torusRing) {
-        const speed = isSpeaking ? 0.04 : 0.015;
+        const speed = isSpeaking ? 0.06 : 0.015;
         this.torusRing.rotation.z -= speed * 1.5;
         this.torusRing.rotation.y += speed * 0.8;
-        this.torusRing.scale.set(baseScale * 1.05, baseScale * 1.05, baseScale * 1.05);
+        this.torusRing.scale.set(baseScale * 1.08, baseScale * 1.08, baseScale * 1.08);
       }
 
       // Also vibrate and scale the central UI Arc Core element & STARK Concentric Rings
@@ -237,11 +237,16 @@ class FateVisualizer {
       const midRingElem = document.querySelector('.stark-ring-mid');
 
       if (arcCoreElem) {
-        const coreScale = 1.0 + soundFreq * 0.28;
-        const coreVibeX = isSpeaking ? (Math.random() - 0.5) * 3 : 0;
-        const coreVibeY = isSpeaking ? (Math.random() - 0.5) * 3 : 0;
+        if (isSpeaking) {
+          arcCoreElem.classList.add('vibrating');
+        } else {
+          arcCoreElem.classList.remove('vibrating');
+        }
+        const coreScale = 1.0 + soundFreq * 0.35;
+        const coreVibeX = isSpeaking ? (Math.random() - 0.5) * 8 : 0;
+        const coreVibeY = isSpeaking ? (Math.random() - 0.5) * 8 : 0;
         arcCoreElem.style.transform = `translate(${coreVibeX}px, ${coreVibeY}px) scale(${coreScale})`;
-        arcCoreElem.style.boxShadow = `0 0 ${35 + soundFreq * 40}px var(--primary-color)`;
+        arcCoreElem.style.boxShadow = `0 0 ${35 + soundFreq * 50}px var(--primary-color)`;
       }
 
       if (outerRingElem) {

@@ -31,17 +31,33 @@ class FateCommandHandler {
         const spokenParts = [];
         const actionParts = [];
 
-        for (const subCmd of subCommands) {
-          // Normalize sub-command context if verbs are omitted (e.g. "open linkedin then instagram" -> "open instagram")
+        for (let i = 0; i < subCommands.length; i++) {
+          const subCmd = subCommands[i];
           let targetSubCmd = subCmd;
-          if (!targetSubCmd.startsWith('open ') && (subCmd.includes('instagram') || subCmd.includes('youtube') || subCmd.includes('github') || subCmd.includes('vercel') || subCmd.includes('finder') || subCmd.includes('camera') || subCmd.includes('code'))) {
+          if (!targetSubCmd.startsWith('open ') && (subCmd.includes('instagram') || subCmd.includes('insta') || subCmd.includes('youtube') || subCmd.includes('github') || subCmd.includes('vercel') || subCmd.includes('finder') || subCmd.includes('camera') || subCmd.includes('code'))) {
             targetSubCmd = `open ${subCmd}`;
           }
 
-          const res = this.processSingleCommand(targetSubCmd, text);
-          if (res) {
-            spokenParts.push(res.speakText || res.spokenText);
-            actionParts.push(res.actionTaken);
+          if (i === 0) {
+            const res = this.processSingleCommand(targetSubCmd, text);
+            if (res) {
+              spokenParts.push(res.speakText || res.spokenText);
+              actionParts.push(res.actionTaken);
+            }
+          } else {
+            // Schedule subsequent consecutive window/app launches with 1.2s delay to prevent popup blocker blocking
+            setTimeout(() => {
+              this.processSingleCommand(targetSubCmd, text);
+            }, i * 1200);
+
+            const cleanSub = targetSubCmd.toLowerCase();
+            if (cleanSub.includes('instagram') || cleanSub.includes('insta')) spokenParts.push('Opening your Instagram profile, Boss!');
+            else if (cleanSub.includes('linkedin')) spokenParts.push('Opening your LinkedIn profile, Boss!');
+            else if (cleanSub.includes('youtube')) spokenParts.push('Opening YouTube.');
+            else if (cleanSub.includes('github')) spokenParts.push('Opening GitHub.');
+            else spokenParts.push(`Opening ${targetSubCmd}, Boss!`);
+
+            actionParts.push(`Queued: ${targetSubCmd}`);
           }
         }
 

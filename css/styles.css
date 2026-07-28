@@ -343,6 +343,10 @@ html, body {
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.arc-reactor-core.vibrating {
+  transition: none !important;
+}
+
 .arc-reactor-core:hover {
   transform: scale(1.12);
   box-shadow: 0 0 45px var(--primary-color), inset 0 0 25px rgba(255, 255, 255, 0.8);
