@@ -276,8 +276,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // Initial Weather Fetch
+      // Initial Weather Fetch & Class Reminders Loop
       this.fetchWeatherForCity('Local Region');
+      this.initClassAutoReminders();
+    }
+
+    initClassAutoReminders() {
+      const announcedSlots = new Set();
+
+      const slotAlertTimes = [
+        { time: '08:20', label: '8:30 AM class' },
+        { time: '09:10', label: '9:20 AM class' },
+        { time: '10:00', label: '10:10 AM class' },
+        { time: '10:50', label: '11:00 AM class' },
+        { time: '12:20', label: '12:30 PM class' },
+        { time: '13:10', label: '1:20 PM class' },
+        { time: '13:50', label: '2:00 PM class' }
+      ];
+
+      setInterval(() => {
+        const now = new Date();
+        const hrs = String(now.getHours()).padStart(2, '0');
+        const mins = String(now.getMinutes()).padStart(2, '0');
+        const currentTimeStr = `${hrs}:${mins}`;
+
+        const match = slotAlertTimes.find(s => s.time === currentTimeStr);
+        if (match && !announcedSlots.has(currentTimeStr)) {
+          announcedSlots.add(currentTimeStr);
+
+          const alertText = `Boss! 10-minute warning: Your upcoming ${match.label} starts shortly.`;
+          this.addChatMessage('FATE', alertText);
+          if (this.speech) this.speech.speak(alertText);
+        }
+      }, 30000);
     }
 
     toggleVoiceListening() {

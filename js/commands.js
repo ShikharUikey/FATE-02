@@ -283,42 +283,42 @@ class FateCommandHandler {
 
     const schoolTimetable = {
       'monday': [
-        '8:30 AM Data Visualization (Room 317)',
-        '9:20 AM Placement Preparation (Room 317)',
-        '10:10 AM BigData Analytics Lab (Lab 404)',
-        '12:30 PM NoSQL Databases Lab (Lab 406)',
-        '2:00 PM BigData Analytics (Room 317)'
+        '8:30 AM Data Visualization by Prof. Himanshu Ranjan (Room 317)',
+        '9:20 AM Placement Preparation by Prof. VKD (Room 317)',
+        '10:10 AM BigData Analytics Lab by Prof. Abhay Pandey (Lab 404)',
+        '12:30 PM NoSQL Databases Lab by Prof. Kapil Jain (Lab 406)',
+        '2:00 PM BigData Analytics by Prof. Abhay Pandey (Room 317)'
       ],
       'tuesday': [
-        '8:30 AM Placement Preparation (Room 317)',
-        '9:20 AM Placement Prep (Room 317)',
-        '10:10 AM Technical Skill-I (Room 402)',
-        '12:30 PM NoSQL Databases (Room 317)',
-        '1:20 PM Mentor Session (Room 317)',
-        '2:00 PM Data Visualization (Room 317)'
+        '8:30 AM Placement Prep by Prof. VKD (Room 317)',
+        '9:20 AM Placement Prep by Prof. KY (Room 317)',
+        '10:10 AM Technical Skill-I by Prof. Shubham Suryavanshi (Room 402)',
+        '12:30 PM NoSQL Databases by Prof. Kapil Jain (Room 317)',
+        '1:20 PM Mentor Session by Prof. Himanshu Ranjan (Room 317)',
+        '2:00 PM Data Visualization by Prof. Himanshu Ranjan (Room 317)'
       ],
       'wednesday': [
-        '8:30 AM NoSQL Databases (Room 317)',
-        '9:20 AM Placement Prep (Room 317)',
-        '10:10 AM Data Visualization Lab (Lab 404)',
-        '12:30 PM BigData Analytics (Room 317)',
+        '8:30 AM NoSQL Databases by Prof. Kapil Jain (Room 317)',
+        '9:20 AM Placement Prep by Prof. KY (Room 317)',
+        '10:10 AM Data Visualization Lab by Prof. Himanshu Ranjan (Lab 404)',
+        '12:30 PM BigData Analytics by Prof. Abhay Pandey (Room 317)',
         '1:20 PM Library Session',
-        '2:00 PM Data Visualization (Room 317)'
+        '2:00 PM Data Visualization by Prof. Himanshu Ranjan (Room 317)'
       ],
       'thursday': [
-        '8:30 AM NoSQL Databases (Room 317)',
-        '9:20 AM Placement Prep (Room 317)',
-        '10:10 AM Indian Culture & Values (Room 317)',
-        '11:00 AM BigData Analytics (Room 317)',
-        '12:30 PM Data Visualization (Room 317)',
-        '1:20 PM Technical Skill-I (Lab 404)'
+        '8:30 AM NoSQL Databases by Prof. Kapil Jain (Room 317)',
+        '9:20 AM Placement Prep by Prof. VKD (Room 317)',
+        '10:10 AM Indian Culture & Values by Dr. Priyanka Bagri (Room 317)',
+        '11:00 AM BigData Analytics by Prof. Abhay Pandey (Room 317)',
+        '12:30 PM Data Visualization by Prof. Himanshu Ranjan (Room 317)',
+        '1:20 PM Technical Skill-I by Prof. Shubham Suryavanshi (Lab 404)'
       ],
       'friday': [
-        '8:30 AM BigData Analytics (Room 317)',
-        '9:20 AM Placement Prep (Room 317)',
-        '10:10 AM Indian Culture & Values (Room 317)',
-        '11:00 AM NoSQL Databases (Room 317)',
-        '12:30 PM Data Visualization (Room 317)',
+        '8:30 AM BigData Analytics by Prof. Abhay Pandey (Room 317)',
+        '9:20 AM Placement Prep by Prof. VKD (Room 317)',
+        '10:10 AM Indian Culture & Values by Dr. Priyanka Bagri (Room 317)',
+        '11:00 AM NoSQL Databases by Prof. Kapil Jain (Room 317)',
+        '12:30 PM Data Visualization by Prof. Himanshu Ranjan (Room 317)',
         '1:20 PM Club Activity'
       ],
       'saturday': ['No classes scheduled for Saturday. Enjoy your weekend!'],
