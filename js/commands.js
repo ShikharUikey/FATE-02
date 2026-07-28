@@ -346,24 +346,27 @@ class FateCommandHandler {
         const matchingClasses = dayClasses.filter(c => c.toLowerCase().includes(facultyKey.toLowerCase()));
 
         if (matchingClasses.length > 0) {
-          const classList = matchingClasses.join(', ');
+          const cleanClassList = matchingClasses.map(c => c.replace(/by (Prof\.|Dr\.)[^()]+/i, '').replace(/\s+/g, ' ')).join(', ');
+          const classCountLabel = matchingClasses.length === 1 ? '1 class' : `${matchingClasses.length} classes`;
+
           return {
-            speakText: `${facultyTitle} has ${matchingClasses.length} ${matchingClasses.length === 1 ? 'class' : 'classes'} for ${displayDay.toLowerCase()}, Boss: ${classList}.`,
+            speakText: `${classCountLabel} ${displayDay.toLowerCase()}, Boss: ${cleanClassList}.`,
             actionTaken: `Faculty Schedule (${facultyKey}): ${matchingClasses.length} classes on ${dayName}`
           };
         } else {
           return {
-            speakText: `${facultyTitle} has no classes scheduled for ${displayDay.toLowerCase()}, Boss!`,
+            speakText: `No classes for ${facultyTitle} ${displayDay.toLowerCase()}, Boss.`,
             actionTaken: `Faculty Schedule (${facultyKey}): 0 classes on ${dayName}`
           };
         }
       }
     }
 
-    const voiceSummary = dayClasses.join(', ');
+    const cleanDayClasses = dayClasses.map(c => c.replace(/by (Prof\.|Dr\.)[^()]+/i, '').replace(/\s+/g, ' ')).join(', ');
+    const totalCount = dayClasses.length;
 
     return {
-      speakText: `Here is your school schedule for ${displayDay.toLowerCase()}, Boss: ${voiceSummary}.`,
+      speakText: `${totalCount} classes ${displayDay.toLowerCase()}, Boss: ${cleanDayClasses}.`,
       actionTaken: `School Schedule (${displayDay}): ${dayName}`
     };
   }
