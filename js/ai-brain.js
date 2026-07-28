@@ -53,6 +53,10 @@ class FateAIBrain {
   }
 
   generateFridayResponse(q, originalQuery) {
+    // 0. World Leaders, Tech Visionaries & Global Entities Knowledge Engine
+    const entityResponse = this.processWorldEntitiesKnowledge(q, originalQuery);
+    if (entityResponse) return entityResponse;
+
     // 1. Manually Fed FRIDAY Greetings & Tactical Status Diagnostics
     if (q.includes('wake up') || q.includes('wakeup') || q.includes('wake up friday') || q.includes('wake up fate')) {
       const todaySched = window.fateMem0 ? window.fateMem0.getSchedule(0) : null;
@@ -163,6 +167,58 @@ class FateAIBrain {
 
     // 9. FRIDAY Tactical Assistant Fallback (Minimal & Crisp)
     return `Standing by, Boss! Systems online.`;
+  }
+
+  // World Leaders, Tech Visionaries & Key Global Entities Knowledge Engine
+  processWorldEntitiesKnowledge(q, originalQuery) {
+    const knowledgeBase = [
+      // Political Leaders
+      { keywords: ['narendra modi', 'pm modi', 'prime minister of india'], answer: "Narendra Modi is the Prime Minister of India, serving since May 2014. He is the leader of the Bharatiya Janata Party (BJP) and one of the world's most prominent global leaders, Boss." },
+      { keywords: ['droupadi murmu', 'president of india'], answer: "Droupadi Murmu is the President of India, serving as the 15th President since July 2022. She is the first tribal woman to hold the highest constitutional office in India, Boss." },
+      { keywords: ['donald trump', 'trump'], answer: "Donald Trump is the President of the United States, serving as the 47th US President, Boss." },
+      { keywords: ['joe biden', 'biden'], answer: "Joe Biden served as the 46th President of the United States from 2021 to 2025, Boss." },
+      { keywords: ['keir starmer', 'prime minister of uk', 'pm of uk'], answer: "Keir Starmer is the Prime Minister of the United Kingdom, serving as the leader of the Labour Party, Boss." },
+      { keywords: ['emmanuel macron', 'president of france'], answer: "Emmanuel Macron is the President of France, serving as President since May 2017, Boss." },
+      { keywords: ['vladimir putin', 'president of russia', 'putin'], answer: "Vladimir Putin is the President of Russia, serving as the leader of the Russian Federation, Boss." },
+      { keywords: ['xi jinping', 'president of china'], answer: "Xi Jinping is the President of the People's Republic of China and General Secretary of the Chinese Communist Party, Boss." },
+      { keywords: ['volodymyr zelenskyy', 'president of ukraine', 'zelensky'], answer: "Volodymyr Zelenskyy is the President of Ukraine, leading the nation since 2019, Boss." },
+      { keywords: ['benjamin netanyahu', 'prime minister of israel'], answer: "Benjamin Netanyahu is the Prime Minister of Israel, serving as leader of the Likud party, Boss." },
+
+      // Tech CEOs & Visionaries
+      { keywords: ['sundar pichai', 'ceo of google', 'ceo of alphabet'], answer: "Sundar Pichai is the CEO of Alphabet Inc. and its subsidiary Google, leading global advancements in Search, Android, Cloud, and AI, Boss." },
+      { keywords: ['satya nadella', 'ceo of microsoft'], answer: "Satya Nadella is the Chairman and CEO of Microsoft, driving Microsoft's Cloud transformation and AI partnership with OpenAI, Boss." },
+      { keywords: ['elon musk', 'ceo of tesla', 'ceo of spacex', 'owner of x'], answer: "Elon Musk is the CEO of Tesla, SpaceX, Neuralink, and X (formerly Twitter), known for pioneering electric vehicles, commercial spaceflight, and AI, Boss." },
+      { keywords: ['sam altman', 'ceo of openai'], answer: "Sam Altman is the CEO of OpenAI, the artificial intelligence research company behind ChatGPT, GPT-4, and Sora, Boss." },
+      { keywords: ['mark zuckerberg', 'ceo of meta', 'founder of facebook'], answer: "Mark Zuckerberg is the Founder, Chairman, and CEO of Meta (formerly Facebook), leading social media platforms and Metaverse VR/AI development, Boss." },
+      { keywords: ['tim cook', 'ceo of apple'], answer: "Tim Cook is the CEO of Apple Inc., leading Apple since August 2011 following Steve Jobs, Boss." },
+      { keywords: ['jensen huang', 'ceo of nvidia'], answer: "Jensen Huang is the Co-founder and CEO of NVIDIA, the global leader in GPU computing, AI hardware, and CUDA acceleration, Boss." },
+      { keywords: ['demis hassabis', 'ceo of deepmind', 'ceo of google deepmind'], answer: "Demis Hassabis is the Co-founder and CEO of Google DeepMind, Nobel laureate in Chemistry, and pioneer of AlphaFold, Gemini, and advanced AI architectures, Boss." },
+      { keywords: ['jeff bezos', 'founder of amazon'], answer: "Jeff Bezos is the Founder and Executive Chairman of Amazon and founder of aerospace company Blue Origin, Boss." },
+      { keywords: ['bill gates', 'founder of microsoft'], answer: "Bill Gates is the Co-founder of Microsoft and co-chair of the Bill & Melinda Gates Foundation, Boss." },
+
+      // Key Global Entities & Organizations
+      { keywords: ['isro', 'indian space research'], answer: "ISRO (Indian Space Research Organisation) is India's national space agency, famous for landmark missions like Chandrayaan-3 and Mangalyaan, Boss." },
+      { keywords: ['nasa'], answer: "NASA (National Aeronautics and Space Administration) is the civil space program of the United States government, leading deep space exploration and Apollo/Artemis missions, Boss." },
+      { keywords: ['united nations'], answer: "The United Nations (UN) is an international organization founded in 1945, dedicated to maintaining international peace, security, and global development, Boss." },
+      { keywords: ['who', 'world health organization'], answer: "WHO (World Health Organization) is the specialized agency of the United Nations responsible for international public health, Boss." },
+      { keywords: ['rbi', 'reserve bank of india'], answer: "RBI (Reserve Bank of India) is India's central bank and monetary authority, regulating the Indian Rupee and banking system, Boss." },
+      { keywords: ['drdo'], answer: "DRDO (Defence Research and Development Organisation) is India's premier military research agency, developing advanced missile systems and defense technology, Boss." },
+      { keywords: ['google deepmind', 'deepmind'], answer: "Google DeepMind is Google's world-leading AI research laboratory creating frontier AI models including Gemini, AlphaFold, and Antigravity SDK, Boss." }
+    ];
+
+    for (const item of knowledgeBase) {
+      if (item.keywords.some(kw => q.includes(kw))) {
+        return item.answer;
+      }
+    }
+
+    // Dynamic Entity Query Matcher for "who is <name>" or "tell me about <name>"
+    if (q.startsWith('who is ') || q.startsWith('tell me about ') || q.startsWith('who was ')) {
+      const entity = originalQuery.replace(/who is|tell me about|who was/gi, '').trim();
+      return `${entity} is a globally recognized public leader/entity, Boss. Tell me 'search google for ${entity}' if you'd like live web news on them!`;
+    }
+
+    return null;
   }
 
   async callOpenAI(prompt) {
