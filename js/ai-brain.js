@@ -215,7 +215,8 @@ class FateAIBrain {
       { keywords: ['who', 'world health organization'], answer: "WHO (World Health Organization) is the specialized agency of the United Nations responsible for international public health, Boss." },
       { keywords: ['rbi', 'reserve bank of india'], answer: "RBI (Reserve Bank of India) is India's central bank and monetary authority, regulating the Indian Rupee and banking system, Boss." },
       { keywords: ['drdo'], answer: "DRDO (Defence Research and Development Organisation) is India's premier military research agency, developing advanced missile systems and defense technology, Boss." },
-      { keywords: ['google deepmind', 'deepmind'], answer: "Google DeepMind is Google's world-leading AI research laboratory creating frontier AI models including Gemini, AlphaFold, and Antigravity SDK, Boss." }
+      { keywords: ['google deepmind', 'deepmind'], answer: "Google DeepMind is Google's world-leading AI research laboratory creating frontier AI models including Gemini, AlphaFold, and Antigravity SDK, Boss." },
+      { keywords: ['microsoft jarvis', 'taskmatrix', 'task matrix', 'microsoft jarvis system'], answer: "Microsoft JARVIS (TaskMatrix.AI) is an advanced AI system that connects LLMs as a controller with specialized neural models across speech, vision, code execution, and web automation, Boss! FATE Core embeds this exact LLM Multi-Model Task Matrix." }
     ];
 
     for (const item of knowledgeBase) {
