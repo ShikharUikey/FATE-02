@@ -447,9 +447,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const baseRam = (2.1 + (Math.cos(Date.now() / 2500) * 0.2)).toFixed(1);
 
         if (this.cpuVal) this.cpuVal.textContent = `${baseCpu}%`;
-        if (this.cpuBar) this.cpuBar.style.width = `${baseCpu}%`;
         if (this.ramVal) this.ramVal.textContent = `${baseRam} GB`;
-        if (this.ramBar) this.ramBar.style.width = `${(baseRam / 16) * 100}%`;
+
+        const cpuRingFill = document.getElementById('cpu-ring-fill');
+        const ramRingFill = document.getElementById('ram-ring-fill');
+
+        if (cpuRingFill) {
+          const cpuOffset = 251.2 - (baseCpu / 100) * 251.2;
+          cpuRingFill.style.strokeDashoffset = cpuOffset;
+        }
+
+        if (ramRingFill) {
+          const ramPct = (baseRam / 16) * 100;
+          const ramOffset = 251.2 - (ramPct / 100) * 251.2;
+          ramRingFill.style.strokeDashoffset = ramOffset;
+        }
       };
 
       setInterval(updateClock, 1000);

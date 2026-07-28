@@ -25,7 +25,7 @@
       <div class="brand-section">
         <div class="fate-logo-icon" id="logo-icon"></div>
         <div class="brand-text">
-          <h1>F.A.T.E. <span>SYSTEM</span></h1>
+          <h1>F.A.T.E. <span>SYSTEM</span> <small style="font-size: 0.6rem; color: var(--primary-color); opacity: 0.8; letter-spacing: 1px; margin-left: 8px;">// STARK INDUSTRIES MARK-85</small></h1>
           <div class="sub-tag">FUTURISTIC AUTONOMOUS TECH ASSISTANT</div>
         </div>
       </div>
@@ -57,56 +57,67 @@
       <!-- Left Telemetry & Quick Action Panel -->
       <aside class="hud-panel">
         <div class="panel-header">
-          <h2>📊 TELEMETRY</h2>
-          <span class="panel-badge">SYS_V2.6</span>
+          <h2>📊 STARK TELEMETRY</h2>
+          <span class="panel-badge">MARK-85</span>
         </div>
 
-        <div class="telemetry-grid">
-          <div class="telemetry-card">
-            <span class="telemetry-label">CPU CORE</span>
-            <span class="telemetry-value" id="cpu-val">21%</span>
-            <div class="telemetry-bar-bg">
-              <div class="telemetry-bar-fill" id="cpu-bar"></div>
+        <!-- High-Tech SVG Circular Telemetry Ring Gauges -->
+        <div class="telemetry-rings-container">
+          
+          <!-- CPU Gauge Ring -->
+          <div class="ring-gauge-card">
+            <svg class="ring-svg" viewBox="0 0 100 100">
+              <circle class="ring-bg" cx="50" cy="50" r="40"></circle>
+              <circle class="ring-fill cpu-ring" id="cpu-ring-fill" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="180"></circle>
+            </svg>
+            <div class="ring-info">
+              <span class="ring-val" id="cpu-val">21%</span>
+              <span class="ring-label">CPU LOAD</span>
             </div>
           </div>
 
-          <div class="telemetry-card">
-            <span class="telemetry-label">MEMORY</span>
-            <span class="telemetry-value" id="ram-val">2.3 GB</span>
-            <div class="telemetry-bar-bg">
-              <div class="telemetry-bar-fill" id="ram-bar" style="width: 25%;"></div>
+          <!-- RAM Gauge Ring -->
+          <div class="ring-gauge-card">
+            <svg class="ring-svg" viewBox="0 0 100 100">
+              <circle class="ring-bg" cx="50" cy="50" r="40"></circle>
+              <circle class="ring-fill ram-ring" id="ram-ring-fill" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="190"></circle>
+            </svg>
+            <div class="ring-info">
+              <span class="ring-val" id="ram-val">2.3 GB</span>
+              <span class="ring-label">MEMORY</span>
             </div>
           </div>
+
         </div>
 
-        <div class="panel-header" style="margin-top: 10px;">
+        <div class="panel-header" style="margin-top: 5px;">
           <h2>⚡ QUICK COMMANDS</h2>
         </div>
 
         <div class="quick-commands-list">
-          <div class="command-chip" data-cmd="what is the weather">
-            <span class="chip-text">Weather Scan</span>
-            <span class="chip-tag">METEO</span>
+          <div class="command-chip" data-cmd="school schedule today">
+            <span class="chip-text">School Schedule</span>
+            <span class="chip-tag">CLASS</span>
+          </div>
+          <div class="command-chip" data-cmd="aaj abhay sir ki class kb h">
+            <span class="chip-text">Abhay Sir Class</span>
+            <span class="chip-tag">FACULTY</span>
           </div>
           <div class="command-chip" data-cmd="open youtube">
             <span class="chip-text">Open YouTube</span>
             <span class="chip-tag">WEB</span>
           </div>
-          <div class="command-chip" data-cmd="search google for latest AI news">
-            <span class="chip-text">Search AI News</span>
-            <span class="chip-tag">SEARCH</span>
+          <div class="command-chip" data-cmd="modi song">
+            <span class="chip-text">Modi Song</span>
+            <span class="chip-tag">AUDIO</span>
+          </div>
+          <div class="command-chip" data-cmd="cid">
+            <span class="chip-text">CID Special</span>
+            <span class="chip-tag">AUDIO</span>
           </div>
           <div class="command-chip" data-cmd="open github">
             <span class="chip-text">Open GitHub</span>
             <span class="chip-tag">DEV</span>
-          </div>
-          <div class="command-chip" data-cmd="generate python script">
-            <span class="chip-text">Python Studio</span>
-            <span class="chip-tag">CODE</span>
-          </div>
-          <div class="command-chip" data-cmd="what time is it">
-            <span class="chip-text">System Time</span>
-            <span class="chip-tag">INFO</span>
           </div>
           <div class="command-chip" data-cmd="switch theme to red alert">
             <span class="chip-text">Red Alert Mode</span>
@@ -127,6 +138,10 @@
           
           <div class="arc-reactor-section">
             <div class="visualizer-container">
+              <!-- STARK Glowing Concentric Arc Rings -->
+              <div class="stark-ring-outer"></div>
+              <div class="stark-ring-mid"></div>
+
               <canvas id="visualizer-canvas"></canvas>
               <div class="arc-reactor-core" id="arc-reactor-core">
                 <span class="reactor-symbol">FATE</span>
