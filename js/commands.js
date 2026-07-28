@@ -20,6 +20,46 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
+    // Dedicated Consecutive Multi-Command Chaining Subsystem ("open linkedin then instagram", "open camera and then finder")
+    if (/\b(then|after|and then|phir|also)\b/i.test(cleanText)) {
+      const subCommands = cleanText
+        .split(/\b(then|after|and then|phir|also)\b/i)
+        .map(cmd => cmd.trim())
+        .filter(cmd => cmd && !/^(then|after|and then|phir|also)$/i.test(cmd));
+
+      if (subCommands.length > 1) {
+        const spokenParts = [];
+        const actionParts = [];
+
+        for (const subCmd of subCommands) {
+          // Normalize sub-command context if verbs are omitted (e.g. "open linkedin then instagram" -> "open instagram")
+          let targetSubCmd = subCmd;
+          if (!targetSubCmd.startsWith('open ') && (subCmd.includes('instagram') || subCmd.includes('youtube') || subCmd.includes('github') || subCmd.includes('vercel') || subCmd.includes('finder') || subCmd.includes('camera') || subCmd.includes('code'))) {
+            targetSubCmd = `open ${subCmd}`;
+          }
+
+          const res = this.processSingleCommand(targetSubCmd, text);
+          if (res) {
+            spokenParts.push(res.speakText || res.spokenText);
+            actionParts.push(res.actionTaken);
+          }
+        }
+
+        if (spokenParts.length > 0) {
+          return {
+            speakText: spokenParts.join(' '),
+            spokenText: spokenParts.join(' '),
+            actionTaken: `Consecutive: ${actionParts.join(' | ')}`
+          };
+        }
+      }
+    }
+
+    return this.processSingleCommand(cleanText, text);
+  }
+
+  processSingleCommand(cleanText, text) {
+
     // Dedicated School / College Class Time Table Subsystem ("what's the school schedule today/tomorrow", "school schedule", "time table")
     const schoolSchedResult = this.processSchoolSchedule(cleanText);
     if (schoolSchedResult) {
