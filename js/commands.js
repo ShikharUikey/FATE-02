@@ -20,6 +20,15 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
+    // Dedicated School / College Class Time Table Subsystem ("what's the school schedule today/tomorrow", "school schedule", "time table")
+    const schoolSchedResult = this.processSchoolSchedule(cleanText);
+    if (schoolSchedResult) {
+      return {
+        speakText: schoolSchedResult.speakText,
+        actionTaken: schoolSchedResult.actionTaken
+      };
+    }
+
     // Dedicated CID Audio Sample Intent ("cid", "what is cid", "CID")
     if (cleanText === 'cid' || cleanText.includes('what is cid') || cleanText.includes('cid kholo') || cleanText.includes('play cid') || cleanText.includes('tell me about cid')) {
       if (this.app.speech) {
@@ -256,6 +265,73 @@ class FateCommandHandler {
     }
 
     return null;
+  }
+
+  // Dedicated School / College Class Time Table Subsystem (SAGE University Bhopal - BCA V Sem)
+  processSchoolSchedule(clean) {
+    const isSchoolQuery = clean.includes('school schedule') || clean.includes('college schedule') || clean.includes('class schedule') || clean.includes('time table') || clean.includes('timetable') || clean.includes('classes') || clean.includes('school') || clean.includes('college');
+
+    if (!isSchoolQuery) return null;
+
+    const isTomorrow = clean.includes('tomorrow') || clean.includes('kal');
+
+    const targetDate = new Date();
+    if (isTomorrow) targetDate.setDate(targetDate.getDate() + 1);
+
+    const dayName = targetDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    const displayDay = isTomorrow ? 'Tomorrow' : 'Today';
+
+    const schoolTimetable = {
+      'monday': [
+        '8:30 AM Data Visualization (Room 317)',
+        '9:20 AM Placement Preparation (Room 317)',
+        '10:10 AM BigData Analytics Lab (Lab 404)',
+        '12:30 PM NoSQL Databases Lab (Lab 406)',
+        '2:00 PM BigData Analytics (Room 317)'
+      ],
+      'tuesday': [
+        '8:30 AM Placement Preparation (Room 317)',
+        '9:20 AM Placement Prep (Room 317)',
+        '10:10 AM Technical Skill-I (Room 402)',
+        '12:30 PM NoSQL Databases (Room 317)',
+        '1:20 PM Mentor Session (Room 317)',
+        '2:00 PM Data Visualization (Room 317)'
+      ],
+      'wednesday': [
+        '8:30 AM NoSQL Databases (Room 317)',
+        '9:20 AM Placement Prep (Room 317)',
+        '10:10 AM Data Visualization Lab (Lab 404)',
+        '12:30 PM BigData Analytics (Room 317)',
+        '1:20 PM Library Session',
+        '2:00 PM Data Visualization (Room 317)'
+      ],
+      'thursday': [
+        '8:30 AM NoSQL Databases (Room 317)',
+        '9:20 AM Placement Prep (Room 317)',
+        '10:10 AM Indian Culture & Values (Room 317)',
+        '11:00 AM BigData Analytics (Room 317)',
+        '12:30 PM Data Visualization (Room 317)',
+        '1:20 PM Technical Skill-I (Lab 404)'
+      ],
+      'friday': [
+        '8:30 AM BigData Analytics (Room 317)',
+        '9:20 AM Placement Prep (Room 317)',
+        '10:10 AM Indian Culture & Values (Room 317)',
+        '11:00 AM NoSQL Databases (Room 317)',
+        '12:30 PM Data Visualization (Room 317)',
+        '1:20 PM Club Activity'
+      ],
+      'saturday': ['No classes scheduled for Saturday. Enjoy your weekend!'],
+      'sunday': ['No classes scheduled for Sunday. Enjoy your weekend!']
+    };
+
+    const dayClasses = schoolTimetable[dayName] || schoolTimetable['monday'];
+    const voiceSummary = dayClasses.join(', ');
+
+    return {
+      speakText: `Here is your school schedule for ${displayDay.toLowerCase()}, Boss: ${voiceSummary}.`,
+      actionTaken: `School Schedule (${displayDay}): ${dayName}`
+    };
   }
 
   // Web & Multi-Tab Browser Automation Subsystem ("open youtube and search python", "open github and search libraries")
