@@ -238,18 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const val = voicePersonaSelect.value;
           if (val === 'jarvis_male') {
             this.speech.setMacVoice('Daniel');
-            this.speech.speak("JARVIS Protocol initialized. At your service, sir.");
-          } else if (val === 'friday_female') {
-            this.speech.setMacVoice('Ava');
-            this.speech.speak("FRIDAY Protocol active. Ready when you are, boss.");
-          } else if (val === 'cyberpunk_synth') {
-            this.speech.setMacVoice('Veena');
-            this.setTheme('emerald');
-            this.speech.speak("Cyberpunk Matrix Protocol active.");
+            this.speech.speak("JARVIS Protocol initialized. At your service, Boss!");
           } else {
             this.speech.setMacVoice('Samantha');
-            this.setTheme('default');
-            this.speech.speak("FATE Standard Assistant active.");
+            this.speech.speak("FATE FRIDAY Protocol active. Ready when you are, Boss!");
           }
           if (typeof audioFX !== 'undefined') audioFX.playSuccess();
         });

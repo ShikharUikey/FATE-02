@@ -224,9 +224,11 @@ class FateSpeechEngine {
       this.synthesis.cancel();
     }
 
-    // Auto-detect Hindi text and route to native macOS Lekha voice
+    // Detect Devanagari Hindi or Hinglish words for authentic natural Indian voice routing
+    const isHinglish = /\b(kar|diya|hai|hain|kaise|kya|haal|batao|kholo|chalao|banao|ji|haan|nahi|nahin|sab|hum|aap|bhi|sahajta|baat|sakta|sakti|hoon|rahe|rakhta|rakhti|karte|karo|bhojpuri)\b/i.test(speakableText);
+
     let activeVoice = this.macVoice;
-    if (/[\u0900-\u097F]/.test(speakableText)) {
+    if (/[\u0900-\u097F]/.test(speakableText) || isHinglish) {
       activeVoice = 'Lekha';
     }
 
