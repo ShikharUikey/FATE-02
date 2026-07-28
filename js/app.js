@@ -274,11 +274,13 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       }
-      if (sfxToggle) {
-        sfxToggle.addEventListener('change', () => {
-          if (typeof audioFX !== 'undefined') audioFX.toggleSound(sfxToggle.checked);
-        });
-      }
+      // Automatically stop speech recognition when switching to external app or tab
+      window.addEventListener('blur', () => {
+        if (this.speech && this.speech.isListening) {
+          console.log('⚡ FATE window lost focus. Stopping voice recognition to prevent background listening.');
+          this.speech.stopListening();
+        }
+      });
 
       // Initial Weather Fetch
       this.fetchWeatherForCity('Local Region');
@@ -331,6 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Do not overlay TTS speech synthesis if custom audio sample is playing
         if (!cmdResult.actionTaken || !cmdResult.actionTaken.includes('Audio Sample:')) {
           this.speech.speak(outputText);
+        }
+
+        // Stop voice recognition when opening an external app, webpage, camera, or finder window
+        if (cmdResult.actionTaken && (cmdResult.actionTaken.includes('macOS:') || cmdResult.actionTaken.includes('Web:') || cmdResult.actionTaken.includes('Opened') || cmdResult.actionTaken.includes('GitHub Search') || cmdResult.actionTaken.includes('YouTube Search'))) {
+          setTimeout(() => {
+            if (this.speech && this.speech.isListening) {
+              this.speech.stopListening();
+            }
+          }, 1500);
         }
         return;
       }
