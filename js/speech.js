@@ -37,6 +37,46 @@ class FateSpeechEngine {
     localStorage.setItem('fate_mac_voice', voiceName);
   }
 
+  // Play custom recorded MP3/WAV voice samples when available
+  playCustomAudioSample(sampleName, textFallback, callback) {
+    const mp3Path = `/audio_samples/${sampleName}.mp3`;
+    const wavPath = `/audio_samples/${sampleName}.wav`;
+
+    const audio = new Audio();
+    audio.src = mp3Path;
+
+    audio.oncanplaythrough = () => {
+      if (this.currentAudio) this.currentAudio.pause();
+      this.currentAudio = audio;
+      audio.play().then(() => {
+        audio.onended = () => {
+          this.currentAudio = null;
+          if (callback) callback();
+        };
+      }).catch(e => {
+        this.speak(textFallback, callback);
+      });
+    };
+
+    audio.onerror = () => {
+      const audioWav = new Audio();
+      audioWav.src = wavPath;
+      audioWav.oncanplaythrough = () => {
+        if (this.currentAudio) this.currentAudio.pause();
+        this.currentAudio = audioWav;
+        audioWav.play().then(() => {
+          audioWav.onended = () => {
+            this.currentAudio = null;
+            if (callback) callback();
+          };
+        }).catch(e => this.speak(textFallback, callback));
+      };
+      audioWav.onerror = () => {
+        this.speak(textFallback, callback);
+      };
+    };
+  }
+
   initRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
