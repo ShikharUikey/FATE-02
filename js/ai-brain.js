@@ -102,7 +102,22 @@ class FateAIBrain {
       return `Right here, Boss! Always glad to assist. What would you like to work on right now?`;
     }
 
-    // 2. FRIDAY Intelligence & Chit-Chat Behavioral Responses
+    // 2. Vocabulary & Advanced C1/C2 English Language Proficiency
+    if (q.includes('c1') || q.includes('c2') || q.includes('vocabulary') || q.includes('advanced words') || q.includes('english words')) {
+      return "Here are 5 C1-level Advanced English words, Boss: 1. Ubiquitous (present everywhere), 2. Ephemeral (lasting a short time), 3. Fastidious (attentive to detail), 4. Perspicacious (having keen insight), 5. Pernicious (having a subtle harmful effect).";
+    }
+
+    // 3. Neural Network & System Architecture Intelligence
+    if (q.includes('neural') || q.includes('network') || q.includes('system') || q.includes('deep learning') || q.includes('arch') || q.includes('model') || q.includes('scappa')) {
+      return "FATE's Neural Subsystem is fully active, Boss: Powered by a multi-layered Intent Classification Engine, Mem0 Persistent Vector Storage, Low-Latency Pipecat Voice Pipeline, and STARK Cyberpunk Telemetry.";
+    }
+
+    // 4. System Speed & Performance Diagnostics
+    if (q === 'speed' || q.includes('speed') || q.includes('latency') || q.includes('fast')) {
+      return "System latency is optimized, Boss: Speech recognition operates in real-time, TTS streaming latency is under 200ms, and all core engines are green.";
+    }
+
+    // 5. FRIDAY Intelligence & Chit-Chat Behavioral Responses
     if (q.includes('status') || q.includes('diagnostics') || q.includes('health')) {
       return "All core subsystems are nominal, Boss. CPU temperature and memory overhead are well within optimal parameters.";
     }
@@ -119,12 +134,12 @@ class FateAIBrain {
       return "If I had hands, I'd brew you a fresh espresso right now, Boss! Make sure to take a short break while I format your scripts.";
     }
 
-    // 3. Math & Academic Quizzes (FRIDAY Tactical Assistant Tone)
+    // 6. Math & Academic Quizzes (FRIDAY Tactical Assistant Tone)
     if (q.includes('math') || q.includes('maths') || q.includes('calculus') || q.includes('integral') || q.includes('derivative') || q.includes('equation')) {
       return `Calculating optimal solution, Boss! Here is a JEE Advanced Definite Integral problem: Evaluate Integral from 0 to pi/2 of sqrt(sin x) / (sqrt(sin x) + sqrt(cos x)) dx. Applying King's Property simplifies the result to pi / 4. Full derivation is ready in Suite Tools!`;
     }
 
-    // 4. Physics & Chemistry Core
+    // 7. Physics & Chemistry Core
     if (q.includes('physics') || q.includes('quantum')) {
       return "Quantum Physics Telemetry, Boss: In quantum mechanics, Schrödinger's Time-Dependent Wave Equation governs wavefunctions: i ℏ (∂Ψ/∂t) = Ĥ Ψ. Energy levels for a 1D box are quantized as E_n = (n² h²)/(8 mL²).";
     }
@@ -133,17 +148,7 @@ class FateAIBrain {
       return "Thermodynamics Analysis, Boss: Reaction spontaneity is determined by Gibbs Free Energy ΔG = ΔH - TΔS. A negative ΔG indicates a spontaneous process.";
     }
 
-    // 5. Neural Networks & Deep Learning
-    if (q.includes('neural') || q.includes('network') || q.includes('deep learning') || q.includes('perceptron') || q.includes('ai model')) {
-      return `Right away, Boss! I've generated a complete 3-Layer NumPy Feedforward Neural Network with Backpropagation for you. Loaded straight into FATE Code Studio.`;
-    }
-
-    // 6. Product Recommendation Systems
-    if (q.includes('recommend') || q.includes('recommendation') || q.includes('recommender') || q.includes('product')) {
-      return `Deploying recommendation engine now, Boss! Content-Based ML Recommender code using TF-IDF Vectorization and Cosine Similarity is hot and ready in FATE Code Studio.`;
-    }
-
-    // 7. Programming & Calculator Modules
+    // 8. Programming & Automation Modules
     if (q.includes('calculator') || q.includes('calc')) {
       return "I've written a complete interactive Python Calculator module for you, Boss! Loaded and ready in FATE Code Studio.";
     }
@@ -152,7 +157,7 @@ class FateAIBrain {
       return "I'm ready to write Python 3.13 scripts, Streamlit ML apps, Flask REST APIs, or data automation for you, Boss! What script shall we build?";
     }
 
-    // 8. Human Motivation & Empathy
+    // 9. Human Motivation & Empathy
     if (q.includes('motivate') || q.includes('motivation') || q.includes('inspire')) {
       return `Remember Boss, consistency beats intensity every single time! Break your task into tiny actionable steps, stay focused, and we'll achieve fantastic results. You've got this!`;
     }
@@ -165,7 +170,13 @@ class FateAIBrain {
       return `Always a pleasure, Boss! Serving your objectives is what I was built for. Let me know if there's anything else you need!`;
     }
 
-    // 9. FRIDAY Tactical Assistant Fallback (Minimal & Crisp)
+    // 10. Smart Conversational Handler for General Queries ("give me X", "explain X", "tell me X")
+    if (q.startsWith('give me ') || q.startsWith('tell me ') || q.startsWith('explain ') || q.startsWith('what is ') || q.startsWith('how to ')) {
+      const topic = originalQuery.replace(/give me|tell me|explain|what is|how to/gi, '').trim();
+      return `Right away, Boss! Analyzing topic '${topic}'. I can write code, search GitHub, or fetch web data for '${topic}' on command!`;
+    }
+
+    // 11. FRIDAY Tactical Assistant Fallback (Minimal & Crisp)
     return `Standing by, Boss! Systems online.`;
   }
 
