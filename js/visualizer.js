@@ -259,6 +259,35 @@ class FateVisualizer {
         midRingElem.style.transform = `scale(${ringScale})`;
       }
 
+      // TRON Identity Disc Container & Concentric Rings High-Frequency Vibration
+      const tronDiscContainer = document.getElementById('tron-disc-container');
+      const tronOuterRing = document.querySelector('.tron-ring-outer');
+      const tronCyanRing = document.querySelector('.tron-ring-cyan');
+      const tronTicksRing = document.querySelector('.tron-ring-ticks');
+
+      if (tronDiscContainer && isSpeaking) {
+        const discVibeX = (Math.random() - 0.5) * 8;
+        const discVibeY = (Math.random() - 0.5) * 8;
+        tronDiscContainer.style.transform = `translate(${discVibeX}px, ${discVibeY}px)`;
+      } else if (tronDiscContainer) {
+        tronDiscContainer.style.transform = `translate(0px, 0px)`;
+      }
+
+      if (tronOuterRing) {
+        const scale = 1.0 + soundFreq * 0.18;
+        tronOuterRing.style.transform = `scale(${scale})`;
+      }
+
+      if (tronCyanRing) {
+        const scale = 1.0 + soundFreq * 0.22;
+        tronCyanRing.style.transform = `scale(${scale})`;
+      }
+
+      if (tronTicksRing) {
+        const scale = 1.0 + soundFreq * 0.28;
+        tronTicksRing.style.transform = `scale(${scale})`;
+      }
+
       this.threeRenderer.render(this.threeScene, this.threeCamera);
       return;
     }

@@ -283,63 +283,70 @@ html, body {
   justify-content: center;
 }
 
-/* STARK Glowing Concentric Arc Rings */
-.stark-ring-outer {
+/* TRON: LEGACY Concentric Identity Disc Rings */
+.tron-ring-outer {
   position: absolute;
-  width: 190px;
-  height: 190px;
+  width: 196px;
+  height: 196px;
   border-radius: 50%;
-  border: 2px stroke var(--primary-color);
-  border-top: 2px solid var(--primary-color);
-  border-bottom: 2px solid var(--primary-color);
-  border-left: 2px dashed rgba(0, 240, 255, 0.3);
-  border-right: 2px dashed rgba(0, 240, 255, 0.3);
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
-  animation: starkRotateClockwise 20s linear infinite;
+  border: 4px solid var(--primary-color);
+  box-shadow: 0 0 25px var(--primary-color), inset 0 0 15px rgba(0, 240, 255, 0.4);
+  animation: starkRotateClockwise 22s linear infinite;
   pointer-events: none;
 }
 
-.stark-ring-mid {
+.tron-ring-cyan {
   position: absolute;
-  width: 160px;
-  height: 160px;
+  width: 168px;
+  height: 168px;
   border-radius: 50%;
-  border: 1px dashed var(--primary-color);
-  box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2);
-  animation: starkRotateCounterClockwise 14s linear infinite;
+  border: 2px dashed rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5), inset 0 0 10px rgba(0, 240, 255, 0.3);
+  animation: starkRotateCounterClockwise 15s linear infinite;
   pointer-events: none;
 }
 
-@keyframes starkRotateClockwise {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes starkRotateCounterClockwise {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(-360deg); }
-}
-
-#visualizer-canvas {
-  width: 150px;
-  height: 150px;
+.tron-ring-ticks {
   position: absolute;
-  top: 25px;
-  left: 25px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 1px stroke var(--primary-color);
+  border-top: 3px solid var(--primary-color);
+  border-bottom: 3px solid var(--primary-color);
+  animation: starkRotateClockwise 10s linear infinite;
+  pointer-events: none;
 }
 
-.arc-reactor-core {
-  width: 75px;
-  height: 75px;
+.tron-satellite-node {
+  position: absolute;
+  top: 8px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--primary-color) 0%, rgba(0, 240, 255, 0.3) 60%, transparent 100%);
   border: 2px solid var(--primary-color);
-  box-shadow: 0 0 30px var(--primary-color), inset 0 0 15px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 15px var(--primary-color), inset 0 0 8px rgba(0, 240, 255, 0.5);
+  pointer-events: none;
+}
+
+.tron-core-node {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 240, 255, 0.9) 0%, rgba(0, 100, 150, 0.4) 60%, transparent 100%);
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 35px var(--primary-color), inset 0 0 20px rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 5;
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #ffffff;
+  text-shadow: 0 0 10px var(--primary-color);
   transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 

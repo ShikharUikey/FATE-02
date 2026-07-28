@@ -137,14 +137,16 @@
         <div class="tab-view active" id="tab-core">
           
           <div class="arc-reactor-section">
-            <div class="visualizer-container">
-              <!-- STARK Glowing Concentric Arc Rings -->
-              <div class="stark-ring-outer"></div>
-              <div class="stark-ring-mid"></div>
+            <div class="visualizer-container" id="tron-disc-container">
+              <!-- TRON: LEGACY Concentric Identity Disc Rings -->
+              <div class="stark-ring-outer tron-ring-outer"></div>
+              <div class="stark-ring-mid tron-ring-cyan"></div>
+              <div class="tron-ring-ticks"></div>
+              <div class="tron-satellite-node"></div>
 
               <canvas id="visualizer-canvas"></canvas>
-              <div class="arc-reactor-core" id="arc-reactor-core">
-                <span class="reactor-symbol">FATE</span>
+              <div class="arc-reactor-core tron-core-node" id="arc-reactor-core">
+                <span class="reactor-symbol" id="tron-core-text">21</span>
               </div>
             </div>
             <div class="voice-status-label" id="voice-status-label">
