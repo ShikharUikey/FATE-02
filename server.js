@@ -209,13 +209,11 @@ const server = http.createServer((req, res) => {
         if (action === 'open_url_in_chrome') {
           const rawUrl = (payload.url || 'https://www.google.com').trim();
           const safeUrl = rawUrl.replace(/"/g, '\\"');
-          exec(`open -a "Google Chrome" "${safeUrl}"`, (err) => {
-            if (err) {
-              exec(`open "${safeUrl}"`);
-            }
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ message: `Opened ${rawUrl} in Chrome` }));
+          exec(`open "${safeUrl}"`, (err) => {
+            if (err) exec(`open -a "Google Chrome" "${safeUrl}"`);
           });
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ message: `Opened ${rawUrl}` }));
           return;
         }
 

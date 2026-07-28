@@ -7,6 +7,22 @@ class FateCommandHandler {
     this.app = app;
   }
 
+  // Bulletproof Web URL & App Launcher (System macOS exec open + window.open fallback)
+  openWebUrl(url) {
+    if (!url) return;
+    try {
+      fetch('/api/mac/command', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'open_url_in_chrome', url: url })
+      }).catch(() => {
+        window.open(url, '_blank');
+      });
+    } catch (e) {
+      window.open(url, '_blank');
+    }
+  }
+
   processCommand(rawText) {
     const text = rawText.trim();
     const lowerText = text.toLowerCase();
@@ -231,8 +247,8 @@ class FateCommandHandler {
 
     // 10. YouTube & Video Automation
     if (cleanText.startsWith('open youtube') || cleanText === 'youtube') {
-      window.open('https://www.youtube.com', '_blank');
-      return { speakText: "Opening YouTube video platform.", actionTaken: "Opened YouTube" };
+      this.openWebUrl('https://www.youtube.com');
+      return { speakText: "Opening YouTube video platform, Boss!", actionTaken: "Opened YouTube" };
     }
 
     // 11. Theme Customization
@@ -454,7 +470,7 @@ What are your thoughts on ${topic}? Let's connect and innovate together!
 
         if (this.app.codeArea) this.app.codeArea.value = linkedinPostDraft;
         this.app.switchTab('suite');
-        window.open('https://www.linkedin.com/feed/', '_blank');
+        this.openWebUrl('https://www.linkedin.com/feed/');
 
         return {
           spokenText: `LinkedIn post on ${topic} drafted and loaded into Code Studio, Boss! Opening LinkedIn Feed.`,
@@ -463,7 +479,7 @@ What are your thoughts on ${topic}? Let's connect and innovate together!
       }
 
       // Open LinkedIn Profile (https://www.linkedin.com/in/shikharuikey)
-      window.open('https://www.linkedin.com/in/shikharuikey', '_blank');
+      this.openWebUrl('https://www.linkedin.com/in/shikharuikey');
       return {
         spokenText: "Opening your LinkedIn profile, Boss!",
         actionTaken: "Opened LinkedIn Profile (shikharuikey)"
@@ -494,7 +510,7 @@ Drop a ⚡ if you're grinding today!
 
         if (this.app.codeArea) this.app.codeArea.value = instaCaptionDraft;
         this.app.switchTab('suite');
-        window.open('https://www.instagram.com/', '_blank');
+        this.openWebUrl('https://www.instagram.com/');
 
         return {
           spokenText: `Instagram caption for ${topic} generated and loaded into Code Studio, Boss! Opening Instagram.`,
@@ -503,7 +519,7 @@ Drop a ⚡ if you're grinding today!
       }
 
       // Open Instagram Profile (https://www.instagram.com/shikhar_uikey_)
-      window.open('https://www.instagram.com/shikhar_uikey_', '_blank');
+      this.openWebUrl('https://www.instagram.com/shikhar_uikey_');
       return {
         spokenText: "Opening your Instagram profile, Boss!",
         actionTaken: "Opened Instagram Profile (shikhar_uikey_)"
@@ -517,17 +533,7 @@ Drop a ⚡ if you're grinding today!
         .trim() || 'ai';
 
       const targetUrl = `https://github.com/search?q=${encodeURIComponent(query)}`;
-      const isChrome = clean.includes('on chrome') || clean.includes('in chrome');
-
-      if (isChrome) {
-        fetch('/api/mac/command', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'open_url_in_chrome', url: targetUrl })
-        });
-      } else {
-        window.open(targetUrl, '_blank');
-      }
+      this.openWebUrl(targetUrl);
 
       // Also query GitHub REST API to fetch live repo results in FATE Code Studio
       fetch(`https://api.github.com/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=5`)
@@ -560,17 +566,7 @@ Drop a ⚡ if you're grinding today!
 
       if (query) {
         const targetUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-        const isChrome = clean.includes('on chrome') || clean.includes('in chrome');
-
-        if (isChrome) {
-          fetch('/api/mac/command', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'open_url_in_chrome', url: targetUrl })
-          });
-        } else {
-          window.open(targetUrl, '_blank');
-        }
+        this.openWebUrl(targetUrl);
 
         return {
           spokenText: `YouTube database par "${query}" search launch kar diya hai.`,
@@ -586,14 +582,16 @@ Drop a ⚡ if you're grinding today!
       'google': { name: 'Google', url: 'https://www.google.com' },
       'chatgpt': { name: 'ChatGPT', url: 'https://chatgpt.com' },
       'chat gpt': { name: 'ChatGPT', url: 'https://chatgpt.com' },
-      'linkedin': { name: 'LinkedIn', url: 'https://www.linkedin.com' },
+      'linkedin': { name: 'LinkedIn', url: 'https://www.linkedin.com/in/shikharuikey' },
+      'instagram': { name: 'Instagram', url: 'https://www.instagram.com/shikhar_uikey_' },
+      'insta': { name: 'Instagram', url: 'https://www.instagram.com/shikhar_uikey_' },
       'twitter': { name: 'Twitter/X', url: 'https://x.com' },
       'x': { name: 'X', url: 'https://x.com' },
       'reddit': { name: 'Reddit', url: 'https://www.reddit.com' },
       'stackoverflow': { name: 'StackOverflow', url: 'https://stackoverflow.com' },
       'stack overflow': { name: 'StackOverflow', url: 'https://stackoverflow.com' },
       'nptel': { name: 'NPTEL', url: 'https://nptel.ac.in' },
-      'coursera': 'https://www.coursera.org',
+      'coursera': { name: 'Coursera', url: 'https://www.coursera.org' },
       'udemy': { name: 'Udemy', url: 'https://www.udemy.com' },
       'figma': { name: 'Figma', url: 'https://www.figma.com' },
       'gmail': { name: 'Gmail', url: 'https://mail.google.com' }
@@ -614,24 +612,18 @@ Drop a ⚡ if you're grinding today!
       }
     });
 
-    if (matchedSites.length > 0 && (clean.includes('open') || clean.includes('launch') || clean.includes('kholo') || clean.includes('youtube') || clean.includes('vercel') || clean.includes('github'))) {
+    if (matchedSites.length > 0 && (clean.includes('open') || clean.includes('launch') || clean.includes('kholo') || clean.includes('youtube') || clean.includes('vercel') || clean.includes('github') || clean.includes('linkedin') || clean.includes('instagram') || clean.includes('insta') || clean.includes('google'))) {
       const siteNames = matchedSites.map(s => s.name).join(', ');
 
-      matchedSites.forEach(site => {
-        if (isChromeExplicit) {
-          fetch('/api/mac/command', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'open_url_in_chrome', url: site.url })
-          });
-        } else {
-          window.open(site.url, '_blank');
-        }
+      matchedSites.forEach((site, i) => {
+        setTimeout(() => {
+          this.openWebUrl(site.url);
+        }, i * 800);
       });
 
       return {
-        spokenText: `${siteNames} web platforms ${isChromeExplicit ? 'Google Chrome par' : ''} launch kar diye hain.`,
-        actionTaken: `Web: Opened ${siteNames} ${isChromeExplicit ? '(Chrome)' : ''}`
+        spokenText: `Opening ${siteNames}, Boss!`,
+        actionTaken: `Web: Opened ${siteNames}`
       };
     }
 
