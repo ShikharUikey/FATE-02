@@ -184,7 +184,7 @@ class FateAIBrain {
   processWorldEntitiesKnowledge(q, originalQuery) {
     const knowledgeBase = [
       // Boss Profile & Political Leaders
-      { keywords: ['shikhar uikey', 'shikhar', 'who am i', 'my profile'], answer: "You are Shikhar Uikey, Boss! Full-Stack AI Developer, BCA Specialist at SAGE University Bhopal, and creator of the FATE Autonomous Tech Assistant." },
+      { keywords: ['shikhar uikey', 'shikhar', 'who am i', 'my profile', 'my instagram', 'shikhar_uikey_'], answer: "You are Shikhar Uikey (@shikhar_uikey_), Boss! Full-Stack AI Developer, BCA Specialist at SAGE University Bhopal, and creator of the FATE Autonomous Tech Assistant." },
       { keywords: ['narendra modi', 'pm modi', 'prime minister of india'], answer: "Narendra Modi is the Prime Minister of India, serving since May 2014. He is the leader of the Bharatiya Janata Party (BJP) and one of the world's most prominent global leaders, Boss." },
       { keywords: ['droupadi murmu', 'president of india'], answer: "Droupadi Murmu is the President of India, serving as the 15th President since July 2022. She is the first tribal woman to hold the highest constitutional office in India, Boss." },
       { keywords: ['donald trump', 'trump'], answer: "Donald Trump is the President of the United States, serving as the 47th US President, Boss." },

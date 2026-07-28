@@ -414,6 +414,46 @@ What are your thoughts on ${topic}? Let's connect and innovate together!
       };
     }
 
+    // Dedicated Instagram Deep Integration ("open instagram", "my insta", "write instagram caption for <topic>")
+    if (clean.includes('instagram') || clean.includes('insta')) {
+      const isCaptionRequest = clean.includes('write') || clean.includes('caption') || clean.includes('reel') || clean.includes('post') || clean.includes('create') || clean.includes('draft');
+
+      if (isCaptionRequest) {
+        const topic = clean
+          .replace(/write an instagram caption for|write instagram caption for|create instagram caption for|insta caption for|instagram caption|insta caption|instagram reel|insta reel|caption for|caption|write|create|draft/gi, '')
+          .replace(/on instagram|on insta|instagram|insta/gi, '')
+          .trim() || 'Tech & Coding Vibes';
+
+        const instaCaptionDraft = `✨ ${topic.toUpperCase()} VIBES ✨
+
+Late nights, clean code, and building futuristic AI assistants. 🚀
+Consistency > Intensity. Day by day, line by line. 💻🔥
+
+Drop a ⚡ if you're grinding today!
+
+.
+.
+.
+#${topic.replace(/\s+/g, '')} #CodingLife #DeveloperLifestyle #TechReels #FullStackDeveloper #SoftwareEngineer #AI #ShikharUikey #ExplorePage #ViralReels`;
+
+        if (this.app.codeArea) this.app.codeArea.value = instaCaptionDraft;
+        this.app.switchTab('suite');
+        window.open('https://www.instagram.com/', '_blank');
+
+        return {
+          spokenText: `Instagram caption for ${topic} generated and loaded into Code Studio, Boss! Opening Instagram.`,
+          actionTaken: `Instagram Caption Draft: ${topic}`
+        };
+      }
+
+      // Open Instagram Profile (https://www.instagram.com/shikhar_uikey_)
+      window.open('https://www.instagram.com/shikhar_uikey_', '_blank');
+      return {
+        spokenText: "Opening your Instagram profile, Boss!",
+        actionTaken: "Opened Instagram Profile (shikhar_uikey_)"
+      };
+    }
+
     // Dedicated Ultra-Strong GitHub Search Engine ("open github and search <query>", "search <query> on get hub")
     if (clean.includes('github') && (clean.includes('search') || clean.includes('libraries') || clean.includes('library') || clean.includes('pack') || clean.includes('repo') || clean.includes('code') || clean.includes('find') || clean.includes('for'))) {
       const query = clean
