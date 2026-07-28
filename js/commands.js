@@ -20,6 +20,21 @@ class FateCommandHandler {
 
     console.log('FATE Executing Intent:', cleanText);
 
+    // Dedicated CID Audio Sample Intent ("cid", "what is cid", "CID")
+    if (cleanText === 'cid' || cleanText.includes('what is cid') || cleanText.includes('cid kholo') || cleanText.includes('play cid') || cleanText.includes('tell me about cid')) {
+      if (this.app.speech) {
+        this.app.speech.playCustomAudioSample('cid01', "CID (Crime Investigation Department) is India's iconic tactical crime investigation series, Boss!");
+      }
+      const detailView = `🕵️‍♂️ FATE CID SPECIAL INTELLIGENCE MATRIX\n==================================================\n\nPlaying Audio Sample: /audio_samples/cid01.m4a\nTitle: CID Special Audio Telemetry\n==================================================\nStatus: Playing Custom Audio Sample (cid01.m4a)`;
+      if (this.app.codeArea) this.app.codeArea.value = detailView;
+      this.app.switchTab('suite');
+
+      return {
+        spokenText: "Playing CID audio sample cid01.m4a, Boss!",
+        actionTaken: "Audio Sample: Playing cid01.m4a"
+      };
+    }
+
     // 0. Persistent Daily Schedule Manager Intent ("set schedule ...", "what's the schedule for today", "show my schedule")
     const scheduleResult = this.processScheduleManager(cleanText, text);
     if (scheduleResult) {

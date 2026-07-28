@@ -16,7 +16,9 @@ const MIME_TYPES = {
   '.gif': 'image/gif',
   '.svg': 'image/svg+xml',
   '.wav': 'audio/wav',
-  '.mp3': 'audio/mpeg'
+  '.mp3': 'audio/mpeg',
+  '.m4a': 'audio/mp4',
+  '.aac': 'audio/aac'
 };
 
 function getActiveTTSPort() {
