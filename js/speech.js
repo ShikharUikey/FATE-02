@@ -12,7 +12,8 @@ class FateSpeechEngine {
     this.wasListeningBeforeSpeaking = false;
 
     this.ttsEngineMode = localStorage.getItem('fate_tts_engine') || 'coqui';
-    this.macVoice = localStorage.getItem('fate_mac_voice') || 'Lekha';
+    this.macVoice = localStorage.getItem('fate_mac_voice') || 'Samantha';
+    this.voicePersona = localStorage.getItem('fate_voice_persona') || 'fate_female';
 
     this.onResultCallback = null;
     this.onStateChangeCallback = null;
@@ -35,6 +36,11 @@ class FateSpeechEngine {
   setMacVoice(voiceName) {
     this.macVoice = voiceName;
     localStorage.setItem('fate_mac_voice', voiceName);
+  }
+
+  setVoicePersona(persona) {
+    this.voicePersona = persona;
+    localStorage.setItem('fate_voice_persona', persona);
   }
 
   // Play custom recorded M4A/MP3/WAV voice samples when available
@@ -228,8 +234,11 @@ class FateSpeechEngine {
     const isHinglish = /\b(kar|diya|hai|hain|kaise|kya|haal|batao|kholo|chalao|banao|ji|haan|nahi|nahin|sab|hum|aap|bhi|sahajta|baat|sakta|sakti|hoon|rahe|rakhta|rakhti|karte|karo|bhojpuri)\b/i.test(speakableText);
 
     let activeVoice = this.macVoice;
-    if (/[\u0900-\u097F]/.test(speakableText) || isHinglish) {
-      activeVoice = 'Lekha';
+
+    if (this.voicePersona === 'jarvis_male') {
+      activeVoice = isHinglish || /[\u0900-\u097F]/.test(speakableText) ? 'Rishi' : 'Daniel';
+    } else {
+      activeVoice = isHinglish || /[\u0900-\u097F]/.test(speakableText) ? 'Lekha' : 'Samantha';
     }
 
     // Native macOS Speech Engine Proxy (/api/tts)

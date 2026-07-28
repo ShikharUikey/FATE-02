@@ -236,6 +236,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (voicePersonaSelect) {
         voicePersonaSelect.addEventListener('change', () => {
           const val = voicePersonaSelect.value;
+          this.speech.setVoicePersona(val);
+
           if (val === 'jarvis_male') {
             this.speech.setMacVoice('Daniel');
             this.speech.speak("JARVIS Protocol initialized. At your service, Boss!");
