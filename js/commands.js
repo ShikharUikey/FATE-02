@@ -269,7 +269,9 @@ class FateCommandHandler {
 
   // Dedicated School / College Class Time Table Subsystem (SAGE University Bhopal - BCA V Sem)
   processSchoolSchedule(clean) {
-    const isSchoolQuery = clean.includes('school schedule') || clean.includes('college schedule') || clean.includes('class schedule') || clean.includes('time table') || clean.includes('timetable') || clean.includes('classes') || clean.includes('school') || clean.includes('college');
+    // Check if query is about school/college schedule OR specific faculty (abhay, kapil, himanshu, priyanka, shubham, vkd, ky)
+    const isFacultyQuery = /\b(abhay|kapil|himanshu|priyanka|shubham|vkd|ky)\b/i.test(clean);
+    const isSchoolQuery = clean.includes('school schedule') || clean.includes('college schedule') || clean.includes('class schedule') || clean.includes('time table') || clean.includes('timetable') || clean.includes('classes') || clean.includes('school') || clean.includes('college') || isFacultyQuery;
 
     if (!isSchoolQuery) return null;
 
@@ -326,6 +328,38 @@ class FateCommandHandler {
     };
 
     const dayClasses = schoolTimetable[dayName] || schoolTimetable['monday'];
+
+    // Handle Faculty-Specific Query (e.g. "aaj abhay sir ki class kb h", "kapil sir class today")
+    if (isFacultyQuery) {
+      let facultyKey = '';
+      let facultyTitle = '';
+
+      if (clean.includes('abhay')) { facultyKey = 'Abhay'; facultyTitle = 'Prof. Abhay Pandey'; }
+      else if (clean.includes('kapil')) { facultyKey = 'Kapil'; facultyTitle = 'Prof. Kapil Jain'; }
+      else if (clean.includes('himanshu')) { facultyKey = 'Himanshu'; facultyTitle = 'Prof. Himanshu Ranjan'; }
+      else if (clean.includes('priyanka')) { facultyKey = 'Priyanka'; facultyTitle = 'Dr. Priyanka Bagri'; }
+      else if (clean.includes('shubham')) { facultyKey = 'Shubham'; facultyTitle = 'Prof. Shubham Suryavanshi'; }
+      else if (clean.includes('vkd')) { facultyKey = 'VKD'; facultyTitle = 'Prof. VKD'; }
+      else if (clean.includes('ky')) { facultyKey = 'KY'; facultyTitle = 'Prof. KY'; }
+
+      if (facultyKey) {
+        const matchingClasses = dayClasses.filter(c => c.toLowerCase().includes(facultyKey.toLowerCase()));
+
+        if (matchingClasses.length > 0) {
+          const classList = matchingClasses.join(', ');
+          return {
+            speakText: `${facultyTitle} has ${matchingClasses.length} ${matchingClasses.length === 1 ? 'class' : 'classes'} for ${displayDay.toLowerCase()}, Boss: ${classList}.`,
+            actionTaken: `Faculty Schedule (${facultyKey}): ${matchingClasses.length} classes on ${dayName}`
+          };
+        } else {
+          return {
+            speakText: `${facultyTitle} has no classes scheduled for ${displayDay.toLowerCase()}, Boss!`,
+            actionTaken: `Faculty Schedule (${facultyKey}): 0 classes on ${dayName}`
+          };
+        }
+      }
+    }
+
     const voiceSummary = dayClasses.join(', ');
 
     return {
