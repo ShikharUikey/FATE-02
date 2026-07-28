@@ -325,8 +325,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (cmdResult) {
         if (typeof audioFX !== 'undefined') audioFX.playSuccess();
-        this.addChatMessage('FATE', cmdResult.speakText);
-        this.speech.speak(cmdResult.speakText);
+        const outputText = cmdResult.speakText || cmdResult.spokenText || 'Action executed successfully, Boss!';
+        this.addChatMessage('FATE', outputText);
+
+        // Do not overlay TTS speech synthesis if custom audio sample is playing
+        if (!cmdResult.actionTaken || !cmdResult.actionTaken.includes('Audio Sample:')) {
+          this.speech.speak(outputText);
+        }
         return;
       }
 

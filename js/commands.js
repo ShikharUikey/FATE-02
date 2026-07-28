@@ -25,11 +25,9 @@ class FateCommandHandler {
       if (this.app.speech) {
         this.app.speech.playCustomAudioSample('cid01', "CID (Crime Investigation Department) is India's iconic tactical crime investigation series, Boss!");
       }
-      const detailView = `🕵️‍♂️ FATE CID SPECIAL INTELLIGENCE MATRIX\n==================================================\n\nPlaying Audio Sample: /audio_samples/cid01.m4a\nTitle: CID Special Audio Telemetry\n==================================================\nStatus: Playing Custom Audio Sample (cid01.m4a)`;
-      if (this.app.codeArea) this.app.codeArea.value = detailView;
-      this.app.switchTab('suite');
 
       return {
+        speakText: "Playing CID audio sample cid01.m4a, Boss!",
         spokenText: "Playing CID audio sample cid01.m4a, Boss!",
         actionTaken: "Audio Sample: Playing cid01.m4a"
       };
