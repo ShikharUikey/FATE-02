@@ -33,6 +33,19 @@ class FateCommandHandler {
       };
     }
 
+    // Dedicated Modi Song Audio Sample Intent ("modi song", "play modi song", "modi song chalao", "modi01")
+    if (cleanText === 'modi song' || cleanText.includes('modi song') || cleanText.includes('play modi song') || cleanText.includes('narendra modi song') || cleanText === 'modi' || cleanText === 'modi01') {
+      if (this.app.speech) {
+        this.app.speech.playCustomAudioSample('modi01', "Playing Modi song audio sample modi01, Boss!");
+      }
+
+      return {
+        speakText: "Playing Modi song audio sample modi01, Boss!",
+        spokenText: "Playing Modi song audio sample modi01, Boss!",
+        actionTaken: "Audio Sample: Playing modi01.m4a"
+      };
+    }
+
     // 0. Persistent Daily Schedule Manager Intent ("set schedule ...", "what's the schedule for today", "show my schedule")
     const scheduleResult = this.processScheduleManager(cleanText, text);
     if (scheduleResult) {
