@@ -245,18 +245,8 @@ class FateVisualizer {
         const coreScale = 1.0 + soundFreq * 0.35;
         const coreVibeX = isSpeaking ? (Math.random() - 0.5) * 8 : 0;
         const coreVibeY = isSpeaking ? (Math.random() - 0.5) * 8 : 0;
-        arcCoreElem.style.transform = `translate(${coreVibeX}px, ${coreVibeY}px) scale(${coreScale})`;
+        arcCoreElem.style.transform = `translate(calc(-50% + ${coreVibeX}px), calc(-50% + ${coreVibeY}px)) scale(${coreScale})`;
         arcCoreElem.style.boxShadow = `0 0 ${35 + soundFreq * 50}px var(--primary-color)`;
-      }
-
-      if (outerRingElem) {
-        const ringScale = 1.0 + soundFreq * 0.15;
-        outerRingElem.style.transform = `scale(${ringScale})`;
-      }
-
-      if (midRingElem) {
-        const ringScale = 1.0 + soundFreq * 0.2;
-        midRingElem.style.transform = `scale(${ringScale})`;
       }
 
       // TRON Identity Disc Container & Concentric Rings High-Frequency Vibration
@@ -275,17 +265,17 @@ class FateVisualizer {
 
       if (tronOuterRing) {
         const scale = 1.0 + soundFreq * 0.18;
-        tronOuterRing.style.transform = `scale(${scale})`;
+        tronOuterRing.style.transform = `translate(-50%, -50%) scale(${scale})`;
       }
 
       if (tronCyanRing) {
         const scale = 1.0 + soundFreq * 0.22;
-        tronCyanRing.style.transform = `scale(${scale})`;
+        tronCyanRing.style.transform = `translate(-50%, -50%) scale(${scale})`;
       }
 
       if (tronTicksRing) {
         const scale = 1.0 + soundFreq * 0.28;
-        tronTicksRing.style.transform = `scale(${scale})`;
+        tronTicksRing.style.transform = `translate(-50%, -50%) scale(${scale})`;
       }
 
       this.threeRenderer.render(this.threeScene, this.threeCamera);
