@@ -175,19 +175,26 @@ class GestureEngine {
 
   classifyGesture(lm) {
     // lm[4] Thumb Tip, lm[8] Index Tip, lm[12] Middle Tip, lm[16] Ring Tip, lm[20] Pinky Tip
-    // lm[0] Wrist
+    const dist = (p1, p2) => {
+      const dx = p1.x - p2.x, dy = p1.y - p2.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
 
-    const thumbExtended = lm[4].y < lm[3].y;
+    const dThumbIndex = dist(lm[4], lm[8]);
+    const dThumbMiddle = dist(lm[4], lm[12]);
+    const dThumbRing = dist(lm[4], lm[16]);
+
+    // 🤌 Italian Hand Emoji / Pinched Fingers Text Selection Gesture (Index, Middle & Ring meeting Thumb tip!)
+    if (dThumbIndex < 0.08 && dThumbMiddle < 0.09 && dThumbRing < 0.10) {
+      return 'PINCHED_TEXT_SELECT';
+    }
+
     const indexExtended = lm[8].y < lm[6].y;
     const middleExtended = lm[12].y < lm[10].y;
     const ringExtended = lm[16].y < lm[14].y;
     const pinkyExtended = lm[20].y < lm[18].y;
 
-    const dx = lm[8].x - lm[4].x;
-    const dy = lm[8].y - lm[4].y;
-    const pinchDist = Math.sqrt(dx * dx + dy * dy);
-
-    if (pinchDist < 0.06) {
+    if (dThumbIndex < 0.055) {
       return 'PINCH_CLICK';
     }
 
@@ -211,30 +218,59 @@ class GestureEngine {
   }
 
   processGestureAction(gesture, lm) {
-    this.updateReadout(`GESTURE: ${gesture}`);
-
     const now = Date.now();
 
-    // 1. Move Mouse Cursor on Index Tip
-    if (gesture === 'POINT_MOVE' || gesture === 'PINCH_CLICK' || gesture === 'PALM') {
-      // Mirror X coordinates for webcam natural movement
+    // Handle Text Selection Release when gesture changes away from PINCHED_TEXT_SELECT
+    if (this.isSelectingText && gesture !== 'PINCHED_TEXT_SELECT') {
+      this.isSelectingText = false;
+      this.sendMouseCommand(this.lastX, this.lastY, 4); // Left Mouse Up (Release Selection)
+      this.updateReadout('TEXT SELECTION RELEASED');
+    }
+
+    // 1. 🤌 PINCHED TEXT SELECTION GESTURE
+    if (gesture === 'PINCHED_TEXT_SELECT') {
+      this.updateReadout('🤌 TEXT SELECTION / DRAGGING ACTIVE');
+
       const normX = 1.0 - lm[8].x;
       const normY = lm[8].y;
 
       const targetX = Math.round(normX * this.screenW);
       const targetY = Math.round(normY * this.screenH);
 
-      // Smooth interpolation
-      const smoothX = Math.round(this.lastX + (targetX - this.lastX) * 0.35);
-      const smoothY = Math.round(this.lastY + (targetY - this.lastY) * 0.35);
+      const smoothX = Math.round(this.lastX + (targetX - this.lastX) * 0.45);
+      const smoothY = Math.round(this.lastY + (targetY - this.lastY) * 0.45);
 
       this.lastX = smoothX;
       this.lastY = smoothY;
 
-      let isClick = (gesture === 'PINCH_CLICK' && (now - this.lastClickTime > 400)) ? 1 : 0;
-      if (isClick) this.lastClickTime = now;
+      this.isSelectingText = true;
+      this.sendMouseCommand(smoothX, smoothY, 3); // Left Mouse Down + Dragged
+      return;
+    }
 
-      this.sendMouseCommand(smoothX, smoothY, isClick);
+    // 2. Normal Cursor Move & Click
+    if (gesture === 'POINT_MOVE' || gesture === 'PINCH_CLICK' || gesture === 'PALM') {
+      this.updateReadout(`GESTURE: ${gesture}`);
+
+      const normX = 1.0 - lm[8].x;
+      const normY = lm[8].y;
+
+      const targetX = Math.round(normX * this.screenW);
+      const targetY = Math.round(normY * this.screenH);
+
+      const smoothX = Math.round(this.lastX + (targetX - this.lastX) * 0.45);
+      const smoothY = Math.round(this.lastY + (targetY - this.lastY) * 0.45);
+
+      this.lastX = smoothX;
+      this.lastY = smoothY;
+
+      let clickAction = 0;
+      if (gesture === 'PINCH_CLICK' && (now - this.lastClickTime > 400)) {
+        clickAction = 1;
+        this.lastClickTime = now;
+      }
+
+      this.sendMouseCommand(smoothX, smoothY, clickAction);
     }
 
     // 2. Lock System on Fist
