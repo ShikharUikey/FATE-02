@@ -65,7 +65,7 @@ class GestureEngine {
           <div class="lock-shield-icon">🔒</div>
           <h2>FATE SYSTEM LOCKED</h2>
           <div class="lock-subtext">SECURITY PROTOCOL MARK-85 ACTIVE</div>
-          <div class="lock-instruction">SHOW OPEN PALM 🖐️ OR 😛 TONGUE OUT EXPRESSION TO UNLOCK</div>
+          <div class="lock-instruction">SHOW 😛 TONGUE OUT FACIAL EXPRESSION TO UNLOCK FATE SYSTEM</div>
           <button class="unlock-btn" id="manual-unlock-btn">UNLOCK FATE</button>
         </div>
       `;
@@ -286,12 +286,6 @@ class GestureEngine {
       this.gestureDebounce = now;
       this.updateReadout('👎 THUMBS DOWN DETECTED // LOCKING SYSTEM');
       this.lockSystem();
-    }
-
-    // 3. Unlock System on Open Palm
-    if (gesture === 'OPEN_PALM_UNLOCK' && this.isLocked && (now - this.gestureDebounce > 1500)) {
-      this.gestureDebounce = now;
-      this.unlockSystem();
     }
   }
 
