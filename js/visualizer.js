@@ -59,47 +59,93 @@ class FateVisualizer {
       this.threeRenderer.setSize(width, height);
       this.threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
 
-      // 3D Particle Sphere Geometry
-      const geometry = new THREE.BufferGeometry();
-      const count = 750;
-      const positions = new Float32Array(count * 3);
-      const radius = 55;
+      // 1. 4D Hypersphere Point Cloud (4D coordinates x,y,z,w projected to 3D)
+      this.points4D = [];
+      const count4D = 900;
+      const radius4D = 58;
 
-      for (let i = 0; i < count; i++) {
-        const u = Math.random();
-        const v = Math.random();
-        const theta = u * 2.0 * Math.PI;
-        const phi = Math.acos(2.0 * v - 1.0);
-        const r = radius + (Math.random() - 0.5) * 6;
+      for (let i = 0; i < count4D; i++) {
+        // Generate uniform random points on 4D sphere (Hypersphere S3)
+        const u1 = Math.random(), u2 = Math.random(), u3 = Math.random();
+        const r1 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+        const r2 = Math.sqrt(-2 * Math.log(u1)) * Math.sin(2 * Math.PI * u2);
+        const r3 = Math.sqrt(-2 * Math.log(u3)) * Math.cos(2 * Math.PI * Math.random());
+        const r4 = Math.sqrt(-2 * Math.log(u3)) * Math.sin(2 * Math.PI * Math.random());
+        const norm = Math.sqrt(r1 * r1 + r2 * r2 + r3 * r3 + r4 * r4);
 
-        positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-        positions[i * 3 + 2] = r * Math.cos(phi);
+        this.points4D.push({
+          x: (r1 / norm) * radius4D,
+          y: (r2 / norm) * radius4D,
+          z: (r3 / norm) * radius4D,
+          w: (r4 / norm) * radius4D
+        });
       }
 
-      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const geom4D = new THREE.BufferGeometry();
+      const posArray = new Float32Array(count4D * 3);
+      geom4D.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
-      const material = new THREE.PointsMaterial({
+      const mat4D = new THREE.PointsMaterial({
         color: new THREE.Color(this.primaryColor),
-        size: 2.2,
+        size: 2.5,
         transparent: true,
-        opacity: 0.85,
+        opacity: 0.9,
         blending: THREE.AdditiveBlending
       });
 
-      this.spherePoints = new THREE.Points(geometry, material);
+      this.spherePoints = new THREE.Points(geom4D, mat4D);
       this.threeScene.add(this.spherePoints);
 
-      // Inner Glowing Ring Torus
-      const ringGeom = new THREE.TorusGeometry(38, 0.8, 16, 100);
-      const ringMat = new THREE.MeshBasicMaterial({
+      // 2. 4D Tesseract Hypercube Wireframe (16 4D Vertices + 32 Edges)
+      this.tesseractVertices4D = [];
+      for (let i = 0; i < 16; i++) {
+        this.tesseractVertices4D.push({
+          x: (i & 1 ? 1 : -1) * 32,
+          y: (i & 2 ? 1 : -1) * 32,
+          z: (i & 4 ? 1 : -1) * 32,
+          w: (i & 8 ? 1 : -1) * 32
+        });
+      }
+
+      // Generate 32 edges connecting vertices differing by 1 bit in 4D space
+      this.tesseractEdges = [];
+      for (let i = 0; i < 16; i++) {
+        for (let j = i + 1; j < 16; j++) {
+          const diff = i ^ j;
+          if ((diff & (diff - 1)) === 0) {
+            this.tesseractEdges.push([i, j]);
+          }
+        }
+      }
+
+      const tesseractGeom = new THREE.BufferGeometry();
+      const tessPosArray = new Float32Array(32 * 2 * 3);
+      tesseractGeom.setAttribute('position', new THREE.BufferAttribute(tessPosArray, 3));
+
+      const tesseractMat = new THREE.LineBasicMaterial({
         color: new THREE.Color(this.secondaryColor),
+        transparent: true,
+        opacity: 0.75,
+        blending: THREE.AdditiveBlending
+      });
+
+      this.tesseractMesh = new THREE.LineSegments(tesseractGeom, tesseractMat);
+      this.threeScene.add(this.tesseractMesh);
+
+      // 3. Inner Glowing Ring Torus
+      const ringGeom = new THREE.TorusGeometry(40, 0.8, 16, 100);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(this.primaryColor),
         wireframe: true,
         transparent: true,
         opacity: 0.6
       });
       this.torusRing = new THREE.Mesh(ringGeom, ringMat);
       this.threeScene.add(this.torusRing);
+
+      // 4D Rotation angles
+      this.angleXW = 0;
+      this.angleZW = 0;
 
     } catch (e) {
       console.warn('Three.js fallback to 2D Canvas:', e);
@@ -214,14 +260,82 @@ class FateVisualizer {
       const vibrateX = isSpeaking ? (Math.random() - 0.5) * 6 : 0;
       const vibrateY = isSpeaking ? (Math.random() - 0.5) * 6 : 0;
 
-      if (this.spherePoints) {
-        const speed = isSpeaking ? 0.06 : isListening ? 0.06 : 0.015;
-        this.spherePoints.rotation.y += speed;
-        this.spherePoints.rotation.x += speed * 0.5;
+      // 4D Hyper-Rotation Equations (Rotating in XW and ZW planes)
+      const rotationSpeed = isSpeaking ? 0.04 : isListening ? 0.03 : 0.012;
+      this.angleXW = (this.angleXW || 0) + rotationSpeed;
+      this.angleZW = (this.angleZW || 0) + rotationSpeed * 0.7;
 
-        // Apply 3D Logo Vibration & Soundgram Pulse
-        this.spherePoints.scale.set(baseScale, baseScale, baseScale);
-        this.spherePoints.position.set(vibrateX, vibrateY, 0);
+      const cosXW = Math.cos(this.angleXW), sinXW = Math.sin(this.angleXW);
+      const cosZW = Math.cos(this.angleZW), sinZW = Math.sin(this.angleZW);
+
+      // 1. Transform 4D Hypersphere Point Cloud to 3D Space
+      if (this.spherePoints && this.points4D) {
+        const positions = this.spherePoints.geometry.attributes.position.array;
+
+        for (let i = 0; i < this.points4D.length; i++) {
+          const pt = this.points4D[i];
+
+          // 4D Rotation XW
+          let x1 = pt.x * cosXW - pt.w * sinXW;
+          let w1 = pt.x * sinXW + pt.w * cosXW;
+
+          // 4D Rotation ZW
+          let z2 = pt.z * cosZW - w1 * sinZW;
+          let w2 = pt.z * sinZW + w1 * cosZW;
+
+          // 4D -> 3D Perspective Projection
+          const distance = 2.2 - (w2 / 120);
+          const px = (x1 / distance) * baseScale + vibrateX;
+          const py = (pt.y / distance) * baseScale + vibrateY;
+          const pz = (z2 / distance) * baseScale;
+
+          positions[i * 3] = px;
+          positions[i * 3 + 1] = py;
+          positions[i * 3 + 2] = pz;
+        }
+        this.spherePoints.geometry.attributes.position.needsUpdate = true;
+      }
+
+      // 2. Transform 4D Tesseract Hypercube Wireframe Edges to 3D Space
+      if (this.tesseractMesh && this.tesseractVertices4D && this.tesseractEdges) {
+        const linePositions = this.tesseractMesh.geometry.attributes.position.array;
+        const projectedVerts = [];
+
+        for (let i = 0; i < this.tesseractVertices4D.length; i++) {
+          const v = this.tesseractVertices4D[i];
+
+          // 4D Rotation XW
+          let x1 = v.x * cosXW - v.w * sinXW;
+          let w1 = v.x * sinXW + v.w * cosXW;
+
+          // 4D Rotation ZW
+          let z2 = v.z * cosZW - w1 * sinZW;
+          let w2 = v.z * sinZW + w1 * cosZW;
+
+          // 4D -> 3D Perspective Projection
+          const distance = 2.0 - (w2 / 100);
+          projectedVerts.push({
+            x: (x1 / distance) * baseScale + vibrateX,
+            y: (v.y / distance) * baseScale + vibrateY,
+            z: (z2 / distance) * baseScale
+          });
+        }
+
+        let ptr = 0;
+        for (let i = 0; i < this.tesseractEdges.length; i++) {
+          const edge = this.tesseractEdges[i];
+          const vA = projectedVerts[edge[0]];
+          const vB = projectedVerts[edge[1]];
+
+          linePositions[ptr++] = vA.x;
+          linePositions[ptr++] = vA.y;
+          linePositions[ptr++] = vA.z;
+
+          linePositions[ptr++] = vB.x;
+          linePositions[ptr++] = vB.y;
+          linePositions[ptr++] = vB.z;
+        }
+        this.tesseractMesh.geometry.attributes.position.needsUpdate = true;
       }
 
       if (this.torusRing) {
