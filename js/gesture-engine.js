@@ -198,6 +198,14 @@ class GestureEngine {
       return 'PINCH_CLICK';
     }
 
+    const isThumbDown = lm[4].y > lm[2].y && lm[4].y > lm[3].y;
+    const otherFingersCurled = !indexExtended && !middleExtended && !ringExtended && !pinkyExtended;
+
+    // 👎 Thumbs Down Gesture (Thumb pointing down + other 4 fingers curled)
+    if (isThumbDown && otherFingersCurled) {
+      return 'THUMBS_DOWN_LOCK';
+    }
+
     if (!indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
       return 'FIST_LOCK';
     }
@@ -273,9 +281,10 @@ class GestureEngine {
       this.sendMouseCommand(smoothX, smoothY, clickAction);
     }
 
-    // 2. Lock System on Fist
-    if (gesture === 'FIST_LOCK' && !this.isLocked && (now - this.gestureDebounce > 1500)) {
+    // 3. Lock System on 👎 Thumbs Down or ✊ Fist
+    if ((gesture === 'THUMBS_DOWN_LOCK' || gesture === 'FIST_LOCK') && !this.isLocked && (now - this.gestureDebounce > 1500)) {
       this.gestureDebounce = now;
+      this.updateReadout('👎 THUMBS DOWN DETECTED // LOCKING SYSTEM');
       this.lockSystem();
     }
 
