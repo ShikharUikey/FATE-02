@@ -211,6 +211,14 @@ class FateCommandHandler {
       };
     }
 
+    if (cleanText.includes('scan face') || cleanText.includes('face recognition') || cleanText.includes('verify face') || cleanText.includes('who am i')) {
+      if (window.fateFace) window.fateFace.toggleFaceEngine();
+      return {
+        speakText: "Activating Huawei HMS AR Engine 3D Face Mesh Topology & Biometric Authenticator, Boss! Scanning face now.",
+        actionTaken: "HMS AR Face Mesh Engine Activated"
+      };
+    }
+
     // 5. Language & Capabilities Overview Engine
     const languagesResult = this.processLanguagesOverview(cleanText);
     if (languagesResult) {

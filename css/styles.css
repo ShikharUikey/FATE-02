@@ -1044,3 +1044,46 @@ html, body {
   margin-top: 8px;
   letter-spacing: 1px;
 }
+
+/* HMS AR Face Mesh & Biometric Box */
+.face-ar-box {
+  background: rgba(0, 15, 30, 0.7);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.15);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 15px;
+}
+
+.face-readout {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #00ff88;
+  text-align: center;
+  margin-top: 8px;
+  letter-spacing: 1px;
+}
+
+.face-control-bar {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.face-btn {
+  font-family: var(--font-orbitron);
+  font-size: 0.72rem;
+  padding: 6px 16px;
+  background: rgba(0, 255, 136, 0.15);
+  color: #00ff88;
+  border: 1px solid #00ff88;
+  border-radius: 6px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+.face-btn:hover {
+  background: rgba(0, 255, 136, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+}
