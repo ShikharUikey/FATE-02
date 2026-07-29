@@ -186,6 +186,31 @@ class FateCommandHandler {
       };
     }
 
+    // Gesture & System Lock Commands
+    if (cleanText.includes('lock system') || cleanText.includes('lock fate') || cleanText.includes('lock hud')) {
+      if (window.fateGesture) window.fateGesture.lockSystem();
+      return {
+        speakText: "FATE System Locked, Boss! Gesture or voice authorization required.",
+        actionTaken: "System Security Lock Activated"
+      };
+    }
+
+    if (cleanText.includes('unlock system') || cleanText.includes('unlock fate') || cleanText.includes('unlock hud')) {
+      if (window.fateGesture) window.fateGesture.unlockSystem();
+      return {
+        speakText: "FATE System Unlocked! Welcome back, Boss.",
+        actionTaken: "System Security Unlocked"
+      };
+    }
+
+    if (cleanText.includes('gesture mouse') || cleanText.includes('start gesture') || cleanText.includes('enable gesture') || cleanText.includes('hand tracking')) {
+      if (window.fateGesture) window.fateGesture.toggleGestureEngine();
+      return {
+        speakText: "Initializing MediaPipe Hand Gesture Mouse Control Engine, Boss! Move your index finger to control the cursor.",
+        actionTaken: "MediaPipe Gesture Engine Initialized"
+      };
+    }
+
     // 5. Language & Capabilities Overview Engine
     const languagesResult = this.processLanguagesOverview(cleanText);
     if (languagesResult) {

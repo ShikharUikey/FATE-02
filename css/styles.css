@@ -915,12 +915,132 @@ html, body {
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
 }
 
-/* Responsive Layout */
-@media (max-width: 1024px) {
-  .hud-body {
-    grid-template-columns: 1fr;
-  }
-  .suite-two-column-layout {
-    grid-template-columns: 1fr;
-  }
+/* Security Lock Screen Overlay */
+.fate-lock-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(2, 6, 18, 0.95);
+  backdrop-filter: blur(25px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.fate-lock-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.lock-card {
+  background: rgba(10, 20, 40, 0.85);
+  border: 2px solid #ff0055;
+  box-shadow: 0 0 50px rgba(255, 0, 85, 0.4), inset 0 0 25px rgba(255, 0, 85, 0.2);
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  max-width: 480px;
+  animation: lockPulse 2s infinite alternate;
+}
+
+@keyframes lockPulse {
+  from { box-shadow: 0 0 30px rgba(255, 0, 85, 0.4); }
+  to { box-shadow: 0 0 60px rgba(255, 0, 85, 0.7); }
+}
+
+.lock-shield-icon {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+}
+
+.lock-card h2 {
+  font-family: var(--font-orbitron);
+  color: #ff0055;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.lock-subtext {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.lock-instruction {
+  font-family: var(--font-orbitron);
+  font-size: 0.85rem;
+  color: #00f0ff;
+  background: rgba(0, 240, 255, 0.1);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.unlock-btn {
+  font-family: var(--font-orbitron);
+  background: linear-gradient(135deg, #00f0ff, #00ff88);
+  color: #000;
+  font-weight: 700;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+  transition: transform 0.2s ease;
+}
+
+.unlock-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Gesture Camera Box */
+.gesture-cam-box {
+  background: rgba(0, 15, 30, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 15px;
+}
+
+.cam-header {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-orbitron);
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+}
+
+.cam-preview-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  height: 240px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+}
+
+.cam-preview-wrapper canvas {
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+}
+
+.gesture-readout {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #00ff88;
+  text-align: center;
+  margin-top: 8px;
+  letter-spacing: 1px;
 }

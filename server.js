@@ -206,6 +206,18 @@ const server = http.createServer((req, res) => {
           return;
         }
 
+        if (action === 'move_mouse') {
+          const x = Math.round(payload.x || 0);
+          const y = Math.round(payload.y || 0);
+          const click = parseInt(payload.click || 0);
+
+          exec(`./mac_mouse ${x} ${y} ${click}`, (err) => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ status: 'ok', x, y, click }));
+          });
+          return;
+        }
+
         if (action === 'open_url_in_chrome') {
           const rawUrl = (payload.url || 'https://www.google.com').trim();
           const safeUrl = rawUrl.replace(/"/g, '\\"');
