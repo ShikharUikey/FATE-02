@@ -122,18 +122,24 @@ class FaceEngine {
       // Render HMS AR Cyberpunk Visor & 3D Face Mesh Topology
       this.drawARFaceVisor(landmarks);
 
+      // Detect 😛 Tongue Out / Wide Mouth Expression
+      const isTongueOut = this.detectTongueOutExpression(landmarks);
+
+      if (isTongueOut) {
+        this.updateReadout('😛 TONGUE OUT EXPRESSION DETECTED!');
+
+        if (window.fateGesture && window.fateGesture.isLocked) {
+          window.fateGesture.unlockSystem();
+          if (window.fateSpeech) {
+            window.fateSpeech.speak("Tongue Out Facial Expression Recognized! FATE System Unlocked, Boss!");
+          }
+        }
+      }
+
       // Verify Boss Identity
       if (!this.isVerified) {
         this.isVerified = true;
         this.updateReadout(`VERIFIED: ${this.userIdentity} [${this.matchConfidence}% MATCH]`);
-        
-        if (window.fateGesture && window.fateGesture.isLocked) {
-          window.fateGesture.unlockSystem();
-        }
-
-        if (window.fateSpeech) {
-          window.fateSpeech.speak(`Biometric Face Recognition Granted! Welcome back, Boss ${this.userIdentity}.`);
-        }
       }
     } else {
       this.isVerified = false;
@@ -141,6 +147,22 @@ class FaceEngine {
     }
 
     this.canvasCtx.restore();
+  }
+
+  detectTongueOutExpression(lm) {
+    if (!lm || !lm[13] || !lm[14] || !lm[61] || !lm[291]) return false;
+
+    const dxMouth = lm[61].x - lm[291].x;
+    const dyMouth = lm[61].y - lm[291].y;
+    const mouthWidth = Math.sqrt(dxMouth * dxMouth + dyMouth * dyMouth);
+
+    const dxLip = lm[13].x - lm[14].x;
+    const dyLip = lm[13].y - lm[14].y;
+    const mouthHeight = Math.sqrt(dxLip * dxLip + dyLip * dyLip);
+
+    const ratio = mouthHeight / (mouthWidth || 1);
+    // Ratio > 0.35 indicates open mouth / tongue sticking out expression 😛
+    return ratio > 0.35;
   }
 
   drawARFaceVisor(landmarks) {

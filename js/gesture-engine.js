@@ -65,7 +65,7 @@ class GestureEngine {
           <div class="lock-shield-icon">🔒</div>
           <h2>FATE SYSTEM LOCKED</h2>
           <div class="lock-subtext">SECURITY PROTOCOL MARK-85 ACTIVE</div>
-          <div class="lock-instruction">SHOW OPEN PALM 🖐️ TO UNLOCK OR SAY "UNLOCK SYSTEM"</div>
+          <div class="lock-instruction">SHOW OPEN PALM 🖐️ OR 😛 TONGUE OUT EXPRESSION TO UNLOCK</div>
           <button class="unlock-btn" id="manual-unlock-btn">UNLOCK FATE</button>
         </div>
       `;
