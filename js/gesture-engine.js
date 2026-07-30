@@ -160,16 +160,48 @@ class GestureEngine {
 
   drawHandSkeleton(landmarks) {
     const ctx = this.canvasCtx;
-    ctx.fillStyle = '#00f0ff';
-    ctx.strokeStyle = '#00ff88';
-    ctx.lineWidth = 2;
+    const w = this.canvasElem.width;
+    const h = this.canvasElem.height;
 
+    // Hand Landmark Connections (MediaPipe Skeleton)
+    const connections = [
+      [0,1],[1,2],[2,3],[3,4], // Thumb
+      [0,5],[5,6],[6,7],[7,8], // Index
+      [5,9],[9,10],[10,11],[11,12], // Middle
+      [9,13],[13,14],[14,15],[15,16], // Ring
+      [13,17],[17,18],[18,19],[19,20],[0,17] // Pinky & Palm
+    ];
+
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.6)';
+    ctx.lineWidth = 2;
+    for (const [i, j] of connections) {
+      if (landmarks[i] && landmarks[j]) {
+        ctx.beginPath();
+        ctx.moveTo(landmarks[i].x * w, landmarks[i].y * h);
+        ctx.lineTo(landmarks[j].x * w, landmarks[j].y * h);
+        ctx.stroke();
+      }
+    }
+
+    // Draw Glowing Landmark Nodes
+    ctx.fillStyle = '#00ff88';
     for (let i = 0; i < landmarks.length; i++) {
-      const x = landmarks[i].x * this.canvasElem.width;
-      const y = landmarks[i].y * this.canvasElem.height;
+      const x = landmarks[i].x * w;
+      const y = landmarks[i].y * h;
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, 2 * Math.PI);
       ctx.fill();
+    }
+
+    // Draw Cyber Target Reticle on Index Tip (Landmark 8)
+    if (landmarks[8]) {
+      const ix = landmarks[8].x * w;
+      const iy = landmarks[8].y * h;
+      ctx.strokeStyle = '#00f0ff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(ix, iy, 8, 0, 2 * Math.PI);
+      ctx.stroke();
     }
   }
 
@@ -210,10 +242,6 @@ class GestureEngine {
       return 'FIST_LOCK';
     }
 
-    if (indexExtended && middleExtended && ringExtended && pinkyExtended) {
-      return 'OPEN_PALM_UNLOCK';
-    }
-
     if (indexExtended && middleExtended && !ringExtended && !pinkyExtended) {
       return 'PEACE_TOGGLE';
     }
@@ -235,50 +263,53 @@ class GestureEngine {
       this.updateReadout('TEXT SELECTION RELEASED');
     }
 
-    // 1. 🤌 PINCHED TEXT SELECTION GESTURE
-    if (gesture === 'PINCHED_TEXT_SELECT') {
-      this.updateReadout('🤌 TEXT SELECTION / DRAGGING ACTIVE');
-
-      const normX = 1.0 - lm[8].x;
-      const normY = lm[8].y;
-
+    // Dynamic Target Calculation with Deadzone & Speed Acceleration
+    const calcSmoothPos = (point) => {
+      const normX = 1.0 - point.x;
+      const normY = point.y;
       const targetX = Math.round(normX * this.screenW);
       const targetY = Math.round(normY * this.screenH);
 
-      const smoothX = Math.round(this.lastX + (targetX - this.lastX) * 0.45);
-      const smoothY = Math.round(this.lastY + (targetY - this.lastY) * 0.45);
+      const dx = targetX - this.lastX;
+      const dy = targetY - this.lastY;
+      const distMove = Math.sqrt(dx * dx + dy * dy);
 
+      // Deadzone: ignore micro-vibrations < 2.2px
+      if (distMove < 2.2) {
+        return { x: this.lastX, y: this.lastY };
+      }
+
+      // Speed Gain Factor
+      const speedFactor = Math.min(1.4, 0.45 + (distMove / 500) * 0.55);
+      const smoothX = Math.round(this.lastX + dx * speedFactor);
+      const smoothY = Math.round(this.lastY + dy * speedFactor);
       this.lastX = smoothX;
       this.lastY = smoothY;
+      return { x: smoothX, y: smoothY };
+    };
+
+    // 1. 🤌 PINCHED TEXT SELECTION GESTURE
+    if (gesture === 'PINCHED_TEXT_SELECT') {
+      this.updateReadout('🤌 TEXT SELECTION / DRAGGING ACTIVE');
+      const pos = calcSmoothPos(lm[8]);
 
       this.isSelectingText = true;
-      this.sendMouseCommand(smoothX, smoothY, 3); // Left Mouse Down + Dragged
+      this.sendMouseCommand(pos.x, pos.y, 3); // Left Mouse Down + Dragged
       return;
     }
 
     // 2. Normal Cursor Move & Click
     if (gesture === 'POINT_MOVE' || gesture === 'PINCH_CLICK' || gesture === 'PALM') {
       this.updateReadout(`GESTURE: ${gesture}`);
-
-      const normX = 1.0 - lm[8].x;
-      const normY = lm[8].y;
-
-      const targetX = Math.round(normX * this.screenW);
-      const targetY = Math.round(normY * this.screenH);
-
-      const smoothX = Math.round(this.lastX + (targetX - this.lastX) * 0.45);
-      const smoothY = Math.round(this.lastY + (targetY - this.lastY) * 0.45);
-
-      this.lastX = smoothX;
-      this.lastY = smoothY;
+      const pos = calcSmoothPos(lm[8]);
 
       let clickAction = 0;
-      if (gesture === 'PINCH_CLICK' && (now - this.lastClickTime > 400)) {
+      if (gesture === 'PINCH_CLICK' && (now - this.lastClickTime > 380)) {
         clickAction = 1;
         this.lastClickTime = now;
       }
 
-      this.sendMouseCommand(smoothX, smoothY, clickAction);
+      this.sendMouseCommand(pos.x, pos.y, clickAction);
     }
 
     // 3. Lock System on 👎 Thumbs Down or ✊ Fist
