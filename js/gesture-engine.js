@@ -65,7 +65,7 @@ class GestureEngine {
           <div class="lock-shield-icon">🔒</div>
           <h2>FATE SYSTEM LOCKED</h2>
           <div class="lock-subtext">SECURITY PROTOCOL MARK-85 ACTIVE</div>
-          <div class="lock-instruction">SHOW 😛 TONGUE OUT FACIAL EXPRESSION TO UNLOCK FATE SYSTEM</div>
+          <div class="lock-instruction">SHOW 🙏 NAMASTE GESTURE TO LOCK // SHOW 😛 TONGUE OUT TO UNLOCK</div>
           <button class="unlock-btn" id="manual-unlock-btn">UNLOCK FATE</button>
         </div>
       `;
@@ -230,16 +230,14 @@ class GestureEngine {
       return 'PINCH_CLICK';
     }
 
-    const isThumbDown = lm[4].y > lm[2].y && lm[4].y > lm[3].y;
-    const otherFingersCurled = !indexExtended && !middleExtended && !ringExtended && !pinkyExtended;
+    const dIndexMiddle = dist(lm[8], lm[12]);
+    const dMiddleRing = dist(lm[12], lm[16]);
+    const dRingPinky = dist(lm[16], lm[20]);
 
-    // 👎 Thumbs Down Gesture (Thumb pointing down + other 4 fingers curled)
-    if (isThumbDown && otherFingersCurled) {
-      return 'THUMBS_DOWN_LOCK';
-    }
-
-    if (!indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
-      return 'FIST_LOCK';
+    // 🙏 Namaste / Folded Hands Gesture (All 4 fingers extended vertically together + tight proximity)
+    if (indexExtended && middleExtended && ringExtended && pinkyExtended &&
+        dIndexMiddle < 0.055 && dMiddleRing < 0.055 && dRingPinky < 0.065) {
+      return 'NAMASTE_HANDS_LOCK';
     }
 
     if (indexExtended && middleExtended && !ringExtended && !pinkyExtended) {
@@ -312,10 +310,10 @@ class GestureEngine {
       this.sendMouseCommand(pos.x, pos.y, clickAction);
     }
 
-    // 3. Lock System on 👎 Thumbs Down or ✊ Fist
-    if ((gesture === 'THUMBS_DOWN_LOCK' || gesture === 'FIST_LOCK') && !this.isLocked && (now - this.gestureDebounce > 1500)) {
+    // 3. EXCLUSIVE LOCK GESTURE: 🙏 Namaste / Folded Hands ONLY
+    if (gesture === 'NAMASTE_HANDS_LOCK' && !this.isLocked && (now - this.gestureDebounce > 1500)) {
       this.gestureDebounce = now;
-      this.updateReadout('👎 THUMBS DOWN DETECTED // LOCKING SYSTEM');
+      this.updateReadout('🙏 NAMASTE GESTURE DETECTED // LOCKING FATE SYSTEM');
       this.lockSystem();
     }
   }
