@@ -221,28 +221,41 @@ class GestureEngine {
       return 'PINCHED_TEXT_SELECT';
     }
 
-    const indexExtended = lm[8].y < lm[6].y;
-    const middleExtended = lm[12].y < lm[10].y;
-    const ringExtended = lm[16].y < lm[14].y;
-    const pinkyExtended = lm[20].y < lm[18].y;
+    const dWristIndex = dist(lm[8], lm[0]);
+    const dWristMiddle = dist(lm[12], lm[0]);
+    const dWristRing = dist(lm[16], lm[0]);
+    const dWristPinky = dist(lm[20], lm[0]);
 
     if (dThumbIndex < 0.055) {
       return 'PINCH_CLICK';
     }
 
-    const dIndexMiddle = dist(lm[8], lm[12]);
-    const dMiddleRing = dist(lm[12], lm[16]);
-    const dRingPinky = dist(lm[16], lm[20]);
+    // 1. ✌️ Peace / Victory Sign Gesture (Tilt-Invariant Distance Ratio)
+    // Index & Middle fingertips extended far from wrist, while Ring & Pinky fingertips are curled
+    const isPeaceSign = (dWristIndex > 1.22 * dWristRing) && 
+                        (dWristMiddle > 1.22 * dWristPinky) && 
+                        (dist(lm[8], lm[12]) > 0.03);
 
-    // 🙏 Namaste / Folded Hands Gesture (All 4 fingers extended vertically together + tight proximity)
-    if (indexExtended && middleExtended && ringExtended && pinkyExtended &&
-        dIndexMiddle < 0.055 && dMiddleRing < 0.055 && dRingPinky < 0.065) {
+    if (isPeaceSign) {
+      return 'PEACE_UNLOCK';
+    }
+
+    // 2. 🙏 Namaste / Folded Hands Gesture (Tilt-Invariant Compact Extension)
+    // All 4 fingers extended from wrist + compact horizontal spread across fingertips
+    const dIndexPinky = dist(lm[8], lm[20]);
+    const allExtended = (dWristIndex > 1.15 * dist(lm[6], lm[0])) &&
+                        (dWristMiddle > 1.15 * dist(lm[10], lm[0])) &&
+                        (dWristRing > 1.15 * dist(lm[14], lm[0])) &&
+                        (dWristPinky > 1.15 * dist(lm[18], lm[0]));
+
+    if (allExtended && dIndexPinky < 0.16) {
       return 'NAMASTE_HANDS_LOCK';
     }
 
-    if (indexExtended && middleExtended && !ringExtended && !pinkyExtended) {
-      return 'PEACE_UNLOCK';
-    }
+    const indexExtended = lm[8].y < lm[6].y;
+    const middleExtended = lm[12].y < lm[10].y;
+    const ringExtended = lm[16].y < lm[14].y;
+    const pinkyExtended = lm[20].y < lm[18].y;
 
     if (indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
       return 'POINT_MOVE';
@@ -311,14 +324,14 @@ class GestureEngine {
     }
 
     // 3. EXCLUSIVE LOCK GESTURE: 🙏 Namaste / Folded Hands ONLY
-    if (gesture === 'NAMASTE_HANDS_LOCK' && !this.isLocked && (now - this.gestureDebounce > 1500)) {
+    if (gesture === 'NAMASTE_HANDS_LOCK' && !this.isLocked && (now - this.gestureDebounce > 600)) {
       this.gestureDebounce = now;
       this.updateReadout('🙏 NAMASTE GESTURE DETECTED // LOCKING FATE SYSTEM');
       this.lockSystem();
     }
 
     // 4. EXCLUSIVE UNLOCK GESTURE: ✌️ Peace Sign ONLY
-    if (gesture === 'PEACE_UNLOCK' && this.isLocked && (now - this.gestureDebounce > 1500)) {
+    if (gesture === 'PEACE_UNLOCK' && this.isLocked && (now - this.gestureDebounce > 600)) {
       this.gestureDebounce = now;
       this.updateReadout('✌️ PEACE GESTURE DETECTED // UNLOCKING FATE SYSTEM');
       this.unlockSystem();
