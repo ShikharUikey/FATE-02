@@ -65,7 +65,7 @@ class GestureEngine {
           <div class="lock-shield-icon">🔒</div>
           <h2>FATE SYSTEM LOCKED</h2>
           <div class="lock-subtext">SECURITY PROTOCOL MARK-85 ACTIVE</div>
-          <div class="lock-instruction">SHOW 🙏 NAMASTE GESTURE TO LOCK // SHOW 😛 TONGUE OUT TO UNLOCK</div>
+          <div class="lock-instruction">SHOW 🙏 NAMASTE GESTURE TO LOCK // SHOW ✌️ PEACE SIGN TO UNLOCK</div>
           <button class="unlock-btn" id="manual-unlock-btn">UNLOCK FATE</button>
         </div>
       `;
@@ -241,7 +241,7 @@ class GestureEngine {
     }
 
     if (indexExtended && middleExtended && !ringExtended && !pinkyExtended) {
-      return 'PEACE_TOGGLE';
+      return 'PEACE_UNLOCK';
     }
 
     if (indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
@@ -315,6 +315,13 @@ class GestureEngine {
       this.gestureDebounce = now;
       this.updateReadout('🙏 NAMASTE GESTURE DETECTED // LOCKING FATE SYSTEM');
       this.lockSystem();
+    }
+
+    // 4. EXCLUSIVE UNLOCK GESTURE: ✌️ Peace Sign ONLY
+    if (gesture === 'PEACE_UNLOCK' && this.isLocked && (now - this.gestureDebounce > 1500)) {
+      this.gestureDebounce = now;
+      this.updateReadout('✌️ PEACE GESTURE DETECTED // UNLOCKING FATE SYSTEM');
+      this.unlockSystem();
     }
   }
 

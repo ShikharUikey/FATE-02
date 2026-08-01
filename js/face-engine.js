@@ -122,20 +122,6 @@ class FaceEngine {
       // Render HMS AR Cyberpunk Visor & 3D Face Mesh Topology
       this.drawARFaceVisor(landmarks);
 
-      // Detect 😛 Tongue Out / Wide Mouth Expression
-      const isTongueOut = this.detectTongueOutExpression(landmarks);
-
-      if (isTongueOut) {
-        this.updateReadout('😛 TONGUE OUT EXPRESSION DETECTED!');
-
-        if (window.fateGesture && window.fateGesture.isLocked) {
-          window.fateGesture.unlockSystem();
-          if (window.fateSpeech) {
-            window.fateSpeech.speak("Tongue Out Facial Expression Recognized! FATE System Unlocked, Boss!");
-          }
-        }
-      }
-
       // Verify Boss Identity
       if (!this.isVerified) {
         this.isVerified = true;
