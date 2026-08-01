@@ -1042,6 +1042,7 @@ print("⚡ FATE AI Recommendation Engine Ready!")
 
   tryParseMath(text) {
     let expr = text.replace(/what is|calculate|solve|how much is|compute/gi, '').trim();
+    expr = expr.replace(/\bequals to\b|\bequals\b|\bequal to\b|\bis equal to\b/gi, '').trim();
     expr = expr.replace(/\bplus\b/gi, '+').replace(/\bminus\b/gi, '-').replace(/\btimes\b|\binto\b|\bx\b/gi, '*').replace(/\bdivided by\b|\bby\b/gi, '/');
     const containsNumber = /\d+/.test(expr);
     const containsOperator = /[+\-*/%**]/.test(expr);
@@ -1051,7 +1052,11 @@ print("⚡ FATE AI Recommendation Engine Ready!")
       if (sanitized) {
         const result = Function(`"use strict"; return (${sanitized})`)();
         if (typeof result === 'number' && !isNaN(result) && isFinite(result)) {
-          return { expressionText: text, result: Number.isInteger(result) ? result : parseFloat(result.toFixed(4)) };
+          const finalResult = Number.isInteger(result) ? result : parseFloat(result.toFixed(4));
+          return {
+            expressionText: sanitized,
+            result: finalResult
+          };
         }
       }
     } catch (e) { return null; }

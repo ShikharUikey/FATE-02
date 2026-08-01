@@ -81,8 +81,43 @@ document.addEventListener('DOMContentLoaded', () => {
         this.updateVoiceStatusUI(state);
       };
 
+      this.pendingMathBuffer = '';
+
       this.speech.onResultCallback = (transcript, isFinal) => {
+        const clean = transcript.toLowerCase().trim();
+        const isMathQuery = clean.includes('calculate') || clean.includes('solve') || clean.includes('plus') || clean.includes('minus') || clean.includes('times') || clean.includes('divided by') || /\d+\s*[\+\-\*\/]\s*\d+/.test(clean);
+
+        if (isMathQuery || this.pendingMathBuffer) {
+          const hasEquals = clean.includes('equals') || clean.includes('equal to') || clean.includes('equal');
+
+          if (!hasEquals && !isFinal) {
+            const preview = (this.pendingMathBuffer ? this.pendingMathBuffer + ' ' : '') + transcript;
+            if (this.voiceStatusLabel) {
+              this.voiceStatusLabel.textContent = `LISTENING MATH (SAY "EQUALS TO"): "${preview}"`;
+              this.voiceStatusLabel.style.color = '#00f0ff';
+            }
+            return;
+          }
+
+          if (!hasEquals && isFinal) {
+            this.pendingMathBuffer = (this.pendingMathBuffer ? this.pendingMathBuffer + ' ' : '') + transcript;
+            if (this.voiceStatusLabel) {
+              this.voiceStatusLabel.textContent = `MATH BUFFERED: "${this.pendingMathBuffer}" (SAY "EQUALS TO" TO EXECUTE)`;
+              this.voiceStatusLabel.style.color = '#00f0ff';
+            }
+            return;
+          }
+
+          if (hasEquals) {
+            const fullMathQuery = (this.pendingMathBuffer ? this.pendingMathBuffer + ' ' : '') + transcript;
+            this.pendingMathBuffer = '';
+            this.handleUserInput(fullMathQuery);
+            return;
+          }
+        }
+
         if (isFinal) {
+          this.pendingMathBuffer = '';
           this.handleUserInput(transcript);
         } else {
           if (this.voiceStatusLabel) this.voiceStatusLabel.textContent = `LISTENING: "${transcript}"`;
