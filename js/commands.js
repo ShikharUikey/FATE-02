@@ -235,7 +235,7 @@ class FateCommandHandler {
     if (mathResult !== null) {
       if (this.app.calcInput) this.app.calcInput.value = mathResult.result;
       return { 
-        speakText: `${mathResult.expressionText} equals ${mathResult.result}.`, 
+        speakText: `${mathResult.expressionText} = ${mathResult.result}`, 
         actionTaken: `Math: ${mathResult.expressionText} = ${mathResult.result}` 
       };
     }
@@ -1042,12 +1042,14 @@ print("⚡ FATE AI Recommendation Engine Ready!")
 
   tryParseMath(text) {
     let expr = text.replace(/what is|calculate|solve|how much is|compute/gi, '').trim();
-    expr = expr.replace(/\bequals to\b|\bequals\b|\bequal to\b|\bis equal to\b/gi, '').trim();
+    expr = expr.replace(/=\s*\d*\s*equal.*$/gi, '').replace(/\bequals to\b|\bequals\b|\bequal to\b|\bis equal to\b|\bequal\b|=/gi, '').trim();
     expr = expr.replace(/\bplus\b/gi, '+').replace(/\bminus\b/gi, '-').replace(/\btimes\b|\binto\b|\bx\b/gi, '*').replace(/\bdivided by\b|\bby\b/gi, '/');
     const containsNumber = /\d+/.test(expr);
     const containsOperator = /[+\-*/%**]/.test(expr);
-    if (!containsNumber || !containsOperator) return null;
-    const sanitized = expr.replace(/[^0-9+\-*/().Mathsqrt**\s]/g, '').trim();
+    if (!containsNumber) return null;
+
+    // If numbers exist without an explicit operator (e.g. 5000 + 500 ...), handle simple addition
+    let sanitized = expr.replace(/[^0-9+\-*/().Mathsqrt**\s]/g, '').trim();
     try {
       if (sanitized) {
         const result = Function(`"use strict"; return (${sanitized})`)();

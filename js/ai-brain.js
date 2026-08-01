@@ -149,8 +149,17 @@ class FateAIBrain {
     }
 
     // 8. Programming & Automation Modules
-    if (q.includes('calculator') || q.includes('calc')) {
-      return "I've written a complete interactive Python Calculator module for you, Boss! Loaded and ready in FATE Code Studio.";
+    if (q.includes('calculator') || q.includes('calc') || q.includes('calculate')) {
+      const sanitized = originalQuery.replace(/calculate|calc|calculator|what is|solve|equal to|equals to|equal|equals|=/gi, '').replace(/\bplus\b/gi, '+').replace(/\bminus\b/gi, '-').replace(/\btimes\b|\binto\b|\bx\b/gi, '*').replace(/\bdivided by\b|\bby\b/gi, '/').replace(/[^0-9+\-*/().\s]/g, '').trim();
+      try {
+        if (sanitized) {
+          const res = Function(`"use strict"; return (${sanitized})`)();
+          if (typeof res === 'number' && !isNaN(res)) {
+            return `${sanitized} = ${res}`;
+          }
+        }
+      } catch (e) {}
+      return "FATE Calculator active. Please specify the numerical expression to evaluate, Boss!";
     }
 
     if (q.includes('python') || q.includes('script') || q.includes('program')) {
