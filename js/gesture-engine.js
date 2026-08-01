@@ -225,29 +225,28 @@ class GestureEngine {
       return 'PINCH_CLICK';
     }
 
-    const indexExtended = lm[8].y < lm[6].y;
-    const middleExtended = lm[12].y < lm[10].y;
-    const ringExtended = lm[16].y > lm[14].y;
-    const pinkyExtended = lm[20].y > lm[18].y;
+    const isIndexUp = lm[8].y < lm[6].y;
+    const isMiddleUp = lm[12].y < lm[10].y;
+    const isRingUp = lm[16].y < lm[14].y;
+    const isPinkyUp = lm[20].y < lm[18].y;
 
-    const dIndexMiddle = dist(lm[8], lm[12]);
-    const dMiddleRing = dist(lm[12], lm[16]);
-    const dRingPinky = dist(lm[16], lm[20]);
+    const isRingCurled = lm[16].y > lm[14].y;
+    const isPinkyCurled = lm[20].y > lm[18].y;
 
-    // 2. ✌️ Peace / Victory Sign Gesture (Index & Middle extended V-shape, Ring & Pinky curled)
-    const isPeaceSign = indexExtended && middleExtended && ringExtended && pinkyExtended && (dIndexMiddle > 0.042);
-    if (isPeaceSign) {
+    // 1. ✌️ Peace / Victory Sign Gesture: Index & Middle UP, Ring & Pinky CURLED
+    if (isIndexUp && isMiddleUp && isRingCurled && isPinkyCurled) {
       return 'PEACE_UNLOCK';
     }
 
-    // 3. 🙏 Namaste / Folded Hands Gesture (All 4 fingers upright AND pressed tightly together: d < 0.038)
-    const allUpright = indexExtended && middleExtended && (lm[16].y < lm[14].y) && (lm[20].y < lm[18].y);
-    const isNamaste = allUpright && (dIndexMiddle < 0.038) && (dMiddleRing < 0.038) && (dRingPinky < 0.042);
-    if (isNamaste) {
+    // 2. 🙏 Namaste / Folded Hands Gesture: ALL 4 fingers UP + Thumb Tucked
+    const isAllFourUp = isIndexUp && isMiddleUp && isRingUp && isPinkyUp;
+    const isThumbTucked = dist(lm[4], lm[5]) < 0.11 || dist(lm[4], lm[8]) < 0.11;
+
+    if (isAllFourUp && isThumbTucked) {
       return 'NAMASTE_HANDS_LOCK';
     }
 
-    if (indexExtended && !middleExtended && ringExtended && pinkyExtended) {
+    if (isIndexUp && !isMiddleUp && isRingCurled && isPinkyCurled) {
       return 'POINT_MOVE';
     }
 
@@ -317,24 +316,24 @@ class GestureEngine {
       this.sendMouseCommand(pos.x, pos.y, clickAction);
     }
 
-    // 3. EXCLUSIVE LOCK GESTURE: 🙏 Namaste / Folded Hands ONLY (Requires 5 consecutive frames hold)
+    // 3. EXCLUSIVE LOCK GESTURE: 🙏 Namaste / Folded Hands ONLY
     if (gesture === 'NAMASTE_HANDS_LOCK' && !this.isLocked) {
       this.namasteFrameCount = (this.namasteFrameCount || 0) + 1;
-      this.updateReadout(`🙏 HOLD NAMASTE TO LOCK (${this.namasteFrameCount}/5)`);
+      this.updateReadout(`🙏 HOLD NAMASTE TO LOCK (${this.namasteFrameCount}/3)`);
 
-      if (this.namasteFrameCount >= 5 && (now - this.gestureDebounce > 1000)) {
+      if (this.namasteFrameCount >= 3 && (now - this.gestureDebounce > 800)) {
         this.gestureDebounce = now;
         this.updateReadout('🙏 NAMASTE DETECTED // LOCKING FATE SYSTEM');
         this.lockSystem();
       }
     }
 
-    // 4. EXCLUSIVE UNLOCK GESTURE: ✌️ Peace Sign ONLY (Requires 5 consecutive frames hold)
+    // 4. EXCLUSIVE UNLOCK GESTURE: ✌️ Peace Sign ONLY
     if (gesture === 'PEACE_UNLOCK' && this.isLocked) {
       this.peaceFrameCount = (this.peaceFrameCount || 0) + 1;
-      this.updateReadout(`✌️ HOLD PEACE SIGN TO UNLOCK (${this.peaceFrameCount}/5)`);
+      this.updateReadout(`✌️ HOLD PEACE SIGN TO UNLOCK (${this.peaceFrameCount}/3)`);
 
-      if (this.peaceFrameCount >= 5 && (now - this.gestureDebounce > 1000)) {
+      if (this.peaceFrameCount >= 3 && (now - this.gestureDebounce > 800)) {
         this.gestureDebounce = now;
         this.updateReadout('✌️ PEACE SIGN DETECTED // UNLOCKING FATE SYSTEM');
         this.unlockSystem();
