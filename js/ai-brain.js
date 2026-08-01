@@ -139,7 +139,11 @@ class FateAIBrain {
       return `Calculating optimal solution, Boss! Here is a JEE Advanced Definite Integral problem: Evaluate Integral from 0 to pi/2 of sqrt(sin x) / (sqrt(sin x) + sqrt(cos x)) dx. Applying King's Property simplifies the result to pi / 4. Full derivation is ready in Suite Tools!`;
     }
 
-    // 7. Physics, Chemistry & NIST JARVIS Materials Design Core
+    // 7. Physics, Chemistry, NIST JARVIS Materials & Ishaan JARVIS Desktop Core
+    if (q.includes('ishaan') || q.includes('ishaan1013') || q.includes('desktop assistant') || q.includes('system diagnostics')) {
+      return "Ishaan JARVIS Desktop AI Voice Assistant Core (ishaan1013/jarvis) active, Boss! Features automated system diagnostics, PyTTSx3 speech synthesis, WolframAlpha computational intelligence, and daily briefing protocols.";
+    }
+
     if (q.includes('jarvis materials') || q.includes('jarvis tools') || q.includes('materials design') || q.includes('dft') || clean.includes('alignn')) {
       return "NIST JARVIS Materials Design Infrastructure (jarvis-tools-notebooks) active, Boss! Computes DFT bandgaps, generates 3D atomic structures, and predicts properties with Atomistic Line Graph Neural Networks (ALIGNN). Full Jupyter notebook pipeline is loaded in Suite Tools!";
     }
