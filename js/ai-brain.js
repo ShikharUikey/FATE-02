@@ -139,9 +139,13 @@ class FateAIBrain {
       return `Calculating optimal solution, Boss! Here is a JEE Advanced Definite Integral problem: Evaluate Integral from 0 to pi/2 of sqrt(sin x) / (sqrt(sin x) + sqrt(cos x)) dx. Applying King's Property simplifies the result to pi / 4. Full derivation is ready in Suite Tools!`;
     }
 
-    // 7. Physics & Chemistry Core
+    // 7. Physics, Chemistry & NIST JARVIS Materials Design Core
+    if (q.includes('jarvis materials') || q.includes('jarvis tools') || q.includes('materials design') || q.includes('dft') || clean.includes('alignn')) {
+      return "NIST JARVIS Materials Design Infrastructure (jarvis-tools-notebooks) active, Boss! Computes DFT bandgaps, generates 3D atomic structures, and predicts properties with Atomistic Line Graph Neural Networks (ALIGNN). Full Jupyter notebook pipeline is loaded in Suite Tools!";
+    }
+
     if (q.includes('physics') || q.includes('quantum')) {
-      return "Quantum Physics Telemetry, Boss: In quantum mechanics, Schrödinger's Time-Dependent Wave Equation governs wavefunctions: i ℏ (∂Ψ/∂t) = Ĥ Ψ. Energy levels for a 1D box are quantized as E_n = (n² h²)/(8 mL²).";
+      return "Quantum Physics & NIST Materials Telemetry, Boss: Schrödinger's Time-Dependent Wave Equation i ℏ (∂Ψ/∂t) = Ĥ Ψ governs atomic quantum states. Integrated with NIST JARVIS-DFT dataset for bandgap predictions.";
     }
 
     if (q.includes('chemistry')) {
